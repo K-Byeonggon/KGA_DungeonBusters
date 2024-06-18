@@ -30,7 +30,7 @@ public class SignupUI : MonoBehaviour
 
     public void OnClick_Exit()
     {
-        //로그인 화면으로 돌아가기
+        SignupManager.Instance.SignupUI_OnClick_Exit();
     }
 
     public void OnClick_Signup()

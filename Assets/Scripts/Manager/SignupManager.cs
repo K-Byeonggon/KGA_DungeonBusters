@@ -124,4 +124,9 @@ public class SignupManager : MonoBehaviour
         if(string.IsNullOrWhiteSpace(password)) return false;
         return true;
     }
+
+    public void SignupUI_OnClick_Exit()
+    {
+        UIManager.Instance.ShowLoginUI();
+    }
 }
