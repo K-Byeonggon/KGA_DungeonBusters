@@ -9,7 +9,7 @@ public class SignupUI : MonoBehaviour
     [SerializeField] InputField Input_Password;
     [SerializeField] Button Btn_Signup;
     [SerializeField] Text Text_Error;
-    
+
     private void OnEnable()
     {
         Btn_Exit.onClick.AddListener(OnClick_Exit);

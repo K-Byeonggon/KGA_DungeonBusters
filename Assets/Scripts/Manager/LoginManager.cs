@@ -3,7 +3,7 @@ using System;
 using System.Data;
 using UnityEngine;
 
-public class LoginManager : MonoBehaviour
+public class LoginManager
 {
     [Header("ConnectionInfo")]
     [SerializeField] string _ip;

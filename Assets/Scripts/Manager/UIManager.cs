@@ -20,18 +20,19 @@ public class UIManager : MonoBehaviour
 
     private void Awake()
     {
-        _instance = this;
+       _instance = this;
     }
 
     public void ShowLoginUI()
     {
-        LoginUI.SetActive(true);
+        //순서에 유의. SetActive(false)가 먼저 일어나야 DB가 다시 열린다
         SignupUI.SetActive(false);
+        LoginUI.SetActive(true);
     }
 
     public void ShowSignupUI()
     {
-        SignupUI.SetActive(true);
         LoginUI.SetActive(false);
+        SignupUI.SetActive(true);
     }
 }
