@@ -9,7 +9,7 @@ public class SignupUI : MonoBehaviour
     [SerializeField] InputField Input_Password;
     [SerializeField] Button Btn_Signup;
     [SerializeField] Text Text_Error;
-    
+
     private void OnEnable()
     {
         Btn_Exit.onClick.AddListener(OnClick_Exit);
@@ -30,7 +30,7 @@ public class SignupUI : MonoBehaviour
 
     public void OnClick_Exit()
     {
-        //로그인 화면으로 돌아가기
+        SignupManager.Instance.SignupUI_OnClick_Exit();
     }
 
     public void OnClick_Signup()
