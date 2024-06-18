@@ -3,7 +3,7 @@ using System;
 using System.Data;
 using UnityEngine;
 
-public class SignupManager : MonoBehaviour
+public class SignupManager
 {
     [Header("ConnectionInfo")]
     [SerializeField] string _ip;
