@@ -5,12 +5,13 @@ public class LoginEventManager : MonoBehaviour
 {
     public static event Func<bool> _connectDBCallback;
     public static event Func<bool> _disConnectDBCallback;
-    public static event Func<bool> _loginCallback;
+    public static event Func<string, string, bool> _loginCallback;
     public static event Action _signupCallback;
 
     public static bool OnEnable_ConnectDB_ActionInvoke()
     {
         bool? connected = _connectDBCallback?.Invoke();
+        Debug.Log(connected == null);
         if (connected != null) return (bool)connected;
         else return false;
     }
@@ -22,9 +23,9 @@ public class LoginEventManager : MonoBehaviour
         else return false;
     }
 
-    public static bool OnClick_Login_ActionInvoke()
+    public static bool OnClick_Login_ActionInvoke(string id, string password)
     {
-        bool? loginSuccess = _loginCallback?.Invoke();
+        bool? loginSuccess = _loginCallback?.Invoke(id, password);
         if (loginSuccess != null) return (bool)loginSuccess;
         else return false;
     }

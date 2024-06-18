@@ -3,7 +3,7 @@ using System;
 using System.Data;
 using UnityEngine;
 
-public class LoginManager : MonoBehaviour
+public class LoginViewModel : MonoBehaviour
 {
     [Header("ConnectionInfo")]
     [SerializeField] string _ip;
@@ -13,31 +13,17 @@ public class LoginManager : MonoBehaviour
 
     private static MySqlConnection _dbConnection;
 
-    private static LoginManager _instance = null;
 
-    public static LoginManager Instance
-    {
-        get
-        {
-            if (_instance == null)
-            {
-                _instance = new LoginManager();
-            }
-            return _instance;
-        }
-    }
 
-    public LoginManager()
+    public LoginViewModel()
     {
         _ip = DBConfig.Instance.IP;
         _dbName = DBConfig.Instance.DBname;
         _uid = DBConfig.Instance.Uid;
         _pwd = DBConfig.Instance.Pwd;
-
     }
 
-    /*
-    public void RegisterLoginEventCallback()
+    private void OnEnable()
     {
         LoginEventManager._connectDBCallback += ConnectDB;
         LoginEventManager._disConnectDBCallback += DisconnectDB;
@@ -45,28 +31,19 @@ public class LoginManager : MonoBehaviour
         //LoginEventManager._signupCallback
     }
 
-    public void UnRegisterLoginEventCallback()
-    {
-        LoginEventManager._connectDBCallback -= ConnectDB;
-        LoginEventManager._disConnectDBCallback -= DisconnectDB;
-        LoginEventManager._loginCallback -= Login_SendQuery;
-        //LoginEventManager._signupCallback
-    }
-    */
-
-    public bool LoginUI_OnEnable_ConnectDB()
+    public bool ConnectDB()
     {
         _dbConnection = DBConnectionManager.Instance.OpenDBConnection();
         return (_dbConnection.State == ConnectionState.Open);
     }
 
-    public bool LoginUI_OnDisable_DisconnectDB()
+    public bool DisconnectDB()
     {
         DBConnectionManager.Instance.CloseDBConnection();
         return (_dbConnection.State == ConnectionState.Closed);
     }
 
-    public bool LoginUI_OnClick_Login_SendQuery(string id, string password)
+    public bool Login_SendQuery(string id, string password)
     {
         /*
         COUNT(*) : 행의 수를 세는 집계 함수. *는 모든 열의 의미하며, 이 경우 조건에 맞는 모든 행의 수를 센다.
@@ -106,10 +83,5 @@ public class LoginManager : MonoBehaviour
             Debug.LogError($"Error: {e.Message}");
             return false;
         }
-    }
-
-    public void LoginUI_OnClick_Signup()
-    {
-        UIManager.Instance.ShowSignupUI();
     }
 }
