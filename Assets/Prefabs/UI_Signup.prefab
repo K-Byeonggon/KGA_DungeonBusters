@@ -12,10 +12,9 @@ GameObject:
   - component: {fileID: 6703100119492831105}
   - component: {fileID: 2074460540515730325}
   - component: {fileID: 1079636530236563013}
-  - component: {fileID: 7810755182300535686}
   - component: {fileID: 2871323611553159217}
   m_Layer: 5
-  m_Name: UI_SignIn
+  m_Name: UI_Signup
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -104,23 +103,6 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
---- !u!114 &7810755182300535686
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 770432298500511388}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 53f504aff414f3847adb213ed3d72ac8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Input_Id: {fileID: 6551927377925400692}
-  Input_Password: {fileID: 823167775876721354}
-  Btn_Login: {fileID: 0}
-  Btn_Sign: {fileID: 3570833671714521263}
-  Text_Error: {fileID: 4252253556418740817}
 --- !u!114 &2871323611553159217
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -136,7 +118,7 @@ MonoBehaviour:
   Btn_Exit: {fileID: 7405475158346171297}
   Input_Id: {fileID: 6551927377925400692}
   Input_Password: {fileID: 823167775876721354}
-  Btn_Sign: {fileID: 3570833671714521263}
+  Btn_Signup: {fileID: 3570833671714521263}
   Text_Error: {fileID: 4252253556418740817}
 --- !u!1 &1098146506768718193
 GameObject:
@@ -1278,7 +1260,7 @@ GameObject:
   - component: {fileID: 5171972817205381196}
   - component: {fileID: 6937022813547030110}
   m_Layer: 5
-  m_Name: Text_Sign
+  m_Name: Text_Signup
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1358,7 +1340,7 @@ GameObject:
   - component: {fileID: 7225042253261327523}
   - component: {fileID: 3570833671714521263}
   m_Layer: 5
-  m_Name: Btn_Sign
+  m_Name: Btn_Signup
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
