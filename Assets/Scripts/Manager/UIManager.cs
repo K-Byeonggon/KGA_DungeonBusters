@@ -2,11 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum UIType
+{
+    Signup,
+    Login
+}
+
 public class UIManager : MonoBehaviour
 {
-    [Header("UI")]
-    [SerializeField] GameObject LoginUI;
-    [SerializeField] GameObject SignupUI;
+    [SerializeField] GameObject UIRoot;
 
     private static UIManager _instance = null;
 
@@ -18,21 +22,94 @@ public class UIManager : MonoBehaviour
         }
     }
 
+    //UI Resources.Load로 불러내도록 개선하기
+    //_createdUIDic : 생성된 UI들을 저장
+    private Dictionary<UIType, GameObject> _createdUIDic = new Dictionary<UIType, GameObject>();
+
+    //_openedUIDic : 활성화된 UI들을 저장
+    private HashSet<UIType> _openedUIDic = new HashSet<UIType>();
+
     private void Awake()
     {
        _instance = this;
     }
 
-    public void ShowLoginUI()
+    private void Start()
     {
-        //순서에 유의. SetActive(false)가 먼저 일어나야 DB가 다시 열린다
-        SignupUI.SetActive(false);
-        LoginUI.SetActive(true);
+        OpenSpecificUI(UIType.Login);
     }
 
-    public void ShowSignupUI()
+
+
+    private void CreateUI(UIType uiType)
     {
-        LoginUI.SetActive(false);
-        SignupUI.SetActive(true);
+        if(_createdUIDic.ContainsKey(uiType) == false) 
+        {
+            string path = GetUIPath(uiType);
+            GameObject loadedUIPrefab = (GameObject)Resources.Load(path);    //UI 프리펩
+            GameObject createdUI = Instantiate(loadedUIPrefab, UIRoot.transform);
+            if(createdUI != null)
+            {
+                _createdUIDic.Add(uiType, createdUI);
+            }
+        }
+    }
+
+    private string GetUIPath(UIType uiType)
+    {
+        string path = string.Empty;
+        switch (uiType)
+        {
+            case UIType.Signup:
+                path = "Prefabs/UI/UI_Signup";
+                break;
+            case UIType.Login:
+                path = "Prefabs/UI/UI_Login";
+                break;
+        }
+        return path;
+    }
+
+    private GameObject GetCreatedUI(UIType uiType)
+    {
+        if(_createdUIDic.ContainsKey(uiType) == false)
+        {
+            CreateUI(uiType);
+        }
+        return _createdUIDic[uiType];
+    }
+
+    private void OpenUI(UIType uiType, GameObject uiObject)
+    {
+        if(_openedUIDic.Contains(uiType) == false)
+        {
+            uiObject.SetActive(true);
+            _openedUIDic.Add(uiType);
+        }
+    }
+
+    private void CloseUI(UIType uiType)
+    {
+        if( _openedUIDic.Contains(uiType) )
+        {
+            var uiObject = _createdUIDic[uiType];
+            uiObject.SetActive(false);
+            _openedUIDic.Remove(uiType);
+        }
+    }
+
+    public void OpenSpecificUI(UIType uiType)
+    {
+        var uiObj = GetCreatedUI(uiType);
+
+        if (uiObj != null)
+        {
+            OpenUI(uiType, uiObj);
+        }
+    }
+
+    public void CloseSpecificUI(UIType uiType)
+    {
+        CloseUI(uiType);
     }
 }

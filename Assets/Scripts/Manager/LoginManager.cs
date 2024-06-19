@@ -36,24 +36,6 @@ public class LoginManager
 
     }
 
-    /*
-    public void RegisterLoginEventCallback()
-    {
-        LoginEventManager._connectDBCallback += ConnectDB;
-        LoginEventManager._disConnectDBCallback += DisconnectDB;
-        LoginEventManager._loginCallback += Login_SendQuery;
-        //LoginEventManager._signupCallback
-    }
-
-    public void UnRegisterLoginEventCallback()
-    {
-        LoginEventManager._connectDBCallback -= ConnectDB;
-        LoginEventManager._disConnectDBCallback -= DisconnectDB;
-        LoginEventManager._loginCallback -= Login_SendQuery;
-        //LoginEventManager._signupCallback
-    }
-    */
-
     public bool LoginUI_OnEnable_ConnectDB()
     {
         _dbConnection = DBConnectionManager.Instance.OpenDBConnection();
@@ -110,6 +92,7 @@ public class LoginManager
 
     public void LoginUI_OnClick_Signup()
     {
-        UIManager.Instance.ShowSignupUI();
+        UIManager.Instance.CloseSpecificUI(UIType.Login);
+        UIManager.Instance.OpenSpecificUI(UIType.Signup);
     }
 }

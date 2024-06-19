@@ -4,15 +4,10 @@ using UnityEngine;
 
 public class LobbyManager : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
 
-    // Update is called once per frame
-    void Update()
+    public void LobbyUI_OnClick_StartWithServer()
     {
-        
+        //UI의 패널을 활성화하고, 이게 끝이네.
+        //근데 이정도는 그냥 UI에서 해도 되지 않을까?
     }
 }

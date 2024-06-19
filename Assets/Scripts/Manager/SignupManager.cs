@@ -127,6 +127,7 @@ public class SignupManager
 
     public void SignupUI_OnClick_Exit()
     {
-        UIManager.Instance.ShowLoginUI();
+        UIManager.Instance.CloseSpecificUI(UIType.Signup);
+        UIManager.Instance.OpenSpecificUI(UIType.Login);
     }
 }
