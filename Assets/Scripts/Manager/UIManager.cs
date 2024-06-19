@@ -5,7 +5,9 @@ using UnityEngine;
 public enum UIType
 {
     Signup,
-    Login
+    Login,
+    Lobby,
+    SetPlayerNumPopup
 }
 
 public class UIManager : MonoBehaviour
@@ -34,13 +36,6 @@ public class UIManager : MonoBehaviour
        _instance = this;
     }
 
-    private void Start()
-    {
-        OpenSpecificUI(UIType.Login);
-    }
-
-
-
     private void CreateUI(UIType uiType)
     {
         if(_createdUIDic.ContainsKey(uiType) == false) 
@@ -65,6 +60,12 @@ public class UIManager : MonoBehaviour
                 break;
             case UIType.Login:
                 path = "Prefabs/UI/UI_Login";
+                break;
+            case UIType.Lobby:
+                path = "Prefabs/UI/UI_Lobby";
+                break;
+            case UIType.SetPlayerNumPopup:
+                path = "Prefabs/UI/Popup_SetPlayerNum";
                 break;
         }
         return path;

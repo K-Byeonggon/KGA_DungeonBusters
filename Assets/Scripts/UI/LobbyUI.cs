@@ -17,19 +17,18 @@ public class LobbyUI : MonoBehaviour
     [SerializeField] Button Btn_StartWithClient;
     [SerializeField] Button Btn_Costume;
 
-    [Header("Panel_SelectNum")]
-    [SerializeField] GameObject Panel_SelectNum;
-    [SerializeField] Button Btn_3Players;
-    [SerializeField] Button Btn_4Players;
-    [SerializeField] Button Btn_5Players;
+
 
     private void OnEnable()
     {
-        Btn_StartWithServer.onClick.AddListener(() => Panel_SelectNum.SetActive(true));
+        Btn_StartWithServer.onClick.AddListener(OnClick_StartWithServer);
         Btn_StartWithClient.onClick.AddListener(() => MyNetworkRoomManager.Instance.StartClient());
     }
 
-
+    private void OnClick_StartWithServer()
+    {
+        UIManager.Instance.OpenSpecificUI(UIType.SetPlayerNumPopup);
+    }
 
 
 }
