@@ -25,7 +25,7 @@ public class SetPlayerNumPopup : MonoBehaviour
 
     private void OnClick_3PlayerStart()
     {
-
+        LobbyManager.Instance.Popup_OnClick_3PlayerStart();
     }
 
     private void OnClick_4PlayerStart()

@@ -4,10 +4,34 @@ using UnityEngine;
 
 public class LobbyManager : MonoBehaviour
 {
+    private static LobbyManager _instance = null;
 
-    public void LobbyUI_OnClick_StartWithServer()
+    public static LobbyManager Instance
     {
-        //UI의 패널을 활성화하고, 이게 끝이네.
-        //근데 이정도는 그냥 UI에서 해도 되지 않을까?
+        get
+        {
+            if (_instance == null)
+            {
+                _instance = new LobbyManager();
+            }
+            return _instance;
+        }
+    }
+
+
+    public void Popup_OnClick_3PlayerStart()
+    {
+        MyNetworkRoomManager.Instance.minPlayers = 3;
+        MyNetworkRoomManager.Instance.StartHost();
+    }
+
+    public void Popup_OnClick_4PlayerStart()
+    {
+        MyNetworkRoomManager.Instance.minPlayers = 4;
+    }
+
+    public void Popup_OnClick_5PlayerStart()
+    {
+        MyNetworkRoomManager.Instance.minPlayers = 5;
     }
 }
