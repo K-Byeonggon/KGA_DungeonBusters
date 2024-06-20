@@ -1,9 +1,10 @@
+using Mirror;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class RoomManager : MonoBehaviour
+public class RoomManager
 {
     private static RoomManager _instance = null;
     public static RoomManager Instance
@@ -18,12 +19,12 @@ public class RoomManager : MonoBehaviour
         }
     }
 
-    public Dictionary<int, MyNetworkRoomPlayer> RoomPlayers = new Dictionary<int, MyNetworkRoomPlayer>(); 
+    public Dictionary<int, GameObject> RoomPlayers = new Dictionary<int, GameObject>(); 
 
     public void RoomUI_OnClick_Ready_CallCmd()
     {
         Debug.Log("¡ÿ∫Ò");
         int uid = LoginManager.Instance.UserID;
-        RoomPlayers[uid].CmdChangeReadyState(true);
+        RoomPlayers[uid].GetComponent<NetworkRoomPlayer>().CmdChangeReadyState(true);
     }
 }

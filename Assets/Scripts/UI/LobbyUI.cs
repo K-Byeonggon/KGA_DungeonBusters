@@ -23,14 +23,14 @@ public class LobbyUI : MonoBehaviour
     {
         Btn_Logout.onClick.AddListener(OnClick_Logout);
         Btn_StartWithServer.onClick.AddListener(OnClick_StartWithServer);
-        //Btn_StartWithClient.onClick.AddListener(() => MyNetworkRoomManager.Instance.StartClient());
+        Btn_StartWithClient.onClick.AddListener(OnClick_StartWithClient);
     }
 
     private void OnDisable()
     {
         Btn_Logout.onClick.RemoveListener(OnClick_Logout);
         Btn_StartWithServer.onClick.RemoveListener(OnClick_StartWithServer);
-
+        Btn_StartWithClient.onClick.RemoveListener(OnClick_StartWithClient);
     }
 
     private void OnClick_Logout()
@@ -44,5 +44,9 @@ public class LobbyUI : MonoBehaviour
         UIManager.Instance.OpenSpecificUI(UIType.SetPlayerNumPopup);
     }
 
+    private void OnClick_StartWithClient()
+    {
+        LobbyManager.Instance.LobbyUI_OnClick_StartWitClient();
+    }
     
 }

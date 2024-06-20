@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class MyNetworkRoomPlayer : NetworkRoomPlayer
 {
+    [SerializeField] int _uid;
+
     private void OnEnable()
     {
         OnEnable_RegisterRoomPlayer();
@@ -12,7 +14,8 @@ public class MyNetworkRoomPlayer : NetworkRoomPlayer
 
     private void OnEnable_RegisterRoomPlayer()
     {
-        RoomManager.Instance.RoomPlayers.Add(LoginManager.Instance.UserID, this);
+        _uid = LoginManager.Instance.UserID;
+        RoomManager.Instance.RoomPlayers.Add(_uid, this.gameObject);
     }
 
     //내장된 CmdChangeReadyState를 활용해서 준비.

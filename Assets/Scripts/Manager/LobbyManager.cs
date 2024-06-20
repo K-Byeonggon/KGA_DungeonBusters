@@ -18,10 +18,16 @@ public class LobbyManager : MonoBehaviour
         }
     }
 
+    public void LobbyUI_OnClick_StartWitClient()
+    {
+        MyNetworkRoomManager.Instance.StartClient();
+    }
+
 
     public void Popup_OnClick_3PlayerStart()
     {
-        MyNetworkRoomManager.Instance.minPlayers = 3;
+        //MyNetworkRoomManager.Instance.minPlayers = 3;
+        MyNetworkRoomManager.Instance.minPlayers = 1;
         MyNetworkRoomManager.Instance.StartHost();
     }
 
