@@ -21,17 +21,4 @@ public class MyNetworkRoomManager : NetworkRoomManager
     }
 
 
-    public override void OnServerAddPlayer(NetworkConnectionToClient conn)
-    {
-        base.OnServerAddPlayer(conn);
-
-        GameObject roomPlayerObject = conn.identity.gameObject;
-        MyNetworkRoomPlayer roomPlayer = roomPlayerObject.GetComponent<MyNetworkRoomPlayer>();
-
-        if(roomPlayer != null)
-        {
-            int userID = ServerLoginManager.Instance.GetUserID(conn);
-            roomPlayer._uid = userID;
-        }
-    }
 }

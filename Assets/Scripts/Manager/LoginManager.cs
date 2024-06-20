@@ -2,8 +2,6 @@ using MySql.Data.MySqlClient;
 using System;
 using System.Data;
 using UnityEngine;
-using Mirror;
-using Org.BouncyCastle.Asn1.Crmf;
 
 public class LoginManager
 {
@@ -107,16 +105,4 @@ public class LoginManager
         UIManager.Instance.CloseSpecificUI(UIType.Login);
         UIManager.Instance.OpenSpecificUI(UIType.Signup);
     }
-
-    public void OnRoomJoin()
-    {
-        SendUserIDToServer(_user_id);
-    }
-
-    private void SendUserIDToServer(int uid)
-    {
-        UserIDMessage msg = new UserIDMessage { UserID = uid };
-        NetworkClient.Send(msg);
-    }
-
 }
