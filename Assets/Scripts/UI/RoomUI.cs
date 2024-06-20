@@ -22,6 +22,6 @@ public class RoomUI : MonoBehaviour
 
     private void OnClick_Ready()
     {
-        Debug.Log("¡ÿ∫Ò");
+        RoomManager.Instance.RoomUI_OnClick_Ready_CallCmd();
     }
 }

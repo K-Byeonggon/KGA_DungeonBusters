@@ -556,9 +556,9 @@ MonoBehaviour:
   evaluationMethod: 0
   evaluationInterval: 3
   timeInterpolationGui: 0
-  showRoomGUI: 1
+  showRoomGUI: 0
   minPlayers: 1
-  roomPlayerPrefab: {fileID: 1491929345875154867, guid: 8feb8ead563699046969e17ac8414be5, type: 3}
+  roomPlayerPrefab: {fileID: 7890592246790481931, guid: 8feb8ead563699046969e17ac8414be5, type: 3}
   RoomScene: Assets/Scenes/OnlineScene.unity
   GameplayScene: Assets/Scenes/GameScene.unity
   _allPlayersReady: 0
