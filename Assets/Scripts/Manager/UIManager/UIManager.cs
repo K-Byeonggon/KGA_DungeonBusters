@@ -7,7 +7,8 @@ public enum UIType
     Signup,
     Login,
     Lobby,
-    SetPlayerNumPopup
+    SetPlayerNumPopup,
+    Room
 }
 
 public class UIManager : MonoBehaviour
@@ -66,6 +67,9 @@ public class UIManager : MonoBehaviour
                 break;
             case UIType.SetPlayerNumPopup:
                 path = "Prefabs/UI/Popup_SetPlayerNum";
+                break;
+            case UIType.Room:
+                path = "Prefabs/UI/UI_Room";
                 break;
         }
         return path;

@@ -13,6 +13,9 @@ public class LoginManager
 
     private static MySqlConnection _dbConnection;
 
+    private int _user_id = -1;
+    public int UserID { get { return _user_id; } }
+
     private static LoginManager _instance = null;
 
     public static LoginManager Instance
@@ -38,6 +41,7 @@ public class LoginManager
 
     public bool LoginUI_OnEnable_ConnectDB()
     {
+        _user_id = -1;
         _dbConnection = DBConnectionManager.Instance.OpenDBConnection();
         return (_dbConnection.State == ConnectionState.Open);
     }
@@ -56,7 +60,7 @@ public class LoginManager
         WHERE : 특정 조건을 지정하는 키워드.
         U_Name=@id : U_Name이 @id와 일치하는 행을 찾는 조건. @는 쿼리문에서 매개변수를 나타냄.
          */
-        string query = "SELECT COUNT(*) FROM user_info WHERE U_Name=@id AND U_Password=@password";
+        string query = "SELECT U_id FROM user_info WHERE U_Name=@id AND U_Password=@password";
 
         try
         {
@@ -67,13 +71,13 @@ public class LoginManager
                 cmd.Parameters.AddWithValue("@password", password);
 
                 // MySqlCommand.ExecuteScalar()는 SQL쿼리를 실행하고 단일 값을 반환한다.
-                // 여기서는 단일 값 COUNT(*)를 반환한다.
-                // Convert.ToInt32로 반환값을 int형으로 바꾼다.
-                int userCount = Convert.ToInt32(cmd.ExecuteScalar());
+                // 여기서는 단일 값 U_id를 반환한다.
+                object result = cmd.ExecuteScalar();
 
-                if (userCount > 0)
+                if (result != null)
                 {
-                    Debug.Log("Login successful!");
+                    _user_id = Convert.ToInt32(result);
+                    Debug.Log($"Login successful! User ID: {_user_id}");
                     return true;
                 }
                 else
@@ -88,6 +92,12 @@ public class LoginManager
             Debug.LogError($"Error: {e.Message}");
             return false;
         }
+    }
+
+    public void LoginUI_OnClick_Login_Access()
+    {
+        UIManager.Instance.CloseSpecificUI(UIType.Login);
+        UIManager.Instance.OpenSpecificUI(UIType.Lobby);
     }
 
     public void LoginUI_OnClick_Signup()

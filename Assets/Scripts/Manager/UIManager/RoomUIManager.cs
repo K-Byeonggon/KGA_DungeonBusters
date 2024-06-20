@@ -2,10 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class LobbyUIManager : UIManager
+public class RoomUIManager : UIManager
 {
     private void Start()
     {
-        OpenSpecificUI(UIType.Lobby);
+        OpenSpecificUI(UIType.Room);
     }
 }

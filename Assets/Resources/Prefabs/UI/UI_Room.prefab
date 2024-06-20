@@ -441,6 +441,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7189602377712504498}
+  - component: {fileID: 5757649882174757037}
   m_Layer: 5
   m_Name: UI_Room
   m_TagString: Untagged
@@ -469,6 +470,23 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &5757649882174757037
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3711464102969728617}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5d418dacc8d28fc40a232cc845e2098c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Text_Players:
+  - {fileID: 8010802697731261669}
+  - {fileID: 2909350046998317888}
+  - {fileID: 3152192476842786092}
+  Btn_Ready: {fileID: 5966781816237404309}
 --- !u!1 &3760230430055343055
 GameObject:
   m_ObjectHideFlags: 0

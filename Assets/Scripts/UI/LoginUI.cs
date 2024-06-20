@@ -33,7 +33,11 @@ public class LoginUI : MonoBehaviour
     public void OnClick_Login()
     {
         bool LoginSuccess = LoginManager.Instance.LoginUI_OnClick_Login_SendQuery(Input_Id.text, Input_Password.text);
-        if (LoginSuccess) { Text_Error.text = "로그인 성공!"; }
+        if (LoginSuccess) 
+        {
+            Text_Error.text = "로그인 성공!";
+            LoginManager.Instance.LoginUI_OnClick_Login_Access();
+        }
         else { Text_Error.text = "로그인 실패!"; }
     }
 
