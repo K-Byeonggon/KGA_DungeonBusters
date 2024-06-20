@@ -1,0 +1,124 @@
+지금 구조
+
+- MyNetworkRoomPlayer
+: _uid값을 가짐. uid는 로컬의 LoginManager의 User_id 값으로 정해짐.
+
+- LoginManager
+: User_id값을 가짐. User_id는 로그인 할때 DB에서 U_id값으로 정해짐.
+
+- LobbyManager
+: 버튼을 누르면 MyNetworkRoomManager를 통해 StartHost, StartClient 호출함.
+RoomPlayer 생성은 StartHost, StartClient에서 알아서 해줌.
+
+- MyNetworkRoomManager
+: 아직 싱글톤인거 말고 아무 기능 없음.
+
+
+Gpt 구조
+
+- RoomManager
+: RoomPlayers라는 Dic 가짐. key-uid와 value-playerObject로 구성됨.
+RoomPlayerPrefab이라는 GameObject가짐. 
+
+[Server] RegisterRoomPlayer(int uid, GameObject playerObject)
+{ RoomPlayers에 등록되지 않은 uid를 가진 플레이어를 등록함. }
+
+[Server] CreateRoomPlayer(NetworkConnection conn, int uid)
+{ RoomPlayerPrefab으로 roomPlayer 생성함. (이전에는 roomPlayer 생성은 RoomManager에 맡겼음)
+NetworkServer.AddPlayerForConnection(conn, roomPlayer)라는 알수 없는 주문을 외움.
+RegisterRoomPlayer를 통해 uid와 생성한 roomPlayer를 Dic에 저장함. }
+
+요약: 어디선가 uid를 받아서 roomPlayer를 생성하고 내부의 Dic에 저장하는 기능을 가짐.
+
+
+- MyNetworkRoomPlayer
+: [SyncVar] int _uid 가짐.
+
+OnEnable에서 LocalPlayer이면 CmdRegisterRoomPlayer 부름.
+
+[Command] CmdRegisterRoomPlayer(int uid)
+{ RoomManager를 통해 uid와 자신을 등록함
+자신의 _uid를 uid로 셋함. }
+
+요약: RoomPlayer는 활성화되면 서버의 RoomManager에 자신을 등록함. 대체 uid는 어디서?
+
+
+- LoginManager
+: 뭔가 많이 뜯어고쳐짐. UserID를 가짐.
+
+Login(string username, string password)
+{ GetUserIdFromDB(username, password)로 UserID를 셋함.
+CmdCreateRoomPlayer(UserID)를 실행함. } 
+
+GetUserIdFromDB(string username, string password)
+{ 아무튼 DB를 통해 u_id를 읽어서 int로 return함. } 
+
+[Command] CmdCreateRoomPlayer(int uid)
+{ NetworkConnection conn = NetworkClient.connection; 이라는 알 수 없는 주문을 외움.
+RoomManager를 통해 CreateRoomPlayer(conn, uid)를 실행함. }
+
+요약: 서버에 NetworkConnection을 통해 자신이 가진 UserId로 RoomPlayer생성 요청을 보냄.
+
+
+
+
+
+
+
+
+뭔가 뭔가 뭔가 뭔가 뭔가 뭔가 뭔가 돌아가는 느낌.
+
+내가 해야될거? 그냥 RoomPlayer를 만들때 각 클라의 uid를 가지길 원함.
+
+그러러면 어떻게 해야할까?
+
+RoomPlayer를 생성할때, Local이 아니면 그 거거거기의 uid를 어떻게 가져와서 설정해주면 되는거아니야?
+
+일단 RoomPlayer생성은 알아서 되잖아.
+
+나는 거기에 줄하나만 제대로 그으면 되는거 아님?
+
+RoomPlayer의 생성은 모든 클라에서 일어나지.
+
+
+- 각 클라의 RoomPlayer 생성은 로컬에서 일어남.
+
+- 로컬에서 RoomPlayer를 생성하면 서버에서 각 클라의 uid를 받아오지 않는한, 로컬 uid로 모든 RoomPlayer를 생성함.
+
+- 그래서 로그인 과정에서 얻은 uid에 대한 정보를 서버로 보낼 필요가 있음.
+
+- 그래서 서버로 보내는 거 까지는 된다 치자. 이 uid 언제 활용해야 하나요?
+
+- 로컬에서 RoomPlayer를 생성할 때 어느 클라의 RoomPlayer가 들어오는지 알 수 있나?
+
+
+찾아보니까 NetworkRoomManager의 OnRoomServerCreateRoomPlayer(conn)을 커스터마이징 해서
+내가 원하는 정보를 가진 RoomPlayer를 생성할 수 있는 것 같다.
+NetworkRoomManager는 OnServerAddPlayer에서 OnRoomServerCreateRoomPlayer를 일단 한번 실행하는데,
+OnRoomServerCreateRoomPlayer가 null을 반환하면(내가 커스텀 안했으면) 알아서 RoomPlayer를 생성한다.
+
+RoomPlayer를 생성할때는 roomPlayerPrefab을 사용하면 된다.
+
+그러면 RoomPlayer를 OnRoomServerCreateRoomPlayer로 생성을 하고,
+생성을 할 때, MyNetworkRoomPlayer의 uid를 수정하면 된다.
+
+이 수정하는 값은 서버에서 받아서?
+
+아 그러면, 서버에 conn과 uid를 담은 Dic이 있어야한다.
+Dic에서 conn으로 uid 찾아서 RoomPlayer생성할 때 conn을 비교해서 uid를 넣으면 된다.
+
+그러면 n인 시작 버튼을 누르면,
+
+Server의 어딘가의 Dic에 NetworkConnectionToClient conn과 함께 LoginManager에서 받은 UserId를 저장하고,
+OnRoomServerCreateRoomPlayer에서 Server에 저장된 UserId로 RoomPlayer를 만든다.
+
+우려되는 점은, Room에 입장하기 전인데 NetworkConnectionToClient 값을 가져올 수 있을까?
+어 ㅓ안되는데 그럼 어떻게 해야함?
+
+- Room에 입장하기전에는 Server로 uid를 보낼 수 없다.
+
+아 그런데 OnRoomServerCreateRoomPlayer가 NetworkConnectionToClient를 요구한다는 거는,
+이 시점에서는 Room에 입장한 상태라는 것이 된다.
+
+그렇다면 uid를 보내는 타이밍을 이 전으로 적절하게 설정하면 좋을 것 같은데??
+그냥 LoginManager 싱글톤으로 만들어버리면 Scene바뀌어도 남으니까 전달 쌉가능~
