@@ -1,3 +1,4 @@
+using JetBrains.Annotations;
 using Mirror;
 using System.Collections;
 using System.Collections.Generic;
@@ -5,18 +6,24 @@ using UnityEngine;
 
 public class MyNetworkRoomPlayer : NetworkRoomPlayer
 {
-    [SerializeField] int _uid;
+    [SyncVar]
+    public int _uid;
 
-    private void OnEnable()
+    public override void OnStartClient()
     {
-        OnEnable_RegisterRoomPlayer();
+        base.OnStartClient();
+        if (isLocalPlayer)
+        {
+            CmdSetUserID(LoginManager.Instance.UserID);
+        }
     }
 
-    private void OnEnable_RegisterRoomPlayer()
+    [Command]
+    private void CmdSetUserID(int uid)
     {
-        _uid = LoginManager.Instance.UserID;
-        RoomManager.Instance.RoomPlayers.Add(_uid, this.gameObject);
+        _uid = uid;
+        NetworkConnection conn = connectionToClient;
+        ServerLoginManager.Instance.RegisterUserID(conn, uid);
     }
-
     //내장된 CmdChangeReadyState를 활용해서 준비.
 }

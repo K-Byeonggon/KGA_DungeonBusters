@@ -26,6 +26,7 @@ public class LobbyManager : MonoBehaviour
 
     public void Popup_OnClick_3PlayerStart()
     {
+        LoginManager.Instance.OnRoomJoin();
         //MyNetworkRoomManager.Instance.minPlayers = 3;
         MyNetworkRoomManager.Instance.minPlayers = 1;
         MyNetworkRoomManager.Instance.StartHost();
