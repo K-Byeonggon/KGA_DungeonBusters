@@ -2237,7 +2237,7 @@ GameObject:
   - component: {fileID: 7701091810171341509}
   - component: {fileID: 9220532769258257148}
   m_Layer: 5
-  m_Name: Text (Legacy)
+  m_Name: Label_Rewards
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3616,10 +3616,10 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 1631085007242196324}
   - {fileID: 1246213801373089153}
   - {fileID: 5530881463323833611}
   - {fileID: 962536146783058246}
-  - {fileID: 1631085007242196324}
   m_Father: {fileID: 583108999888532786}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
