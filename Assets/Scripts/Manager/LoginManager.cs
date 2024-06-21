@@ -3,7 +3,7 @@ using System;
 using System.Data;
 using UnityEngine;
 
-public class LoginManager
+public class LoginManager : MonoBehaviour
 {
     [Header("ConnectionInfo")]
     [SerializeField] string _ip;
@@ -16,17 +16,18 @@ public class LoginManager
     private int _user_id = -1;
     public int UserID { get { return _user_id; } }
 
-    private static LoginManager _instance = null;
+    public static LoginManager Instance { get; private set; }
 
-    public static LoginManager Instance
+    public void Awake()
     {
-        get
+        if (Instance != null && Instance != this)
         {
-            if (_instance == null)
-            {
-                _instance = new LoginManager();
-            }
-            return _instance;
+            Destroy(gameObject);
+        }
+        else
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject); // 선택 사항: 씬 전환 시 유지
         }
     }
 

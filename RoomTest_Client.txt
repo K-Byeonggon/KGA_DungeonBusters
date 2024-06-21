@@ -1,0 +1,74 @@
+Client로 Online Scene에 입장할 때.
+
+OnRoomStartClient
+OnStartClient
+OnRoomClientConnect
+OnClientConnet
+OnClientEnter
+OnRoomClientSceneChanged
+OnClientSceneChanged
+
+RoomPlayer: OnStartClient
+RoomPlayer: OnStartLocalPlayer
+
+OnClientEnter
+
+RoomPlayer: OnClientEnterRoom
+
+순서로 진행됨.
+서버에 Host로 룸 입장할때랑 차이점은
+대충 Server붙은 이벤트는 Client이벤트로 바뀌어서 호출되었다는 점이 있다.
+RoomPlayer가 서버로 시작하는 경우 OnStartServer를 호출하고,
+RoomManager에서도 OnServerAddPlayer를 추가로 호출한다.
+
+여기서 클라이언트가 Stop Client를 한다면
+
+OnRoomClientDisconnect
+OnClientDisconnect
+OnRoomStopClient
+OnRoomClientExit
+
+RoomPlayer: OnClientExitRoom
+RoomPlayer: OnStopLocalPlayer
+RoomPlayer: OnStopClient
+
+순서로 진행됨.
+클라가 방에서 Stop Client 하는 경우에는 서버와 많은 차이가 있다.
+일단 순서가 RoomManager가 먼저 연결해제하고 방나가기 까지 한후에
+RoomPlayer가 방을 나가고 Client를 멈춘다.
+
+
+=============================================
+
+클라에서 Ready해서 게임 시작할 때
+
+
+OnClientNotReady
+OnRoomClientExit
+
+RoomPlayer: OnClientExitRoom
+
+OnRoomClientSceneChanged
+OnClientSceneChanged
+
+RoomPlayer: OnStopLocalPlayer
+
+
+순서로 진행됨.
+
+? 이거 어디서 플레이어 등록해야됨?
+
+그래서 ServerOnly에서 무슨일이 벌어지는지 확인해봤다.
+
+클라가 GameScene에 입장하면 ServerOnly에서는
+
+OnServerChangeScene (GameScene)
+OnRoomServerPlayersReady
+OnRoomServerSceneChanged (GameScene)
+OnServerSceneChanged (GameScene)
+OnServerReady (conn.identity != null)
+
+게임을 시작하는 경우 OnServerReady가 불린다.
+여기서 등록해보자.
+
+OnServerReady는 GameScene뿐만 아니라 OnlineScene에서 도 불리니까 주의.

@@ -5,18 +5,20 @@ using UnityEngine;
 
 public class MyNetworkRoomPlayer : NetworkRoomPlayer
 {
-    [SerializeField] int _uid;
+    [SyncVar][SerializeField] int _uid;
     public int Uid {  get { return _uid; }  set { _uid = value; } }
-    private void OnEnable()
+
+    public override void OnStartClient()
     {
-        OnEnable_RegisterRoomPlayer();
+        int clientUID = LoginManager.Instance.UserID;
+        UIDManager.Instance.AddClientUID(connectionToClient, clientUID);
+        CmdSendUIDToServer(clientUID);
+        _uid = UIDManager.Instance.GetClientUID(connectionToClient);
     }
 
-    private void OnEnable_RegisterRoomPlayer()
+    [Command]
+    void CmdSendUIDToServer(int uid)
     {
-        _uid = LoginManager.Instance.UserID;
-        RoomManager.Instance.RoomPlayers.Add(_uid, this.gameObject);
+        UIDManager.Instance.AddClientUID(connectionToClient, uid);
     }
-
-    //내장된 CmdChangeReadyState를 활용해서 준비.
 }

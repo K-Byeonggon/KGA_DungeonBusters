@@ -20,18 +20,37 @@ public class MyNetworkRoomManager : NetworkRoomManager
         }
     }
 
+    public override void OnServerAddPlayer(NetworkConnectionToClient conn)
+    {
+
+        base.OnServerAddPlayer(conn);
+    }
+
+
+
+
     public override GameObject OnRoomServerCreateRoomPlayer(NetworkConnectionToClient conn)
     {
         //여기서 커스텀으로 RoomPlayer 생성.
         GameObject roomPlayer = Instantiate(roomPlayerPrefab.gameObject, Vector3.zero, Quaternion.identity);
 
+        //생성할때 uid설정이 안되서 그냥 생성후에 uid 바꿔주는 것을 시도해보려고 한다.
+        /*
         var myRoomPlayer = roomPlayer.GetComponent<MyNetworkRoomPlayer>();
 
         if (myRoomPlayer != null)
         {
-            myRoomPlayer.Uid = 123345; //여기에 서버 어딘가의 Dic에 conn과 함께 저장된 uid 값 넣기
+            int uid = UIDManager.Instance.GetClientUID(conn);
+            if (uid != -1)
+            {
+                myRoomPlayer.Uid = uid;
+            }
+            else
+            {
+                Debug.LogError("UID 못찾았어용");
+            }
         }
-
+        */
         return roomPlayer;
     }
 }

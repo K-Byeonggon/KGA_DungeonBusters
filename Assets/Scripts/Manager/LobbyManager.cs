@@ -1,8 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public class LobbyManager : MonoBehaviour
+public class LobbyManager
 {
     private static LobbyManager _instance = null;
 
