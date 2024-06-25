@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Xml.Linq;
 using UnityEngine;
 
 public class DataManager : MonoBehaviour
@@ -33,6 +34,7 @@ public class DataManager : MonoBehaviour
 
     private void ReadMonsterTable(string tableName)
     {
-
+        XDocument doc = XDocument.Load()
+            //몬스터 정보가 Monster가 아니라 Stage1에 저장되있어서 고민을 좀 해봐야
     }
 }
