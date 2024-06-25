@@ -13,7 +13,7 @@ public enum Jewel
 public class MyPlayer : NetworkBehaviour
 {
     [SerializeField] List<int> _cards = new List<int>() { 1,2,3,4,5,6,7};
-    [SerializeField] List<int> _jewels = new List<int>() { 0, 0, 0 }; //RED:0, YELLOW:1, BLUE:2
+    [SerializeField] List<int> _jewels = new List<int>() { 1, 1, 1 }; //RED:0, YELLOW:1, BLUE:2
 
     public int PopCard(int num)
     {
