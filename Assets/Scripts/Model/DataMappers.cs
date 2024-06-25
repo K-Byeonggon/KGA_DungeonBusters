@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Monster
 {
+    public int DataId { get; set; }
     public string Name { get; set; }
     public int HP { get; set; }
     public string Reward1 {  get; set; }
