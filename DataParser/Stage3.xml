@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Stage3>
+  <dataCategory>
+    <data DataName="Poison_Slime" Name="포이즌 슬라임" HP="4" Reward1="{1,1,1}" Reward2="" Reward3="" />
+    <data DataName="Kerberos" Name="케르베로스" HP="7" Reward1="{0,0,2}" Reward2="" Reward3="" />
+    <data DataName="Skeleton_Warior" Name="스켈레톤 워리어" HP="8" Reward1="{0,2,0}" Reward2="{1,0,0}" Reward3="" />
+    <data DataName="Mimic" Name="미믹" HP="10" Reward1="{1,1,1}" Reward2="{0,1,0}" Reward3="" />
+    <data DataName="Dragon" Name="드래곤" HP="14" Reward1="{0,0,2}" Reward2="{1,0,0}" Reward3="{0,1,0}" />
+  </dataCategory>
+</Stage3>
