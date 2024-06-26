@@ -45,7 +45,7 @@ public class DataManager : MonoBehaviour
             var tempMonster = new Monster();
             tempMonster.DataId = int.Parse(data.Attribute(nameof(tempMonster.DataId)).Value);
             tempMonster.Name = data.Attribute(nameof(Monster.Name)).Value;
-            tempMonster.Stage = int.Parse(data.Attribute(nameof(Monster.Stage)).Value);
+            tempMonster.Dungeon = int.Parse(data.Attribute(nameof(Monster.Dungeon)).Value);
             tempMonster.HP = int.Parse(data.Attribute(nameof(Monster.HP)).Value);
             tempMonster.Reward1 = ReadMonsterRewards(data, nameof(tempMonster.Reward1));
             tempMonster.Reward2 = ReadMonsterRewards(data, nameof(tempMonster.Reward2));

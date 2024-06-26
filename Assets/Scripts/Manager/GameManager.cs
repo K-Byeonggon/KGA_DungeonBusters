@@ -4,28 +4,28 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    [SerializeField] int _currentStage;
+    [SerializeField] int _currentDungeon;
 
     public Queue<Monster> _monsterQueue;
 
-    public int CurrentStage
+    public int CurrentDungeon
     {
-        get { return _currentStage; }
+        get { return _currentDungeon; }
         set 
         {
-            _currentStage = value;
+            _currentDungeon = value;
             //stage set될때 일어나는 것들.
         }
     }
 
     private void OnEnable()
     {
-        CurrentStage = 2;
-        Get4MonstersFromData(CurrentStage);
+        CurrentDungeon = 2;
+        Get4MonstersFromData(CurrentDungeon);
 
         foreach (Monster monster in _monsterQueue)
         {
-            Debug.Log($"{monster.Name} + {monster.Stage}");
+            Debug.Log($"{monster.Name} + {monster.Dungeon}");
         }
     }
 
