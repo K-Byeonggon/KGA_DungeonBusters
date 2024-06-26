@@ -13,10 +13,22 @@ public enum Jewel
 public class MyPlayer : NetworkBehaviour
 {
     public List<int> _cards = new List<int>() { 1,2,3,4,5,6,7};
-    public List<int> _usedCards = new List<int>();
-    public List<int> _jewels = new List<int>() { 1, 1, 1 }; //RED:0, YELLOW:1, BLUE:2
+    [SerializeField] List<int> _usedCards = new List<int>();
+    [SerializeField] List<int> _jewels = new List<int>() { 1, 1, 1 }; //RED:0, YELLOW:1, BLUE:2
     public int _currentCard;
     public bool _isAttacked;
+
+    public List<int> Jewels
+    {
+        get { return _jewels; }
+        set { _jewels = value; }
+    }
+    public List<int> UsedCards
+    {
+        get { return _usedCards; }
+        set { _usedCards = value; }
+    }
+
 
     public int PopCard(int num)
     {
@@ -36,7 +48,7 @@ public class MyPlayer : NetworkBehaviour
         _usedCards = new List<int>();
     }
 
-    public void GetJewel(Jewel color, int num)
+    public void AddJewel(Jewel color, int num)
     {
         _jewels[(int)color] += num;
     }
