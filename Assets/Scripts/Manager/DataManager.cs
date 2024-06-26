@@ -17,6 +17,7 @@ public class DataManager : MonoBehaviour
         ReadAllDataOnAwake();
     }
 
+
     private void ReadAllDataOnAwake()
     {
         ReadData(nameof(Monster));

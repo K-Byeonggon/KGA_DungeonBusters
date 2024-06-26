@@ -7,11 +7,12 @@ public static class DataManagerExtension
 {
     public static Monster GetMonster(this DataManager manager, int dataId)
     {
+        var loadedMonsterList = manager.LoadedMonsterList;
         if(manager.LoadedMonsterList.Count == 0 
             || manager.LoadedMonsterList.ContainsKey(dataId) == false)
         {
             return null;
         }
-        return manager.LoadedMonsterList[dataId];
+        return loadedMonsterList[dataId];
     }
 }
