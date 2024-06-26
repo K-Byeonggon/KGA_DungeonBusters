@@ -7,7 +7,7 @@ public class DataManager : MonoBehaviour
 {
     public static DataManager Instance { get; private set; }
 
-    Dictionary<int, Monster> _loadedMonsterList = new Dictionary<int, Monster>();
+    public Dictionary<int, Monster> LoadedMonsterList {  get; private set; }
 
     private readonly string _dataRootPath = "C:/Unity/DungeonBusters/DataParser";
 
@@ -34,6 +34,8 @@ public class DataManager : MonoBehaviour
 
     private void ReadMonsterTable(string tableName)
     {
+        LoadedMonsterList = new Dictionary<int, Monster>();
+
         XDocument doc = XDocument.Load($"{_dataRootPath}/{tableName}.xml");
         var dataElements = doc.Descendants("data");
 
@@ -46,18 +48,20 @@ public class DataManager : MonoBehaviour
             tempMonster.HP = int.Parse(data.Attribute(nameof(Monster.HP)).Value);
             tempMonster.Reward1 = ReadMonsterRewards(data, nameof(tempMonster.Reward1));
             tempMonster.Reward2 = ReadMonsterRewards(data, nameof(tempMonster.Reward2));
-            tempMonster.Reward2 = ReadMonsterRewards(data, nameof(tempMonster.Reward3));
-            _loadedMonsterList.Add(tempMonster.DataId, tempMonster);
+            tempMonster.Reward3 = ReadMonsterRewards(data, nameof(tempMonster.Reward3));
+            LoadedMonsterList.Add(tempMonster.DataId, tempMonster);
         }
     }
 
     private List<int> ReadMonsterRewards(XElement data, string Rewardn)
     {
         string rewardn_ListStr = data.Attribute(Rewardn).Value;
-        if (string.IsNullOrEmpty(rewardn_ListStr))
+
+        if (!string.IsNullOrEmpty(rewardn_ListStr))
         {
             rewardn_ListStr = rewardn_ListStr.Replace("{", string.Empty);
             rewardn_ListStr = rewardn_ListStr.Replace("}", string.Empty);
+            rewardn_ListStr = rewardn_ListStr.Trim();
 
             var rewards = rewardn_ListStr.Split(',');
 
@@ -66,7 +70,14 @@ public class DataManager : MonoBehaviour
                 var list = new List<int>();
                 foreach (var reward in rewards)
                 {
-                    list.Add(int.Parse(reward));
+                    if (int.TryParse(reward, out int value))
+                    {
+                        list.Add(value);
+                    }
+                    else
+                    {
+                        Debug.LogWarning($"Failed to parse : {reward}");
+                    }
                 }
                 return list;
             }
