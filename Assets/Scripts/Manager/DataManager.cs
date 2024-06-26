@@ -26,7 +26,7 @@ public class DataManager : MonoBehaviour
     {
         switch(tableName)
         {
-            case "Stage1":
+            case "Monster":
                 ReadMonsterTable(tableName);
                 break;
         }
@@ -34,7 +34,44 @@ public class DataManager : MonoBehaviour
 
     private void ReadMonsterTable(string tableName)
     {
-        XDocument doc = XDocument.Load()
-            //몬스터 정보가 Monster가 아니라 Stage1에 저장되있어서 고민을 좀 해봐야
+        XDocument doc = XDocument.Load($"{_dataRootPath}/{tableName}.xml");
+        var dataElements = doc.Descendants("data");
+
+        foreach (var data in dataElements)
+        {
+            var tempMonster = new Monster();
+            tempMonster.DataId = int.Parse(data.Attribute(nameof(tempMonster.DataId)).Value);
+            tempMonster.Name = data.Attribute(nameof(Monster.Name)).Value;
+            tempMonster.Stage = int.Parse(data.Attribute(nameof(Monster.Stage)).Value);
+            tempMonster.HP = int.Parse(data.Attribute(nameof(Monster.HP)).Value);
+            tempMonster.Reward1 = ReadMonsterRewards(data, nameof(tempMonster.Reward1));
+            tempMonster.Reward2 = ReadMonsterRewards(data, nameof(tempMonster.Reward2));
+            tempMonster.Reward2 = ReadMonsterRewards(data, nameof(tempMonster.Reward3));
+            _loadedMonsterList.Add(tempMonster.DataId, tempMonster);
+        }
+    }
+
+    private List<int> ReadMonsterRewards(XElement data, string Rewardn)
+    {
+        string rewardn_ListStr = data.Attribute(Rewardn).Value;
+        if (string.IsNullOrEmpty(rewardn_ListStr))
+        {
+            rewardn_ListStr = rewardn_ListStr.Replace("{", string.Empty);
+            rewardn_ListStr = rewardn_ListStr.Replace("}", string.Empty);
+
+            var rewards = rewardn_ListStr.Split(',');
+
+            if (rewards.Length > 0)
+            {
+                var list = new List<int>();
+                foreach (var reward in rewards)
+                {
+                    list.Add(int.Parse(reward));
+                }
+                return list;
+            }
+            else { return null; }
+        }
+        else { return null; }
     }
 }

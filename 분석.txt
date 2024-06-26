@@ -121,4 +121,13 @@ OnRoomServerCreateRoomPlayer에서 Server에 저장된 UserId로 RoomPlayer를 �
 이 시점에서는 Room에 입장한 상태라는 것이 된다.
 
 그렇다면 uid를 보내는 타이밍을 이 전으로 적절하게 설정하면 좋을 것 같은데??
-그냥 LoginManager 싱글톤으로 만들어버리면 Scene바뀌어도 남으니까 전달 쌉가능~
+
+
+만들어야 할 것
+- LoginManager에서 얻은 UserId를 NetworkConnectionToClient와 함께 저장할 Dictionary를 담은 클래스
+- UserId를 Server로 보내는 메서드
+- Dictionary에 저장된 UserId를 RoomPlayer에 붙이는 부분
+
+아니 Dictionary있긴해야하는데..UIDManager라는 클래스에 담으라고 하니까 괜히 하기 싫네..
+
+UID전송은 어디서 언제 해야할까? 일단 LoginManager가 로그인 하자마자 들고 있긴함.
