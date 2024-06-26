@@ -5,21 +5,25 @@ using UnityEngine.UI;
 
 public class Panel_Players : MonoBehaviour
 {
-    [SerializeField] Image Img_Player1;
-    [SerializeField] Text Text_JewelRed_Player1;
-    [SerializeField] Text Text_JewelYellow_Player1;
-    [SerializeField] Text Text_JewelBlue_Player1;
-    [SerializeField] Text Text_Used_Player1;
+    [SerializeField] GameObject Transform_SlotRoot;
+    [SerializeField] GameObject Prefab_PlayerSlot;
 
-    [SerializeField] Image Img_Player2;
-    [SerializeField] Text Text_JewelRed_Player2;
-    [SerializeField] Text Text_JewelYellow_Player2;
-    [SerializeField] Text Text_JewelBlue_Player2;
-    [SerializeField] Text Text_Used_Player2;
+    public void Start()
+    {
+        SetPlayerUI();
+    }
 
-    [SerializeField] Image Img_Player3;
-    [SerializeField] Text Text_JewelRed_Player3;
-    [SerializeField] Text Text_JewelYellow_Player3;
-    [SerializeField] Text Text_JewelBlue_Player3;
-    [SerializeField] Text Text_Used_Player3;
+    private void SetPlayerUI()
+    {
+        //int playerNum = MyNetworkRoomManager.Instance.minPlayers;
+        //나중에는 플레이어 개수 세는 거 다른 방법으로 바꾸기
+        int playerNum = 3;
+        for (int i = 0; i < playerNum; i++)
+        {
+            var gObj = Instantiate(Prefab_PlayerSlot, Transform_SlotRoot.transform);
+            var player1 = gObj.GetComponent<Panel_Player1>();
+            player1.SetPlayerInfo(i);
+
+        }
+    }
 }

@@ -20,6 +20,7 @@ public class MyPlayer : NetworkBehaviour
 
     public int PopCard(int num)
     {
+        
         if (_cards.Contains(num))
         {
             _usedCards.Add(num);
