@@ -12,13 +12,17 @@ public enum Jewel
 
 public class MyPlayer : NetworkBehaviour
 {
-    [SerializeField] List<int> _cards = new List<int>() { 1,2,3,4,5,6,7};
-    [SerializeField] List<int> _jewels = new List<int>() { 1, 1, 1 }; //RED:0, YELLOW:1, BLUE:2
+    public List<int> _cards = new List<int>() { 1,2,3,4,5,6,7};
+    public List<int> _usedCards = new List<int>();
+    public List<int> _jewels = new List<int>() { 1, 1, 1 }; //RED:0, YELLOW:1, BLUE:2
+    public int _currentCard;
+    public bool _isAttacked;
 
     public int PopCard(int num)
     {
         if (_cards.Contains(num))
         {
+            _usedCards.Add(num);
             _cards.Remove(num);
             return num;
         }
@@ -28,6 +32,7 @@ public class MyPlayer : NetworkBehaviour
     public void InitCards()
     {
         _cards = new List<int>() { 1,2,3,4,5,6,7 };
+        _usedCards = new List<int>();
     }
 
     public void GetJewel(Jewel color, int num)

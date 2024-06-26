@@ -906,6 +906,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _currentDungeon: 0
+  _currentStage: 0
 --- !u!4 &1866083260
 Transform:
   m_ObjectHideFlags: 0
@@ -1118,6 +1119,18 @@ PrefabInstance:
       propertyPath: m_TargetGraphic
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 1429761934602447766, guid: 49de4c4e93fd45f4c8f7620c5ad0ebce, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0.00055168214
+      objectReference: {fileID: 0}
+    - target: {fileID: 2053831199357202438, guid: 49de4c4e93fd45f4c8f7620c5ad0ebce, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2053831199357202438, guid: 49de4c4e93fd45f4c8f7620c5ad0ebce, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5727622978531524068, guid: 49de4c4e93fd45f4c8f7620c5ad0ebce, type: 3}
       propertyPath: m_AnchorMax.x
       value: 0
@@ -1129,6 +1142,18 @@ PrefabInstance:
     - target: {fileID: 6396667087793172958, guid: 49de4c4e93fd45f4c8f7620c5ad0ebce, type: 3}
       propertyPath: m_Name
       value: UI_Battle
+      objectReference: {fileID: 0}
+    - target: {fileID: 7634546641975544367, guid: 49de4c4e93fd45f4c8f7620c5ad0ebce, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7634546641975544367, guid: 49de4c4e93fd45f4c8f7620c5ad0ebce, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7634546641975544367, guid: 49de4c4e93fd45f4c8f7620c5ad0ebce, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
