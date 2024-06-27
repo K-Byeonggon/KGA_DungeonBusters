@@ -1,14 +1,15 @@
+using Mirror;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GameManager : MonoBehaviour
+public class GameManager : NetworkBehaviour
 {
     public static GameManager Instance;
 
     [SerializeField] int _currentDungeon;
     [SerializeField] int _currentStage;
-    [SerializeField] Monster _currentMonster;
+    [SyncVar(hook = nameof(OnCurrentMonsterChanged))][SerializeField] Monster _currentMonster;
 
     public Queue<Monster> _monsterQueue;
 
@@ -19,7 +20,10 @@ public class GameManager : MonoBehaviour
         {
             _currentDungeon = value;
             //Dungeon이 바뀌면 바로 그 던전의 몬스터 4마리를 선정한다.
-            Get4MonstersFromData(CurrentDungeon);
+            if (isServer)
+            {
+                Get4MonstersFromData(CurrentDungeon);
+            }
         }
     }
 
@@ -38,8 +42,11 @@ public class GameManager : MonoBehaviour
         get { return _currentMonster; }
         set
         {
-            _currentMonster = value;
-            //currentMonster가 변경되면 바로 UI에 표시하도록 하자.
+            if (isServer)
+            {
+                _currentMonster = value;
+                //currentMonster가 변경되면 바로 UI에 표시하도록 하자.
+            }
         }
     }
 
@@ -48,15 +55,24 @@ public class GameManager : MonoBehaviour
         Instance = this;
     }
 
-    private void OnEnable()
+    public override void OnStartServer()
     {
+        base.OnStartServer();
         CurrentDungeon = 1;
         CurrentStage = 1;
 
-        CurrentMonster = _monsterQueue.Dequeue();
-
+        if (_monsterQueue.Count > 0)
+        {
+            CurrentMonster = _monsterQueue.Dequeue();
+        }
     }
 
+    private void OnCurrentMonsterChanged(Monster oldMonster, Monster newMonster)
+    {
+        //여기서 클라이언트 UI를 업데이트하세요.
+    }
+
+    [Server]
     public void Get4MonstersFromData(int dungeon)
     {
         _monsterQueue = new Queue<Monster>();
@@ -72,5 +88,12 @@ public class GameManager : MonoBehaviour
         }
     }
 
-
+    [Command]
+    public void CmdSetNextMonster()
+    {
+        if(_monsterQueue.Count > 0)
+        {
+            CurrentMonster = _monsterQueue.Dequeue();
+        }
+    }
 }

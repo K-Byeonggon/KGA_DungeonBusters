@@ -12,7 +12,7 @@ public class Panel_Reward1 : MonoBehaviour
 
     public void SetRewardInfo(int rewardNum)
     {
-        var monster = GameManager.Instance.CurrentMonster;
+        var monster = NewGameManager.Instance.CurrentMonster;
         var rewards = new List<int>();
         switch (rewardNum)
         {

@@ -604,6 +604,7 @@ MonoBehaviour:
   Text_CurrentStage: {fileID: 8308753099534766186}
   Btn_SelectCard: {fileID: 4246183060928729033}
   panel_Players: {fileID: 5069388239054855231}
+  panel_Rewards: {fileID: 758446267597219340}
 --- !u!1 &6644537748523471340
 GameObject:
   m_ObjectHideFlags: 0
@@ -1354,6 +1355,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d572dbd119acac2478e1b1891a26d5d0, type: 3}
+--- !u!114 &758446267597219340 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4389803877785614468, guid: d572dbd119acac2478e1b1891a26d5d0, type: 3}
+  m_PrefabInstance: {fileID: 3921858482425388680}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b05fbbfc59e20f4497773e29c3d1944, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!224 &8622331930959746651 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 4739353300679018707, guid: d572dbd119acac2478e1b1891a26d5d0, type: 3}
