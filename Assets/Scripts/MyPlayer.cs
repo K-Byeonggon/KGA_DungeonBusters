@@ -29,6 +29,21 @@ public class MyPlayer : NetworkBehaviour
         set { _usedCards = value; }
     }
 
+    private void Start()
+    {
+        if (this.isLocalPlayer)
+        {
+            Debug.Log($"MyPlayer(Local).netId = {this.netId}");
+        }
+        else
+        {
+            Debug.Log($"MyPlayer.netId = {this.netId}");
+        }
+
+        //이 시점에 패널 생성 요청
+    }
+
+
 
     public int PopCard(int num)
     {

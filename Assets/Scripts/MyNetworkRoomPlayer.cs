@@ -8,6 +8,19 @@ public class MyNetworkRoomPlayer : NetworkRoomPlayer
     [SyncVar][SerializeField] int _uid;
     public int Uid {  get { return _uid; }  set { _uid = value; } }
 
+
+    public override void OnStartClient()
+    {
+        if (this.isLocalPlayer)
+        {
+            Debug.Log($"RoomPlayer(Local).netId = {this.netId}");
+        }
+        else
+        {
+            Debug.Log($"RoomPlayer.netId = {this.netId}");
+        }
+    }
+
     public override void OnClientEnterRoom()
     {
         //이거도 잠시 uid가져오는 시도는 포기합시다~

@@ -26,7 +26,7 @@ public class MyNetworkRoomManager : NetworkRoomManager
         base.OnServerAddPlayer(conn);
     }
 
-
+    
 
 
     public override GameObject OnRoomServerCreateRoomPlayer(NetworkConnectionToClient conn)
