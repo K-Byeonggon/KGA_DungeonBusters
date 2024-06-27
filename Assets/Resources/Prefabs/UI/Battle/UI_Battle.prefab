@@ -603,6 +603,7 @@ MonoBehaviour:
   Text_CurrentDungeon: {fileID: 4917484607178154586}
   Text_CurrentStage: {fileID: 8308753099534766186}
   Btn_SelectCard: {fileID: 4246183060928729033}
+  panel_Players: {fileID: 5069388239054855231}
 --- !u!1 &6644537748523471340
 GameObject:
   m_ObjectHideFlags: 0
@@ -1245,6 +1246,17 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 1099515791442341726, guid: 102509a53ca5de741bbc88ef8cb06b24, type: 3}
   m_PrefabInstance: {fileID: 540397293384114494}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &5069388239054855231 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4694428421732072705, guid: 102509a53ca5de741bbc88ef8cb06b24, type: 3}
+  m_PrefabInstance: {fileID: 540397293384114494}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b4c15800806a49d42b84ab9e54b8a50c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &3921858482425388680
 PrefabInstance:
   m_ObjectHideFlags: 0

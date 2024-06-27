@@ -23,8 +23,12 @@ public class Panel_Player1 : MonoBehaviour
         }
     }
 
+    private void Start()
+    {
+        SetPlayerInfo();
+    }
 
-    public void SetPlayerInfo(int playerNum)
+    public void SetPlayerInfo()
     {
         Debug.Log($"Panel_Id:{Panel_Id}, localPlayer.netId{NetworkClient.localPlayer.netId}");
 

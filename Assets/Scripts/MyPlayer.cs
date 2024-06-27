@@ -41,6 +41,8 @@ public class MyPlayer : NetworkBehaviour
         }
 
         //이 시점에 패널 생성 요청
+        //이딴 말도 안돼는 방법으로 가능하더라도 하고 싶지 않은데
+        BattleUIManager.Instance.GetCreatedUI(UIType.Battle).GetComponent<BattleUI>().RequestCreatePlayerPanel((int)this.netId);
     }
 
 

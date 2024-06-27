@@ -8,7 +8,8 @@ public enum UIType
     Login,
     Lobby,
     SetPlayerNumPopup,
-    Room
+    Room,
+    Battle
 }
 
 public class UIManager : MonoBehaviour
@@ -71,11 +72,14 @@ public class UIManager : MonoBehaviour
             case UIType.Room:
                 path = "Prefabs/UI/UI_Room";
                 break;
+            case UIType.Battle:
+                path = "Prefabs/UI/Battle/UI_Battle";
+                break;
         }
         return path;
     }
 
-    private GameObject GetCreatedUI(UIType uiType)
+    public GameObject GetCreatedUI(UIType uiType)
     {
         if(_createdUIDic.ContainsKey(uiType) == false)
         {

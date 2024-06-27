@@ -17,10 +17,20 @@ public class BattleUI : MonoBehaviour
     [Header("Panel_Button")]
     [SerializeField] Button Btn_SelectCard;
 
+    //이렇게 가지고 있는 방법 말고 다른 방법이 있을 것이다.
+    [Header("Panel_Players")]
+    [SerializeField] Panel_Players panel_Players;
+
     private void Start()
     {
         SetEnemy();
         SetDungeon();
+    }
+
+
+    public void RequestCreatePlayerPanel(int player_netId)
+    {  
+        panel_Players.CreatePlayerPanel(player_netId);
     }
 
 
