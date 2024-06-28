@@ -12,7 +12,13 @@ public class Popup_Select : MonoBehaviour
     [SerializeField] Button Btn_Card4;
     [SerializeField] Button Btn_Card5;
     [SerializeField] Button Btn_Card6;
-    [SerializeField] Button Btn_Card7;
+
+
+    public void SetCards()
+    {
+        
+    }
+
 
     public void OnClick_FrontClose()
     {

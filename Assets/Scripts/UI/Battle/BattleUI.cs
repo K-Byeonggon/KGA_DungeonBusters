@@ -21,11 +21,6 @@ public class BattleUI : MonoBehaviour
     [Header("Panels")]
     [SerializeField] Panel_Players panel_Players;
     [SerializeField] Panel_Rewards panel_Rewards;
-    
-    private void Start()
-    {
-
-    }
 
 
     public void RequestCreatePlayerPanel(int player_netId)
@@ -72,7 +67,7 @@ public class BattleUI : MonoBehaviour
 
     public void OnClick_SelectCard()
     {
-
+        //카드 선택창 띄워야한다.
     }
 
 

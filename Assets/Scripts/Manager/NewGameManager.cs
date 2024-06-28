@@ -1,5 +1,6 @@
 using Mirror;
-using System.Collections;
+using Mirror.Examples.CCU;
+using Mono.CompilerServices.SymbolWriter;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -14,6 +15,9 @@ public class NewGameManager : NetworkBehaviour
     [SerializeField] Monster _currentMonster;                           //현재 전투중인 몬스터
     [SerializeField] Queue<Monster> _currentDungeonMonsterQueue;        //현재 진행중인 던전에 있는 몬스터를 담은 Queue
                                                                         //그 외에 플레이어가 제출한 카드 등등이 있을 수 있다.
+    
+    public Dictionary<int, Monster> _monsterList = new Dictionary<int, Monster>();
+
     public int CurrentDungeon
     {
         get { return _currentDungeon; }
@@ -36,17 +40,18 @@ public class NewGameManager : NetworkBehaviour
             BattleUIManager.Instance.RequestUpdateStage();
         }
     }
-    
+
     public Monster CurrentMonster
     {
         get { return _currentMonster; }
         set
         {
             _currentMonster = value;
+            Debug.Log("Update CurrentMonster");
             BattleUIManager.Instance.RequestUpdateMonster();
         }
     }
-    
+
     public Queue<Monster> CurrentDungeonMonsterQueue
     {
         get { return _currentDungeonMonsterQueue; }
@@ -68,7 +73,11 @@ public class NewGameManager : NetworkBehaviour
     public override void OnStartClient()
     {
         base.OnStartClient();
+        //RequestCurrentDungeonInfo();
+        CmdSendAllStateToClient();
     }
+
+
 
     #region 상태머신
     [Server]
@@ -117,6 +126,7 @@ public class NewGameManager : NetworkBehaviour
     {
         CurrentDungeon = 0;
         CurrentStage = 0;
+
         ChangeState(GameState.StartDungeon);
     }
 
@@ -126,15 +136,22 @@ public class NewGameManager : NetworkBehaviour
     #region 2. 던전 시작
 
     // 던전 시작 함수(서버에서만 실행 후, ClientRpc로 각 클라에 상태 업데이트)
+    
     [Server]
     private void StartDungeon()
     {
         CurrentDungeon++;
         this.Enqueue4MonstersFromData(_currentDungeon);
 
-        RpcUpdateDungeonState(CurrentDungeon);
+        //RpcUpdateDungeonState(CurrentDungeon);
 
         ChangeState(GameState.StartStage);
+    }
+
+    [Command(requiresAuthority = false)]
+    private void RequestCurrentDungeonInfo()
+    {
+        RpcUpdateDungeonState(CurrentDungeon);
     }
 
     // 클라이언트에서 던전 상태 업데이트
@@ -155,20 +172,34 @@ public class NewGameManager : NetworkBehaviour
         CurrentStage++;
         this.DequeueMonsterCurrentStage();
 
-        RpcUpdateStageState(CurrentStage, CurrentMonster);
+        //RpcUpdateStageState(CurrentStage, CurrentMonster);
 
         ChangeState(GameState.SubmitCard);
     }
 
     [ClientRpc]
-    private void RpcUpdateStageState(int stage, Monster monster)
+    private void RpcUpdateStageState(int stage, int monsterId)
     {
         Debug.Log("ClientRpc: UpdateStageState");
         CurrentStage = stage;
-        CurrentMonster = monster;
+
+
+
+        if (_monsterList.ContainsKey(monsterId))
+        {
+            CurrentMonster = _monsterList[monsterId];
+        }
     }
 
     #endregion
+
+    //StartServer에서 Server를 다 바꾸고, StartClient에서 클라를 갱신
+    [Command(requiresAuthority = false)]
+    private void CmdSendAllStateToClient()
+    {
+        RpcUpdateDungeonState(CurrentDungeon);
+        RpcUpdateStageState(CurrentStage, CurrentMonster.DataId);
+    }
 
 
 
@@ -204,7 +235,7 @@ public class NewGameManager : NetworkBehaviour
     #region 4. 전투 결과 계산 및 보상 분배
     //전투 결과 계산 및 보상 분배 (서버에서 실행 후, ClientRpc로 각 클라에 상태 업데이트)
     [Server]
-    private void CalculateBattleResult() 
+    private void CalculateBattleResult()
     {
         //전투 결과 계산 메서드
         //보상 분배 메서드
@@ -213,7 +244,7 @@ public class NewGameManager : NetworkBehaviour
 
     //상태 동기화 함수
     [ClientRpc]
-    private void RpcUpdateGameState() 
+    private void RpcUpdateGameState()
     {
         //클라이언트에 게임 상태 업데이트
     }

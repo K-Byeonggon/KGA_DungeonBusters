@@ -23,7 +23,18 @@ public static class NewGameManagerExtension
     {
         if(gm.CurrentDungeonMonsterQueue.Count > 0)
         {
-            gm.CurrentMonster = gm.CurrentDungeonMonsterQueue.Dequeue();
+           var monster  = gm.CurrentDungeonMonsterQueue.Dequeue();
+
+            if (gm._monsterList.ContainsKey(monster.DataId))
+            {
+                gm._monsterList[monster.DataId] = monster;
+            }
+            else
+            {
+                gm._monsterList.Add(monster.DataId, monster);
+            }
+
+            gm.CurrentMonster = monster;
         }
         else
         {
