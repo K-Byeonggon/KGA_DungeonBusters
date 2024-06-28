@@ -56,9 +56,13 @@ public class BattleUI : MonoBehaviour
         Text_Hp.text = $"{monster.HP}";
     }
 
-    public void UpdateDungeonPanel()
+    public void UpdateDungeon()
     {
         Text_CurrentDungeon.text = $"Dungeon {NewGameManager.Instance.CurrentDungeon}";
+    }
+
+    public void UpdateStage()
+    {
         Text_CurrentStage.text = $"{NewGameManager.Instance.CurrentStage}/4";
     }
 

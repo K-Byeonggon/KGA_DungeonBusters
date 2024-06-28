@@ -8,6 +8,7 @@ public class NewGameManager : NetworkBehaviour
     public static NewGameManager Instance;
 
     //게임 상태 변수
+    [SerializeField] GameState _currentState;
     [SerializeField] int _currentDungeon;                               //현재 진행중인 던전
     [SerializeField] int _currentStage;                                 //현재 진행중인 스테이지
     [SerializeField] Monster _currentMonster;                           //현재 전투중인 몬스터
@@ -16,19 +17,31 @@ public class NewGameManager : NetworkBehaviour
     public int CurrentDungeon
     {
         get { return _currentDungeon; }
-        set { _currentDungeon = value; }
+        set
+        {
+            _currentDungeon = value;
+            //여기서 UI 변경? 하면 클라도 값이 변경될테니 UI 변경 되겠지?
+        }
     }
 
     public int CurrentStage
     {
         get { return _currentStage; }
-        set { _currentStage = value; }
+        set
+        {
+            _currentStage = value;
+            //여기서 UI 변경?
+        }
     }
     
     public Monster CurrentMonster
     {
         get { return _currentMonster; }
-        set { _currentMonster = value; }
+        set
+        {
+            _currentMonster = value;
+            //여기서 UI 변경?
+        }
     }
     
     public Queue<Monster> CurrentDungeonMonsterQueue
@@ -49,6 +62,43 @@ public class NewGameManager : NetworkBehaviour
         InitializeGame();
     }
 
+    #region 상태머신
+    [Server]
+    private void ChangeState(GameState newState)
+    {
+        _currentState = newState;
+        
+    }
+
+    [Server]
+    private void OnStateEnter(GameState state)
+    {
+        switch (state)
+        {
+            case GameState.StartDungeon:
+                StartDungeon();
+                break;
+            case GameState.StartStage:
+                StartStage();
+                break;
+            case GameState.SubmitCard:
+                break;
+            case GameState.WaitForPlayers:
+                break;
+            case GameState.CalculateResults:
+                break;
+            case GameState.GetJewels:
+                break;
+            case GameState.LoseJewels:
+                break;
+            case GameState.EndGame:
+                break;
+        }
+    }
+
+    #endregion
+
+
 
 
     #region 1. 게임 초기화
@@ -59,6 +109,7 @@ public class NewGameManager : NetworkBehaviour
     {
         CurrentDungeon = 0;
         CurrentStage = 0;
+        ChangeState(GameState.StartDungeon);
     }
 
     #endregion
@@ -74,6 +125,8 @@ public class NewGameManager : NetworkBehaviour
         this.Enqueue4MonstersFromData(_currentDungeon);
 
         RpcUpdateDungeonState(CurrentDungeon);
+
+        ChangeState(GameState.StartStage);
     }
 
     // 클라이언트에서 던전 상태 업데이트
@@ -94,6 +147,8 @@ public class NewGameManager : NetworkBehaviour
         this.DequeueMonsterCurrentStage();
 
         RpcUpdateStageState(CurrentStage, CurrentMonster);
+
+        ChangeState(GameState.SubmitCard);
     }
 
     [ClientRpc]
