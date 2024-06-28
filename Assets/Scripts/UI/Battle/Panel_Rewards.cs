@@ -8,14 +8,9 @@ public class Panel_Rewards : MonoBehaviour
     [SerializeField] GameObject Transform_SlotRoot;
     [SerializeField] GameObject Prefab_RewardSlot;
 
-    public void Start()
-    {
-        SetRewardUI();
-    }
 
-    private void SetRewardUI()
+    public void SetRewardUI()
     {
-
         for (int i = 1; i < 4; i++)
         {
             var gObj = Instantiate(Prefab_RewardSlot, Transform_SlotRoot.transform);
@@ -23,6 +18,5 @@ public class Panel_Rewards : MonoBehaviour
             reward1.SetRewardInfo(i);
 
         }
-
     }
 }

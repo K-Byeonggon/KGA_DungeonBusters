@@ -24,8 +24,7 @@ public class BattleUI : MonoBehaviour
     
     private void Start()
     {
-        SetEnemy();
-        SetDungeon();
+
     }
 
 
@@ -68,7 +67,7 @@ public class BattleUI : MonoBehaviour
 
     public void UpdateRewardsPanel()
     {
-
+        panel_Rewards.SetRewardUI();
     }
 
     public void OnClick_SelectCard()

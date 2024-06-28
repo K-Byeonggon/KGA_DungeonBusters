@@ -21,6 +21,7 @@ public class NewGameManager : NetworkBehaviour
         {
             _currentDungeon = value;
             //여기서 UI 변경? 하면 클라도 값이 변경될테니 UI 변경 되겠지?
+            BattleUIManager.Instance.RequestUpdateDungeon();
         }
     }
 
@@ -30,7 +31,7 @@ public class NewGameManager : NetworkBehaviour
         set
         {
             _currentStage = value;
-            //여기서 UI 변경?
+            BattleUIManager.Instance.RequestUpdateStage();
         }
     }
     
@@ -40,7 +41,7 @@ public class NewGameManager : NetworkBehaviour
         set
         {
             _currentMonster = value;
-            //여기서 UI 변경?
+            BattleUIManager.Instance.RequestUpdateMonster();
         }
     }
     
@@ -67,7 +68,7 @@ public class NewGameManager : NetworkBehaviour
     private void ChangeState(GameState newState)
     {
         _currentState = newState;
-        
+        OnStateEnter(newState);
     }
 
     [Server]
