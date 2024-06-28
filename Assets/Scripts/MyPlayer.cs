@@ -12,11 +12,17 @@ public enum Jewel
 
 public class MyPlayer : NetworkBehaviour
 {
-    public List<int> _cards = new List<int>() { 1,2,3,4,5,6,7};
-    [SerializeField] List<int> _usedCards = new List<int>();
-    [SerializeField] List<int> _jewels = new List<int>() { 1, 1, 1 }; //RED:0, YELLOW:1, BLUE:2
+    public List<int> _cards;
+    [SerializeField] List<int> _usedCards;
+    [SerializeField] List<int> _jewels; //RED:0, YELLOW:1, BLUE:2
     public int _currentCard;
     public bool _isAttacked;
+
+    public List<int> Cards
+    {
+        get { return  _cards; }
+        set { _cards = value; }
+    }
 
     public List<int> Jewels
     {
@@ -31,12 +37,18 @@ public class MyPlayer : NetworkBehaviour
 
     private void Start()
     {
+        initialSettings();
+
         //이 시점에 패널 생성 요청
-        //이딴 말도 안돼는 방법으로 가능하더라도 하고 싶지 않은데
-        BattleUIManager.Instance.GetCreatedUI(UIType.Battle).GetComponent<BattleUI>().RequestCreatePlayerPanel((int)this.netId);
+        BattleUIManager.Instance.RequestCreatePlayer((int)this.netId);
     }
 
-
+    private void initialSettings()
+    {
+        Cards = new List<int>() { 1,2,3,4,5,6,7 };  //3인 게임: 2~7, 4~5인 게임: 1~6
+        UsedCards = new List<int>();
+        Jewels = new List<int>() { 1, 1, 1 };       //RED:0, YELLOW:1, BLUE:2
+    }
 
     public int PopCard(int num)
     {

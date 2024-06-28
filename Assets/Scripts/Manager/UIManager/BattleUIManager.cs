@@ -34,8 +34,8 @@ public class BattleUIManager : UIManager
         battleUI.UpdateRewardsPanel();
     }
 
-    public void RequestUpdatePlayer()
+    public void RequestCreatePlayer(int player_netId)
     {
-
+        battleUI.RequestCreatePlayerPanel(player_netId);
     }
 }

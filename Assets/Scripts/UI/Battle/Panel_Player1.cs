@@ -37,14 +37,39 @@ public class Panel_Player1 : MonoBehaviour
             Img_Player.color = Color.red;
         }
 
-        if (NetworkClient.localPlayer != null)
+        UpdateJewelsInfo();
+        UpdateUsedCardsInfo();
+
+    }
+
+    private void UpdateJewelsInfo()
+    {
+        if(NetworkClient.localPlayer != null)
         {
-            MyPlayer myPlayer = NetworkClient.localPlayer.GetComponent<MyPlayer>();
-
-            Text_JewelRed_Player.text = $"{myPlayer.Jewels[0]}";
-            Text_JewelYellow_Player.text = $"{myPlayer.Jewels[1]}";
-            Text_JewelBlue_Player.text = $"{myPlayer.Jewels[2]}";
+            MyPlayer player = NetworkClient.localPlayer.GetComponent<MyPlayer>();
+            Text_JewelRed_Player.text = $"{player.Jewels[0]}";
+            Text_JewelYellow_Player.text = $"{player.Jewels[1]}";
+            Text_JewelBlue_Player.text = $"{player.Jewels[2]}";
         }
+        else { Debug.LogError("localPlayer == null"); }
+    }
 
+    private void UpdateUsedCardsInfo()
+    {
+        if(NetworkClient.localPlayer != null)
+        {
+            MyPlayer player = NetworkClient.localPlayer.GetComponent<MyPlayer>();
+
+            string cards = string.Empty;
+
+            foreach(int card in player.UsedCards)
+            {
+                cards += $"{card} ";
+            }
+
+            Text_UsedCard.text = "Used: " + cards;
+
+        }
+        else { Debug.LogError("localPlayer == null"); }
     }
 }
