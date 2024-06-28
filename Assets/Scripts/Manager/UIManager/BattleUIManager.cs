@@ -33,4 +33,9 @@ public class BattleUIManager : UIManager
         battleUI.UpdateEnemyPanel();
         battleUI.UpdateRewardsPanel();
     }
+
+    public void RequestUpdatePlayer()
+    {
+
+    }
 }

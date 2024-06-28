@@ -21,6 +21,7 @@ public class NewGameManager : NetworkBehaviour
         {
             _currentDungeon = value;
             //여기서 UI 변경? 하면 클라도 값이 변경될테니 UI 변경 되겠지?
+            Debug.Log("Update CurrentDungeon");
             BattleUIManager.Instance.RequestUpdateDungeon();
         }
     }
@@ -31,6 +32,7 @@ public class NewGameManager : NetworkBehaviour
         set
         {
             _currentStage = value;
+            Debug.Log("Update CurrentStage");
             BattleUIManager.Instance.RequestUpdateStage();
         }
     }
@@ -61,6 +63,11 @@ public class NewGameManager : NetworkBehaviour
     {
         base.OnStartServer();
         InitializeGame();
+    }
+
+    public override void OnStartClient()
+    {
+        base.OnStartClient();
     }
 
     #region 상태머신
@@ -134,6 +141,7 @@ public class NewGameManager : NetworkBehaviour
     [ClientRpc]
     private void RpcUpdateDungeonState(int dungeon)
     {
+        Debug.Log("ClientRpc: UpdateDungeonState");
         CurrentDungeon = dungeon;
     }
 
@@ -155,6 +163,7 @@ public class NewGameManager : NetworkBehaviour
     [ClientRpc]
     private void RpcUpdateStageState(int stage, Monster monster)
     {
+        Debug.Log("ClientRpc: UpdateStageState");
         CurrentStage = stage;
         CurrentMonster = monster;
     }
