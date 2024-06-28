@@ -1,6 +1,4 @@
 using Mirror;
-using Mirror.Examples.CCU;
-using Mono.CompilerServices.SymbolWriter;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -15,7 +13,9 @@ public class NewGameManager : NetworkBehaviour
     [SerializeField] Monster _currentMonster;                           //현재 전투중인 몬스터
     [SerializeField] Queue<Monster> _currentDungeonMonsterQueue;        //현재 진행중인 던전에 있는 몬스터를 담은 Queue
                                                                         //그 외에 플레이어가 제출한 카드 등등이 있을 수 있다.
-    
+
+    [SerializeField] int _currentMonsterId;
+
     public Dictionary<int, Monster> _monsterList = new Dictionary<int, Monster>();
 
     public int CurrentDungeon
@@ -50,6 +50,12 @@ public class NewGameManager : NetworkBehaviour
             Debug.Log("Update CurrentMonster");
             BattleUIManager.Instance.RequestUpdateMonster();
         }
+    }
+
+    public int CurrentMonsterId
+    {
+        get { return _currentMonsterId; }
+        set { _currentMonsterId = value; }
     }
 
     public Queue<Monster> CurrentDungeonMonsterQueue

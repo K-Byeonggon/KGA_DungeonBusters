@@ -25,6 +25,7 @@ public static class NewGameManagerExtension
         {
            var monster  = gm.CurrentDungeonMonsterQueue.Dequeue();
 
+            
             if (gm._monsterList.ContainsKey(monster.DataId))
             {
                 gm._monsterList[monster.DataId] = monster;
@@ -33,8 +34,9 @@ public static class NewGameManagerExtension
             {
                 gm._monsterList.Add(monster.DataId, monster);
             }
-
+            
             gm.CurrentMonster = monster;
+            gm.CurrentMonsterId = monster.DataId;
         }
         else
         {
