@@ -189,12 +189,8 @@ public class NewGameManager : NetworkBehaviour
         Debug.Log("ClientRpc: UpdateStageState");
         CurrentStage = stage;
 
+        CurrentMonster = DataManager.Instance.GetMonster(monsterId);
 
-
-        if (_monsterList.ContainsKey(monsterId))
-        {
-            CurrentMonster = _monsterList[monsterId];
-        }
     }
 
     #endregion
@@ -204,6 +200,7 @@ public class NewGameManager : NetworkBehaviour
     private void CmdSendAllStateToClient()
     {
         RpcUpdateDungeonState(CurrentDungeon);
+        //여기서 몬스터ID를 주면, 클라에선 다시 xml에서 Id로 몬스터 정보 받기.
         RpcUpdateStageState(CurrentStage, CurrentMonster.DataId);
     }
 

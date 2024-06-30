@@ -43,4 +43,6 @@ public static class NewGameManagerExtension
             Debug.LogError("gm.CurrentDungeonMonsterQueue is Empty");
         }
     }
+
+
 }
