@@ -274,7 +274,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 3622556117500237259}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 2204623576884388187}
+        m_TargetAssemblyTypeName: BattleUI, Assembly-CSharp
+        m_MethodName: OnClick_SelectCard
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &3343501686395327153
 GameObject:
   m_ObjectHideFlags: 0
@@ -605,6 +617,7 @@ MonoBehaviour:
   Btn_SelectCard: {fileID: 4246183060928729033}
   panel_Players: {fileID: 5069388239054855231}
   panel_Rewards: {fileID: 758446267597219340}
+  popup_Select: {fileID: 8599346485347558336}
 --- !u!1 &6644537748523471340
 GameObject:
   m_ObjectHideFlags: 0
@@ -1477,6 +1490,17 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 3984990993527981081, guid: 70cc3569f4365574ca92e8a486f2a532, type: 3}
   m_PrefabInstance: {fileID: 4316932306243645412}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &8599346485347558336 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5530375392737250340, guid: 70cc3569f4365574ca92e8a486f2a532, type: 3}
+  m_PrefabInstance: {fileID: 4316932306243645412}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0dc6989d5c5a6b43a41669d9361f0f2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &7051546976145657923
 PrefabInstance:
   m_ObjectHideFlags: 0

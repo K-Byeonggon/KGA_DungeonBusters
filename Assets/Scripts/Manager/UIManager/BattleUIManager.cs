@@ -38,4 +38,9 @@ public class BattleUIManager : UIManager
     {
         battleUI.RequestCreatePlayerPanel(player_netId);
     }
+
+    public void RequestUpdateSelectCard()
+    {
+        battleUI.UpdateSelectCardPopup();
+    }
 }

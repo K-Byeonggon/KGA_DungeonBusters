@@ -22,6 +22,8 @@ public class BattleUI : MonoBehaviour
     [SerializeField] Panel_Players panel_Players;
     [SerializeField] Panel_Rewards panel_Rewards;
 
+    [Header("Popups")]
+    [SerializeField] Popup_Select popup_Select;
 
     public void RequestCreatePlayerPanel(int player_netId)
     {  
@@ -66,9 +68,15 @@ public class BattleUI : MonoBehaviour
         panel_Rewards.SetRewardUI();
     }
 
+    public void UpdateSelectCardPopup()
+    {
+        popup_Select.RemoveCards();
+        popup_Select.SetCards();
+    }
+
     public void OnClick_SelectCard()
     {
-        //카드 선택창 띄워야한다.
+        popup_Select.gameObject.SetActive(true);
     }
 
 

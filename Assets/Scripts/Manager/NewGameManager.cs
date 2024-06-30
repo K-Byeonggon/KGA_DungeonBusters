@@ -191,10 +191,8 @@ public class NewGameManager : NetworkBehaviour
 
         CurrentMonster = DataManager.Instance.GetMonster(monsterId);
 
+        SetLocalPopupSelect();
     }
-
-    #endregion
-
     //StartServer에서 Server를 다 바꾸고, StartClient에서 클라를 갱신
     [Command(requiresAuthority = false)]
     private void CmdSendAllStateToClient()
@@ -203,6 +201,17 @@ public class NewGameManager : NetworkBehaviour
         //여기서 몬스터ID를 주면, 클라에선 다시 xml에서 Id로 몬스터 정보 받기.
         RpcUpdateStageState(CurrentStage, CurrentMonster.DataId);
     }
+
+    #endregion
+
+    #region 2-2. 플레이어 카드 세팅
+
+    private void SetLocalPopupSelect()
+    {
+        BattleUIManager.Instance.RequestUpdateSelectCard();
+    }
+
+    #endregion
 
 
 
