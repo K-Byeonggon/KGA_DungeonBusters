@@ -8,6 +8,13 @@ public class Panel_Rewards : MonoBehaviour
     [SerializeField] GameObject Transform_SlotRoot;
     [SerializeField] GameObject Prefab_RewardSlot;
 
+    public void RemoveRewards()
+    {
+        for(int i = 0; i < Transform_SlotRoot.transform.childCount; i++)
+        {
+            Destroy(Transform_SlotRoot.transform.GetChild(i).gameObject);            
+        }
+    }
 
     public void SetRewardUI()
     {

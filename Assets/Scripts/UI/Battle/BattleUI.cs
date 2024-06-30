@@ -62,6 +62,7 @@ public class BattleUI : MonoBehaviour
 
     public void UpdateRewardsPanel()
     {
+        panel_Rewards.RemoveRewards();
         panel_Rewards.SetRewardUI();
     }
 
