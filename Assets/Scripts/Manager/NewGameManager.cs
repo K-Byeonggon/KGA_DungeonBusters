@@ -309,7 +309,7 @@ public class NewGameManager : NetworkBehaviour
 
         Debug.Log($"totalDamage == {totalDamage}");
         if(StageClear) { CmdChooseRewardedPlayer(); }
-        else { LoseProcess(); }
+        else { /*보석 잃는 로직*/ }
     }
 
 
@@ -335,10 +335,17 @@ public class NewGameManager : NetworkBehaviour
         }
     }
 
-    private int GetMinCardPlayerNetId()
+
+    //토벌 성공시는 보상을 받을 가장 작은 값이 여러개일 경우가 없지만,
+    //토벌 실패시는 보상을 잃을 가장 작은 값이 여러개일 수 있다.
+    private List<int> GetMinCardPlayerNetIds()
     {
-        int minCardPlayerNetId = SubmittedCardList.Aggregate((l, r) => l.Value < r.Value ? l : r).Key;
-        return minCardPlayerNetId;
+        int minValue = SubmittedCardList.Values.Min();
+        List<int> minCardPlayerNetIds = SubmittedCardList
+            .Where(kv => kv.Value == minValue)
+            .Select(kv => kv.Key)
+            .ToList();
+        return minCardPlayerNetIds;
     }
 
     private MyPlayer GetPlayerFromNetId(int playerNetId)
@@ -363,15 +370,20 @@ public class NewGameManager : NetworkBehaviour
             if (CurrentMonster.Reward[reward_n] == null)
                 break;
             //1. 가장 작은 카드 낸 플레이어 NetId 구하기(그 후 Dic에서 삭제) (1명으로 test하면 보상이 2개 이상일때 에러 발생)
-            int playerNetId = GetMinCardPlayerNetId();
-            int usedCard = SubmittedCardList[playerNetId];
-            SubmittedCardList.Remove(playerNetId);
+            List<int> playerNetIds = GetMinCardPlayerNetIds();
+            int usedCard = SubmittedCardList[playerNetIds[0]];
+            SubmittedCardList.Remove(playerNetIds[0]);
+
 
             //2. 모든 클라의 해당 NetId가진 플레이어에 보상 주기.
-            RpcPlayerGetReward(playerNetId, reward_n);
+            foreach (int playerNetId in playerNetIds)
+            {
+                RpcPlayerGetReward(playerNetId, reward_n);
+                RpcSetPlayerUsedCard(playerNetId, usedCard);
+            }
 
             //3. 모든 클라의 해당 NetId가진 플레이어 가진 카드, 사용한 카드 갱신 (가진 카드는 모두 바꿀 필요없지만)
-            RpcSetPlayerUsedCard(playerNetId, usedCard);
+            
         }
     }
 
@@ -400,27 +412,12 @@ public class NewGameManager : NetworkBehaviour
 
     #endregion
 
+    #region 보석 잃는 로직
 
-    [Server]
-    private void LoseProcess()
-    {
-        //보석 잃는 순위 정하기
-        //보상 잃기
-    }
 
-    [Command]
-    public void CmdSubmitCard(int playerId, int card)
-    {
-        if (!isServer) return;
 
-        HandleCardSubmission(playerId, card);
-    }
+    #endregion
 
-    [Server]
-    private void HandleCardSubmission(int playerId, int card)
-    {
-        CalculateBattleResult();
-    }
 
     #endregion
 
