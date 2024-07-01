@@ -29,13 +29,20 @@ public class Popup_Select : MonoBehaviour
             var gObj = Instantiate(Prefab_CardRed, Transform_SlotRoot.transform);
             var card_n = gObj.GetComponent<Card>();
             card_n.SetNumber(card);
+            card_n.SetPopupSelectUI(this);
         }
 
+    }
+
+    public void UISetActive(bool active)
+    {
+        this.gameObject.SetActive(active);
     }
 
 
     public void OnClick_FrontClose()
     {
         //대충 전면 닫기
+        UISetActive(false);
     }
 }

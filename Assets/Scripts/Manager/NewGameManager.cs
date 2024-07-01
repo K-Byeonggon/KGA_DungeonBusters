@@ -12,12 +12,14 @@ public class NewGameManager : NetworkBehaviour
     [SerializeField] int _currentStage;                                 //현재 진행중인 스테이지
     [SerializeField] Monster _currentMonster;                           //현재 전투중인 몬스터
     [SerializeField] Queue<Monster> _currentDungeonMonsterQueue;        //현재 진행중인 던전에 있는 몬스터를 담은 Queue
-                                                                        //그 외에 플레이어가 제출한 카드 등등이 있을 수 있다.
+    [SerializeField] Dictionary<int, int> _submittedCardList;
 
     [SerializeField] int _currentMonsterId;
 
     public Dictionary<int, Monster> _monsterList = new Dictionary<int, Monster>();
 
+
+    #region 프로퍼티
     public int CurrentDungeon
     {
         get { return _currentDungeon; }
@@ -63,6 +65,14 @@ public class NewGameManager : NetworkBehaviour
         get { return _currentDungeonMonsterQueue; }
         set { _currentDungeonMonsterQueue = value; }
     }
+
+    public Dictionary<int, int> SubmittedCardList
+    {
+        get { return _submittedCardList; }
+        set { _submittedCardList = value; }
+    }
+
+    #endregion
 
     private void Awake()
     {
@@ -132,6 +142,8 @@ public class NewGameManager : NetworkBehaviour
     {
         CurrentDungeon = 0;
         CurrentStage = 0;
+        SubmittedCardList = new Dictionary<int, int>();
+
 
         ChangeState(GameState.StartDungeon);
     }
@@ -171,6 +183,8 @@ public class NewGameManager : NetworkBehaviour
     #endregion
 
     #region 2-1. 스테이지 시작
+
+    //스테이지 시작전 초기화: 플레이어들이 제출한 카드, 플레이어 보석개수, 사용한 카드
 
     [Server]
     private void StartStage()
@@ -227,6 +241,24 @@ public class NewGameManager : NetworkBehaviour
     }
 
     //플레이어의 카드 제출 처리(클라에서 요청후, 서버에서 처리)
+    [Command(requiresAuthority = false)]
+    public void CmdAddSubmittedCard(NetworkIdentity identity, int cardNum)
+    {
+        int playerNetId = (int)identity.netId;
+
+        if (SubmittedCardList.ContainsKey(playerNetId))
+        {
+            SubmittedCardList[playerNetId] = cardNum;
+        }
+        else
+        {
+            SubmittedCardList.Add(playerNetId, cardNum);
+        }
+        Debug.Log($"Added- netId:{playerNetId}, num:{SubmittedCardList[playerNetId]}");
+    }
+
+
+
     [Command]
     public void CmdSubmitCard(int playerId, int card)
     {
@@ -261,4 +293,6 @@ public class NewGameManager : NetworkBehaviour
         //클라이언트에 게임 상태 업데이트
     }
     #endregion
+
+
 }

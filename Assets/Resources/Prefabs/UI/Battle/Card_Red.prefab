@@ -199,7 +199,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 3652094981452309454}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1079207455027402192}
+        m_TargetAssemblyTypeName: Card, Assembly-CSharp
+        m_MethodName: OnClick_Card
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &7238708685827785414
 GameObject:
   m_ObjectHideFlags: 0
@@ -210,6 +222,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5456170570438945228}
   - component: {fileID: 1079207455027402192}
+  - component: {fileID: 573891064379011480}
   m_Layer: 5
   m_Name: Card_Red
   m_TagString: Untagged
@@ -249,5 +262,33 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f5a179124ae1ef94eb7925464f9a6ca9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  Img_Card: {fileID: 3652094981452309454}
   Btn_Card: {fileID: 1338083147248314292}
   Text_Number: {fileID: 3551802546137081294}
+  Popup_Select: {fileID: 0}
+  Sprite_color:
+  - {fileID: -1566623720, guid: 4ef39ff1ebd46ba4bbc1bb66995f4bba, type: 3}
+  - {fileID: -1789673266, guid: 4ef39ff1ebd46ba4bbc1bb66995f4bba, type: 3}
+  - {fileID: -364366952, guid: 4ef39ff1ebd46ba4bbc1bb66995f4bba, type: 3}
+  - {fileID: 1602821133, guid: 4ef39ff1ebd46ba4bbc1bb66995f4bba, type: 3}
+  - {fileID: -223000144, guid: 4ef39ff1ebd46ba4bbc1bb66995f4bba, type: 3}
+--- !u!114 &573891064379011480
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7238708685827785414}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b91ecbcc199f4492b9a91e820070131, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sceneId: 0
+  _assetId: 1364633081
+  serverOnly: 0
+  visibility: 0
+  hasSpawned: 0
