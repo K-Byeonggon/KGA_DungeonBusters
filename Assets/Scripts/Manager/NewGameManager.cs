@@ -361,6 +361,8 @@ public class NewGameManager : NetworkBehaviour
         
         for (int reward_n = 0; reward_n < 3; reward_n++)
         {
+            if (CurrentMonster.Reward[reward_n] == null)
+                break;
             //1. 가장 작은 카드 낸 플레이어 NetId 구하기(그 후 Dic에서 삭제)
             int playerNetId = GetMinCardPlayerNetId();
             int usedCard = SubmittedCardList[playerNetId];
