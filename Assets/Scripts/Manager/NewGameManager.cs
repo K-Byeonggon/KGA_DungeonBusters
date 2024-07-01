@@ -337,7 +337,6 @@ public class NewGameManager : NetworkBehaviour
 
     private int GetMinCardPlayerNetId()
     {
-        //여기서 문제가 발생하는듯?
         int minCardPlayerNetId = SubmittedCardList.Aggregate((l, r) => l.Value < r.Value ? l : r).Key;
         return minCardPlayerNetId;
     }
@@ -363,7 +362,7 @@ public class NewGameManager : NetworkBehaviour
         {
             if (CurrentMonster.Reward[reward_n] == null)
                 break;
-            //1. 가장 작은 카드 낸 플레이어 NetId 구하기(그 후 Dic에서 삭제)
+            //1. 가장 작은 카드 낸 플레이어 NetId 구하기(그 후 Dic에서 삭제) (1명으로 test하면 보상이 2개 이상일때 에러 발생)
             int playerNetId = GetMinCardPlayerNetId();
             int usedCard = SubmittedCardList[playerNetId];
             SubmittedCardList.Remove(playerNetId);
