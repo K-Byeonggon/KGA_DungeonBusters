@@ -47,9 +47,10 @@ public class DataManager : MonoBehaviour
             tempMonster.Name = data.Attribute(nameof(Monster.Name)).Value;
             tempMonster.Dungeon = int.Parse(data.Attribute(nameof(Monster.Dungeon)).Value);
             tempMonster.HP = int.Parse(data.Attribute(nameof(Monster.HP)).Value);
-            tempMonster.Reward1 = ReadMonsterRewards(data, nameof(tempMonster.Reward1));
-            tempMonster.Reward2 = ReadMonsterRewards(data, nameof(tempMonster.Reward2));
-            tempMonster.Reward3 = ReadMonsterRewards(data, nameof(tempMonster.Reward3));
+            tempMonster.Reward.Add(ReadMonsterRewards(data, "Reward1"));
+            tempMonster.Reward.Add(ReadMonsterRewards(data, "Reward2"));
+            tempMonster.Reward.Add(ReadMonsterRewards(data, "Reward3"));
+
             LoadedMonsterList.Add(tempMonster.DataId, tempMonster);
         }
     }

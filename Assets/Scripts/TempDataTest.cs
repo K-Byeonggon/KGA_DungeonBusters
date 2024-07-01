@@ -13,7 +13,7 @@ public class TempDataTest : MonoBehaviour
 
         Debug.Log($"{_testMonster.Name}, {_testMonster.HP}");
 
-        foreach (var reward in _testMonster.Reward1)
+        foreach (var reward in _testMonster.Reward[0])
         {
             Debug.Log($"{reward}");
         }

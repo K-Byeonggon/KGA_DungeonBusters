@@ -17,13 +17,13 @@ public class Panel_Reward1 : MonoBehaviour
         switch (rewardNum)
         {
             case 1:
-                rewards = monster.Reward1;
+                rewards = monster.Reward[0];
                 break;
             case 2:
-                rewards = monster.Reward2;
+                rewards = monster.Reward[1];
                 break;
             case 3:
-                rewards = monster.Reward3;
+                rewards = monster.Reward[2];
                 break;
         }
 

@@ -8,7 +8,11 @@ public class Monster
     public string Name { get; set; }
     public int Dungeon { get; set; }
     public int HP { get; set; }
-    public List<int> Reward1 {  get; set; }
-    public List<int> Reward2 { get; set; }
-    public List<int> Reward3 { get; set; }
+    public List<List<int>> Reward { get; set; } //{{red, yellow, blue}, {red, yellow, blue}, {red, yellow, blue}}
+
+    public Monster()
+    {
+        Reward = new List<List<int>>();
+    }
+
 }
