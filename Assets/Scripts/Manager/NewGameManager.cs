@@ -150,7 +150,7 @@ public class NewGameManager : NetworkBehaviour
         CurrentDungeon = 0;
         CurrentStage = 0;
         SubmittedCardList = new Dictionary<int, int>();
-
+        DuplicationCheck = new Dictionary<int, int>();
 
         ChangeState(GameState.StartDungeon);
     }
@@ -276,7 +276,7 @@ public class NewGameManager : NetworkBehaviour
 
     private void OnAllPlayersSubmitted()
     {
-
+        CalculateDamage();
     }
 
     [Server]
@@ -308,45 +308,13 @@ public class NewGameManager : NetworkBehaviour
         bool StageClear = totalDamage >= monsterHp;
 
         Debug.Log($"totalDamage == {totalDamage}");
-        if(StageClear) { ClearProcess(); }
+        if(StageClear) { CmdChooseRewardedPlayer(); }
         else { LoseProcess(); }
     }
 
-    [Server]
-    private void ClearProcess()
-    {
-        //보상 받는 순위 정하기
-        //0. 중복 딜 넣은 플레이어 제거
-        foreach(int card in SubmittedCardList.Values)
-        {
-            if (DuplicationCheck[card] > 1)
-            {
-                int valueToRemove = card;
-                var keysToRemove = SubmittedCardList.Where(kvp => kvp.Value == valueToRemove)
-                    .Select(kvp => kvp.Key)
-                    .ToList();
-
-                foreach (var key in keysToRemove)
-                {
-                    SubmittedCardList.Remove(key);
-                    Debug.Log($"Key {key} with Value {valueToRemove} removed");
-                }
-            }
-        }
-
-        //1. 가장 적은 딜 넣은 플레이어 선정
-
-        //2. 플레이어에 보석 증정(모든 클라에 동기화 되어야함)
 
 
-        //3. 보상 받은 플레이어 카드제출목록에서 제거
-        SubmittedCardList.Remove(GetMinCardPlayerNetId());
-
-
-
-
-    }
-
+    #region 보석 보상 로직
     private void RemoveDuplicatedCard()
     {
         foreach (int card in SubmittedCardList.Values)
@@ -369,14 +337,15 @@ public class NewGameManager : NetworkBehaviour
 
     private int GetMinCardPlayerNetId()
     {
+        //여기서 문제가 발생하는듯?
         int minCardPlayerNetId = SubmittedCardList.Aggregate((l, r) => l.Value < r.Value ? l : r).Key;
         return minCardPlayerNetId;
     }
 
-    private MyPlayer GetMinCardPlayer(int minCardPlayerNetId)
+    private MyPlayer GetPlayerFromNetId(int playerNetId)
     {   
         MyPlayer player = null; NetworkIdentity networkIdentity;
-        if (NetworkServer.spawned.TryGetValue((uint)minCardPlayerNetId, out networkIdentity))
+        if (NetworkServer.spawned.TryGetValue((uint)playerNetId, out networkIdentity))
         {
             player = networkIdentity.gameObject.GetComponent<MyPlayer>();
             return player;
@@ -390,21 +359,46 @@ public class NewGameManager : NetworkBehaviour
         //0. 중복 카드 제거
         RemoveDuplicatedCard();
         
-        //1. 가장 작은 카드 낸 플레이어 NetId 구하기
-        int playerNetId = GetMinCardPlayerNetId();
+        for (int reward_n = 0; reward_n < 3; reward_n++)
+        {
+            //1. 가장 작은 카드 낸 플레이어 NetId 구하기(그 후 Dic에서 삭제)
+            int playerNetId = GetMinCardPlayerNetId();
+            int usedCard = SubmittedCardList[playerNetId];
+            SubmittedCardList.Remove(playerNetId);
 
-        //2. 모든 클라의 해당 NetId가진 플레이어에 보상 주기.
-        RpcPlayerGetReward(playerNetId);
+            //2. 모든 클라의 해당 NetId가진 플레이어에 보상 주기.
+            RpcPlayerGetReward(playerNetId, reward_n);
+
+            //3. 모든 클라의 해당 NetId가진 플레이어 가진 카드, 사용한 카드 갱신 (가진 카드는 모두 바꿀 필요없지만)
+            RpcSetPlayerUsedCard(playerNetId, usedCard);
+        }
     }
 
     [ClientRpc]
-    public void RpcPlayerGetReward(int playerNetId)
+    public void RpcPlayerGetReward(int playerNetId, int reward_n)
     {
         //2-1. NetId의 플레이어 찾기
-        MyPlayer player = GetMinCardPlayer(playerNetId);
+        MyPlayer player = GetPlayerFromNetId(playerNetId);
 
         //2-2. 플레이어에 해당 Reward의 보석 추가.
+        if (CurrentMonster.Reward[reward_n] != null)
+        {
+            player.Jewels[0] += CurrentMonster.Reward[reward_n][0];
+            player.Jewels[1] += CurrentMonster.Reward[reward_n][1];
+            player.Jewels[2] += CurrentMonster.Reward[reward_n][2];
+        }
     }
+
+    [ClientRpc]
+    public void RpcSetPlayerUsedCard(int playerNetId, int usedCard)
+    {
+        MyPlayer player = GetPlayerFromNetId(playerNetId);
+        player.UsedCards.Add(usedCard);
+        player.Cards.Remove(usedCard);
+    }
+
+    #endregion
+
 
     [Server]
     private void LoseProcess()
