@@ -46,6 +46,11 @@ public class Card : NetworkBehaviour
         int cardNum = int.Parse(Text_Number.text);
         NewGameManager.Instance.CmdAddSubmittedCard(NetworkClient.localPlayer, cardNum);
 
+        //로컬 플레이어 정보 수정(이거도 서버로 가야하나?)
+        MyPlayer player = NetworkClient.localPlayer.GetComponent<MyPlayer>();
+        player.UsedCards.Add(cardNum);
+        player.Cards.Remove(cardNum);
+
         //그리고 선택창 닫기(이건 모든 클라에서 이루어져야해)
         Popup_Select.UISetActive(false);
     }

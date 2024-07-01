@@ -16,7 +16,8 @@ public class MyPlayer : NetworkBehaviour
     [SerializeField] List<int> _usedCards;
     [SerializeField] List<int> _jewels; //RED:0, YELLOW:1, BLUE:2
     public int _currentCard;
-    public bool _isAttacked;
+    public bool _isAttackSuccessed;
+    public int rewardOrder;
 
     public List<int> Cards
     {
@@ -27,12 +28,20 @@ public class MyPlayer : NetworkBehaviour
     public List<int> Jewels
     {
         get { return _jewels; }
-        set { _jewels = value; }
+        set
+        {
+            _jewels = value;
+        
+        }
     }
     public List<int> UsedCards
     {
         get { return _usedCards; }
-        set { _usedCards = value; }
+        set
+        {
+            _usedCards = value;
+        
+        }
     }
 
     private void Start()

@@ -1,5 +1,6 @@
 using Mirror;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class NewGameManager : NetworkBehaviour
@@ -13,11 +14,11 @@ public class NewGameManager : NetworkBehaviour
     [SerializeField] Monster _currentMonster;                           //현재 전투중인 몬스터
     [SerializeField] Queue<Monster> _currentDungeonMonsterQueue;        //현재 진행중인 던전에 있는 몬스터를 담은 Queue
     [SerializeField] Dictionary<int, int> _submittedCardList;
+    [SerializeField] Dictionary<int, int> _duplicationCheck;
 
     [SerializeField] int _currentMonsterId;
 
     public Dictionary<int, Monster> _monsterList = new Dictionary<int, Monster>();
-
 
     #region 프로퍼티
     public int CurrentDungeon
@@ -70,6 +71,12 @@ public class NewGameManager : NetworkBehaviour
     {
         get { return _submittedCardList; }
         set { _submittedCardList = value; }
+    }
+
+    public Dictionary<int, int> DuplicationCheck
+    {
+        get { return _duplicationCheck; }
+        set { _duplicationCheck = value; }
     }
 
     #endregion
@@ -255,9 +262,156 @@ public class NewGameManager : NetworkBehaviour
             SubmittedCardList.Add(playerNetId, cardNum);
         }
         Debug.Log($"Added- netId:{playerNetId}, num:{SubmittedCardList[playerNetId]}");
+
+        if (AllPlayersSubmitted())
+        {
+            OnAllPlayersSubmitted();
+        }
     }
 
+    private bool AllPlayersSubmitted()
+    {
+        return NetworkServer.connections.Count == SubmittedCardList.Count;
+    }
 
+    private void OnAllPlayersSubmitted()
+    {
+
+    }
+
+    [Server]
+    private void CalculateDamage()
+    {
+        int monsterHp = CurrentMonster.HP;
+        int totalDamage = 0;
+        
+        foreach (var card in SubmittedCardList.Values)
+        {
+            if (DuplicationCheck.ContainsKey(card))
+            {
+                DuplicationCheck[card]++;
+            }
+            else
+            {
+                DuplicationCheck[card] = 1;
+            }
+        }
+
+        foreach(var kvp in SubmittedCardList)
+        {
+            if (DuplicationCheck[kvp.Value] == 1)
+            {
+                totalDamage += kvp.Value;
+            }
+        }
+
+        bool StageClear = totalDamage >= monsterHp;
+
+        Debug.Log($"totalDamage == {totalDamage}");
+        if(StageClear) { ClearProcess(); }
+        else { LoseProcess(); }
+    }
+
+    [Server]
+    private void ClearProcess()
+    {
+        //보상 받는 순위 정하기
+        //0. 중복 딜 넣은 플레이어 제거
+        foreach(int card in SubmittedCardList.Values)
+        {
+            if (DuplicationCheck[card] > 1)
+            {
+                int valueToRemove = card;
+                var keysToRemove = SubmittedCardList.Where(kvp => kvp.Value == valueToRemove)
+                    .Select(kvp => kvp.Key)
+                    .ToList();
+
+                foreach (var key in keysToRemove)
+                {
+                    SubmittedCardList.Remove(key);
+                    Debug.Log($"Key {key} with Value {valueToRemove} removed");
+                }
+            }
+        }
+
+        //1. 가장 적은 딜 넣은 플레이어 선정
+
+        //2. 플레이어에 보석 증정(모든 클라에 동기화 되어야함)
+
+
+        //3. 보상 받은 플레이어 카드제출목록에서 제거
+        SubmittedCardList.Remove(GetMinCardPlayerNetId());
+
+
+
+
+    }
+
+    private void RemoveDuplicatedCard()
+    {
+        foreach (int card in SubmittedCardList.Values)
+        {
+            if (DuplicationCheck[card] > 1)
+            {
+                int valueToRemove = card;
+                var keysToRemove = SubmittedCardList.Where(kvp => kvp.Value == valueToRemove)
+                    .Select(kvp => kvp.Key)
+                    .ToList();
+
+                foreach (var key in keysToRemove)
+                {
+                    SubmittedCardList.Remove(key);
+                    Debug.Log($"Key {key} with Value {valueToRemove} removed");
+                }
+            }
+        }
+    }
+
+    private int GetMinCardPlayerNetId()
+    {
+        int minCardPlayerNetId = SubmittedCardList.Aggregate((l, r) => l.Value < r.Value ? l : r).Key;
+        return minCardPlayerNetId;
+    }
+
+    private MyPlayer GetMinCardPlayer(int minCardPlayerNetId)
+    {   
+        MyPlayer player = null; NetworkIdentity networkIdentity;
+        if (NetworkServer.spawned.TryGetValue((uint)minCardPlayerNetId, out networkIdentity))
+        {
+            player = networkIdentity.gameObject.GetComponent<MyPlayer>();
+            return player;
+        }
+        else { return player; }
+    }
+
+    [Command(requiresAuthority = false)]
+    public void CmdChooseRewardedPlayer()
+    {
+        //0. 중복 카드 제거
+        RemoveDuplicatedCard();
+        
+        //1. 가장 작은 카드 낸 플레이어 NetId 구하기
+        int playerNetId = GetMinCardPlayerNetId();
+
+        //2. 모든 클라의 해당 NetId가진 플레이어에 보상 주기.
+        RpcPlayerGetReward(playerNetId);
+    }
+
+    [ClientRpc]
+    public void RpcPlayerGetReward(int playerNetId)
+    {
+        //2-1. NetId의 플레이어 찾기
+        MyPlayer player = GetMinCardPlayer(playerNetId);
+
+        //2-2. 플레이어에 해당 Reward의 보석 추가.
+    }
+
+    [Server]
+    private void LoseProcess()
+    {
+        //보석 잃는 순위 정하기
+        //보상 잃기
+    }
 
     [Command]
     public void CmdSubmitCard(int playerId, int card)
