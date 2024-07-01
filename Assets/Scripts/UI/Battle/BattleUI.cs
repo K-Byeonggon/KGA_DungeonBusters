@@ -17,6 +17,12 @@ public class BattleUI : MonoBehaviour
     [Header("Panel_Button")]
     [SerializeField] Button Btn_SelectCard;
 
+    [Header("Panel_Bonus")]
+    [SerializeField] Text Text_BonusRed;
+    [SerializeField] Text Text_BonusYellow;
+    [SerializeField] Text Text_BonusBlue;
+
+
     //이렇게 가지고 있는 방법 말고 다른 방법이 있을 것이다.
     [Header("Panels")]
     [SerializeField] Panel_Players panel_Players;
@@ -72,6 +78,13 @@ public class BattleUI : MonoBehaviour
     {
         popup_Select.RemoveCards();
         popup_Select.SetCards();
+    }
+
+    public void UpdateBonusJewels()
+    {
+        Text_BonusRed.text = $"{NewGameManager.Instance.BonusJewels[0]}";
+        Text_BonusYellow.text = $"{NewGameManager.Instance.BonusJewels[1]}";
+        Text_BonusBlue.text = $"{NewGameManager.Instance.BonusJewels[2]}";
     }
 
     public void OnClick_SelectCard()

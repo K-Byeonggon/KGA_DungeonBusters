@@ -43,4 +43,9 @@ public class BattleUIManager : UIManager
     {
         battleUI.UpdateSelectCardPopup();
     }
+
+    public void RequestUpdateBonusJewels()
+    {
+        battleUI.UpdateBonusJewels();
+    }
 }

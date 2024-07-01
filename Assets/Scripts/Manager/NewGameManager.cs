@@ -15,6 +15,7 @@ public class NewGameManager : NetworkBehaviour
     [SerializeField] Queue<Monster> _currentDungeonMonsterQueue;        //현재 진행중인 던전에 있는 몬스터를 담은 Queue
     [SerializeField] Dictionary<int, int> _submittedCardList;
     [SerializeField] Dictionary<int, int> _duplicationCheck;
+    [SerializeField] List<int> _bonusJewels;
 
     [SerializeField] int _currentMonsterId;
 
@@ -77,6 +78,16 @@ public class NewGameManager : NetworkBehaviour
     {
         get { return _duplicationCheck; }
         set { _duplicationCheck = value; }
+    }
+
+    public List<int> BonusJewels
+    {
+        get { return _bonusJewels; }
+        set
+        {
+            _bonusJewels = value;
+            BattleUIManager.Instance.RequestUpdateBonusJewels();
+        }
     }
 
     #endregion
@@ -151,7 +162,7 @@ public class NewGameManager : NetworkBehaviour
         CurrentStage = 0;
         SubmittedCardList = new Dictionary<int, int>();
         DuplicationCheck = new Dictionary<int, int>();
-
+        BonusJewels = new List<int>() { 0, 0, 0 };
         ChangeState(GameState.StartDungeon);
     }
 
