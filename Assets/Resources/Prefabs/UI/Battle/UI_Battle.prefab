@@ -1094,6 +1094,7 @@ MonoBehaviour:
   panel_Players: {fileID: 5069388239054855231}
   panel_Rewards: {fileID: 758446267597219340}
   popup_Select: {fileID: 8599346485347558336}
+  popup_RemoveJewels: {fileID: 8421897156247975961}
 --- !u!1 &6537601960591063923
 GameObject:
   m_ObjectHideFlags: 0
@@ -2327,6 +2328,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Popup_RemoveJewels
       objectReference: {fileID: 0}
+    - target: {fileID: 3887654124819367077, guid: f2303b6de38f65246ae910e5419ea150, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4435567581242502415, guid: f2303b6de38f65246ae910e5419ea150, type: 3}
       propertyPath: m_Spacing
       value: 10
@@ -2336,6 +2341,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f2303b6de38f65246ae910e5419ea150, type: 3}
+--- !u!114 &8421897156247975961 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 239596220627563616, guid: f2303b6de38f65246ae910e5419ea150, type: 3}
+  m_PrefabInstance: {fileID: 8625415462475287673}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a35193c25d346e4d8002e21af3c105d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!224 &8579983727972248701 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 45484683008057348, guid: f2303b6de38f65246ae910e5419ea150, type: 3}

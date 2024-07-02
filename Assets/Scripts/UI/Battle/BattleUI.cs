@@ -92,6 +92,7 @@ public class BattleUI : MonoBehaviour
     {
         popup_RemoveJewels.RemoveJewels();
         popup_RemoveJewels.SetJewels(maxJewels);
+        popup_RemoveJewels.SetBonus();
         popup_RemoveJewels.UISetActive(true);
     }
 

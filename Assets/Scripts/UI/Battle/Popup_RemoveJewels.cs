@@ -35,7 +35,14 @@ public class Popup_RemoveJewels : MonoBehaviour
             jewel_n.SetCount(player.Jewels[indexJewel]);
             jewel_n.SetPopupRemoveJewels(this);
         }
+    }
 
+    public void SetBonus()
+    {
+        List<int> bonus = NewGameManager.Instance.BonusJewels;
+        Text_JewelRed.text = $"{bonus[0]}";
+        Text_JewelYellow.text = $"{bonus[1]}";
+        Text_JewelBlue.text = $"{bonus[2]}";
     }
 
     public void UISetActive(bool active)

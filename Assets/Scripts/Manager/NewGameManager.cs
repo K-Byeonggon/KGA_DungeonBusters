@@ -13,11 +13,11 @@ public class NewGameManager : NetworkBehaviour
     [SerializeField] int _currentStage;                                 //현재 진행중인 스테이지
     [SerializeField] Monster _currentMonster;                           //현재 전투중인 몬스터
     [SerializeField] Queue<Monster> _currentDungeonMonsterQueue;        //현재 진행중인 던전에 있는 몬스터를 담은 Queue
-    [SerializeField] Dictionary<int, int> _submittedCardList;
-    [SerializeField] Dictionary<int, int> _duplicationCheck;
-    [SerializeField] List<int> _bonusJewels;
-    [SerializeField] Dictionary<uint, int> _selectedJewelIndexList;
-
+    [SerializeField] Dictionary<int, int> _submittedCardList;           //key:netId, value:제출한 카드Num
+    [SerializeField] Dictionary<int, int> _duplicationCheck;            //key:CardNum, value:해당Num의 개수
+    [SerializeField] List<int> _bonusJewels;                            //보너스 Jewel
+    [SerializeField] Dictionary<uint, int> _selectedJewelIndexList;     //key:netId, value:플레이어가 선택한 버릴 Jewel 인덱스
+    [SerializeField] Dictionary<int, List<int>> _netIdAndJewelsIndex;    //key:netId, value:가장많은Jewel의 인덱스List
 
     [SerializeField] int _currentMonsterId;
 
@@ -98,6 +98,12 @@ public class NewGameManager : NetworkBehaviour
         set { _selectedJewelIndexList = value; }
     }
 
+    public Dictionary<int, List<int>> NetIdAndJewelsIndex
+    {
+        get { return _netIdAndJewelsIndex; }
+        set { _netIdAndJewelsIndex = value; }
+    }
+
     #endregion
 
     private void Awake()
@@ -172,6 +178,7 @@ public class NewGameManager : NetworkBehaviour
         DuplicationCheck = new Dictionary<int, int>();
         BonusJewels = new List<int>() { 0, 0, 0 };
         SelectedJewelIndexList = new Dictionary<uint, int>();
+        NetIdAndJewelsIndex = new Dictionary<int, List<int>>();
         ChangeState(GameState.StartDungeon);
     }
 
@@ -219,6 +226,7 @@ public class NewGameManager : NetworkBehaviour
         CurrentStage++;
         this.DequeueMonsterCurrentStage();
 
+        //CurrentMonster = DataManager.Instance.GetMonster(0);
         //RpcUpdateStageState(CurrentStage, CurrentMonster);
 
         ChangeState(GameState.SubmitCard);
@@ -452,29 +460,33 @@ public class NewGameManager : NetworkBehaviour
         List<int> losePlayerNetIds = GetMinCardPlayerNetIds();
 
         //2. 해당 NetId의 플레이어가 가장 많이 가진 보석의 색깔 구하기.
-        Dictionary<int, List<int>> netIdAndJewelsIndex = new Dictionary<int, List<int>>();
         foreach (int netId in losePlayerNetIds)
         {
             MyPlayer player = GetPlayerFromNetId(netId);
             List<int> maxJewels = FindMaxIndexes(player.Jewels);
-            netIdAndJewelsIndex.Add(netId, maxJewels);
+            NetIdAndJewelsIndex.Add(netId, maxJewels);
         }
 
         //3-1. 보석의 색깔이 여러개면, 플레이어에게 어떤 보석을 버릴지 선택을 시킨다
         //그냥 보석 색깔 하나라도 플레이어가 클릭하게 하자. 그러면 일괄적으로 ClientRpc날리면 된다.
-        foreach(var kv in netIdAndJewelsIndex)
+        foreach(var kv in NetIdAndJewelsIndex)
         {
             RpcSetUIToLoseJewels(kv.Key, kv.Value);
         }
 
-        //4. 패배 플레이어들이 선택 다 했는지 체크.
-        if (AllPlayerSelectedJewel(netIdAndJewelsIndex.Count))
+        
+
+
+    }
+
+    //4. 패배 플레이어들이 선택 다 했는지 체크.
+    public void RemoveJewelsAndSetBonus()
+    {
+        if (AllPlayerSelectedJewel(NetIdAndJewelsIndex.Count))
         {
             //선택을 바탕으로 모든 클라에서 패배 플레이어의 Jewel 보너스로.
             OnAllPlayersSelectedJewel();
         }
-
-
     }
 
     private bool AllPlayerSelectedJewel(int dic_count)
