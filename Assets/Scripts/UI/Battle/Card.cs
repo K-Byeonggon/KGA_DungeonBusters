@@ -44,7 +44,9 @@ public class Card : NetworkBehaviour
     {
         //NewGameManager에 번호를 localPlayer의 Netid와 함께 넘기기(이건 NewGameManager에서 해줌)
         int cardNum = int.Parse(Text_Number.text);
-        NewGameManager.Instance.CmdAddSubmittedCard(NetworkClient.localPlayer, cardNum);
+        //NetworkClient.localPlayer
+        int netId = (int)NetworkClient.localPlayer.netId;
+        NewGameManager.Instance.CmdAddSubmittedCard(netId, cardNum);
 
         //그리고 선택창 닫기(이건 모든 클라에서 이루어져야해)
         Popup_Select.UISetActive(false);

@@ -277,9 +277,9 @@ public class NewGameManager : NetworkBehaviour
 
     //플레이어의 카드 제출 처리(클라에서 요청후, 서버에서 처리)
     [Command(requiresAuthority = false)]
-    public void CmdAddSubmittedCard(NetworkIdentity identity, int cardNum)
+    public void CmdAddSubmittedCard(int netId, int cardNum)
     {
-        int playerNetId = (int)identity.netId;
+        int playerNetId = netId;
 
         if (SubmittedCardList.ContainsKey(playerNetId))
         {
@@ -291,9 +291,20 @@ public class NewGameManager : NetworkBehaviour
         }
         Debug.Log($"Added- netId:{playerNetId}, num:{SubmittedCardList[playerNetId]}");
 
+        CmdCheckAllPlayerSubmitted();
+    }
+
+    //[Command(requiresAuthority = false)]
+    [Server]
+    public void CmdCheckAllPlayerSubmitted()
+    {
         if (AllPlayersSubmitted())
         {
             OnAllPlayersSubmitted();
+        }
+        else
+        {
+            Debug.Log("아직 제출안한 플레이어 있음.");
         }
     }
 
@@ -389,9 +400,16 @@ public class NewGameManager : NetworkBehaviour
         else { return player; }
     }
 
-    [Command(requiresAuthority = false)]
+    //[Command(requiresAuthority = false)]
+    [Server]
     public void CmdRequestSetUsedCard()
     {
+        //디버깅용
+        foreach(var kv in SubmittedCardList)
+        {
+            Debug.Log($"netId:{kv.Key} Card:{kv.Value}");
+        }
+
         //-1. 플레이어가 낸 카드들 UsedCard에 저장하고 갱신하기.
         foreach (var kv in SubmittedCardList)
         {
@@ -399,7 +417,8 @@ public class NewGameManager : NetworkBehaviour
         }
     }
 
-    [Command(requiresAuthority = false)]
+    //[Command(requiresAuthority = false)]
+    [Server]
     public void CmdChooseRewardedPlayer()
     {
         //0. 중복 카드 제거
@@ -445,7 +464,12 @@ public class NewGameManager : NetworkBehaviour
     public void RpcSetPlayerUsedCard(int playerNetId, int usedCard)
     {
         MyPlayer player = GetPlayerFromNetId(playerNetId);
+        if(player == null) { Debug.LogError("player == null"); return; }
+
+        if (player.UsedCards == null) { Debug.LogError("player.UsedCards == null"); return; }
         player.UsedCards.Add(usedCard);
+
+
         player.Cards.Remove(usedCard);
     }
 
