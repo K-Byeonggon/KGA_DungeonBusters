@@ -30,6 +30,7 @@ public class BattleUI : MonoBehaviour
 
     [Header("Popups")]
     [SerializeField] Popup_Select popup_Select;
+    [SerializeField] Popup_RemoveJewels popup_RemoveJewels;
 
     public void RequestCreatePlayerPanel(int player_netId)
     {  
@@ -85,6 +86,13 @@ public class BattleUI : MonoBehaviour
         Text_BonusRed.text = $"{NewGameManager.Instance.BonusJewels[0]}";
         Text_BonusYellow.text = $"{NewGameManager.Instance.BonusJewels[1]}";
         Text_BonusBlue.text = $"{NewGameManager.Instance.BonusJewels[2]}";
+    }
+
+    public void UpdateRemoveJewels(List<int> maxJewels)
+    {
+        popup_RemoveJewels.RemoveJewels();
+        popup_RemoveJewels.SetJewels(maxJewels);
+        popup_RemoveJewels.UISetActive(true);
     }
 
     public void OnClick_SelectCard()

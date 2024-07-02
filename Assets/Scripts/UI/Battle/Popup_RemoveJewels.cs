@@ -23,17 +23,17 @@ public class Popup_RemoveJewels : MonoBehaviour
         }
     }
 
-    public void SetJewels()
+    public void SetJewels(List<int> maxJewels)
     {
         MyPlayer player = NetworkClient.localPlayer.GetComponent<MyPlayer>();
 
-        for(int i = 0; i < player.Jewels.Count; i++)
+        foreach(int indexJewel in maxJewels)
         {
             var gObj = Instantiate(Prefab_Jewel, Transform_SlotRoot.transform);
             var jewel_n = gObj.GetComponent<Content_Jewel>();
-            jewel_n.SetColor(i);
-            jewel_n.SetCount(player.Jewels[i]);
-            jewel_n.SetPopupSelectUI(this);
+            jewel_n.SetColor(indexJewel);
+            jewel_n.SetCount(player.Jewels[indexJewel]);
+            jewel_n.SetPopupRemoveJewels(this);
         }
 
     }

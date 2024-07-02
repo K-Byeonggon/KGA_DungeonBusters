@@ -1,3 +1,4 @@
+using Mirror;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,6 +10,7 @@ public class Content_Jewel : MonoBehaviour
     [SerializeField] Button Btn_Jewel;
     [SerializeField] Text Text_Count;
     private Popup_RemoveJewels Popup_RemoveJewels;
+    private int jewelIndex;
 
     [Header("Color 0:Red 1:Yellow 2:Blue")]
     [SerializeField] List<Sprite> Sprite_color;
@@ -16,9 +18,10 @@ public class Content_Jewel : MonoBehaviour
     public void SetColor(int index)
     {
         Img_Jewel.sprite = Sprite_color[index];
+        jewelIndex = index;
     }
 
-    public void SetPopupSelectUI(Popup_RemoveJewels ui)
+    public void SetPopupRemoveJewels(Popup_RemoveJewels ui)
     {
         Popup_RemoveJewels = ui;
     }
@@ -30,6 +33,9 @@ public class Content_Jewel : MonoBehaviour
 
     public void OnClick_Jewel()
     {
-        //클릭하면 NewGameManager에 의해 플레이어가 가진 해당 색의 보석이 전부 보너스로 옮겨진다.
+        //클릭시 플레이어의 netId와 선택한 Jewel의 Index가 NewGameManager의 SelectedJewelIndexList에 저장된다.
+        NewGameManager.Instance.SelectedJewelIndexList.Add(NetworkClient.localPlayer.netId, jewelIndex);
+        
+        Popup_RemoveJewels.UISetActive(false);
     }
 }

@@ -16,6 +16,8 @@ public class NewGameManager : NetworkBehaviour
     [SerializeField] Dictionary<int, int> _submittedCardList;
     [SerializeField] Dictionary<int, int> _duplicationCheck;
     [SerializeField] List<int> _bonusJewels;
+    [SerializeField] Dictionary<uint, int> _selectedJewelIndexList;
+
 
     [SerializeField] int _currentMonsterId;
 
@@ -88,6 +90,12 @@ public class NewGameManager : NetworkBehaviour
             _bonusJewels = value;
             BattleUIManager.Instance.RequestUpdateBonusJewels();
         }
+    }
+
+    public Dictionary<uint, int> SelectedJewelIndexList
+    {
+        get { return _selectedJewelIndexList; }
+        set { _selectedJewelIndexList = value; }
     }
 
     #endregion
@@ -163,6 +171,7 @@ public class NewGameManager : NetworkBehaviour
         SubmittedCardList = new Dictionary<int, int>();
         DuplicationCheck = new Dictionary<int, int>();
         BonusJewels = new List<int>() { 0, 0, 0 };
+        SelectedJewelIndexList = new Dictionary<uint, int>();
         ChangeState(GameState.StartDungeon);
     }
 
@@ -322,7 +331,7 @@ public class NewGameManager : NetworkBehaviour
 
         Debug.Log($"totalDamage == {totalDamage}");
         if(StageClear) { CmdChooseRewardedPlayer(); }
-        else { /*보석 잃는 로직*/ }
+        else { CmdPutJewelsInBonus(); }
     }
 
 
@@ -436,24 +445,95 @@ public class NewGameManager : NetworkBehaviour
 
     #region 보석 잃는 로직
 
-    public void PutJewelsInBonus()
+    [Command(requiresAuthority = false)]
+    public void CmdPutJewelsInBonus()
     {
         //1. 가장 작은 카드를 낸 플레이어들의 NetId 구하기
         List<int> losePlayerNetIds = GetMinCardPlayerNetIds();
 
         //2. 해당 NetId의 플레이어가 가장 많이 가진 보석의 색깔 구하기.
-        List<int> maxJewels = new List<int>();
+        Dictionary<int, List<int>> netIdAndJewelsIndex = new Dictionary<int, List<int>>();
         foreach (int netId in losePlayerNetIds)
         {
             MyPlayer player = GetPlayerFromNetId(netId);
-
-            maxJewels = FindMaxIndexes(player.Jewels);
+            List<int> maxJewels = FindMaxIndexes(player.Jewels);
+            netIdAndJewelsIndex.Add(netId, maxJewels);
         }
 
         //3-1. 보석의 색깔이 여러개면, 플레이어에게 어떤 보석을 버릴지 선택을 시킨다
-        //그냥 보석 색깔 하나라도 플레이어가 클릭하게 하자.
-        //이거는 보석 색깔이 여러개인 플레이어만 시켜야되네. ClientRpc로 실행하고 NetId로 구분할 수 있을까?
+        //그냥 보석 색깔 하나라도 플레이어가 클릭하게 하자. 그러면 일괄적으로 ClientRpc날리면 된다.
+        foreach(var kv in netIdAndJewelsIndex)
+        {
+            RpcSetUIToLoseJewels(kv.Key, kv.Value);
+        }
 
+        //4. 패배 플레이어들이 선택 다 했는지 체크.
+        if (AllPlayerSelectedJewel(netIdAndJewelsIndex.Count))
+        {
+            //선택을 바탕으로 모든 클라에서 패배 플레이어의 Jewel 보너스로.
+            OnAllPlayersSelectedJewel();
+        }
+
+
+    }
+
+    private bool AllPlayerSelectedJewel(int dic_count)
+    {
+        return (dic_count == SelectedJewelIndexList.Count);
+    }
+
+    private void OnAllPlayersSelectedJewel()
+    {
+        AddJewelsToBonus();
+
+        RpcLoseJewels();
+
+        CmdRequestUpdateBonus();
+    }
+
+    //Server의 보너스에 더하는 로직
+    [Server]
+    private void AddJewelsToBonus()
+    {
+        foreach (var kv in SelectedJewelIndexList)
+        {
+            BonusJewels[kv.Value] += GetPlayerFromNetId((int)kv.Key).Jewels[kv.Value];
+        }
+    }
+
+    //클라의 패배 플레이어 Jewel을 없애는 로직
+    [ClientRpc]
+    private void RpcLoseJewels()
+    {
+        foreach (var kv in SelectedJewelIndexList)
+        {
+            GetPlayerFromNetId((int)kv.Key).Jewels[kv.Value] = 0;
+        }
+    }
+
+    [Command(requiresAuthority = false)]
+    private void CmdRequestUpdateBonus()
+    {
+        UpdateBonus(BonusJewels);
+    }
+
+    [ClientRpc]
+    private void UpdateBonus(List<int> bonus)
+    {
+        BonusJewels = bonus;
+    }
+
+    //보석을 잃을 플레이어에게 UI 띄워주기
+    [ClientRpc]
+    private void RpcSetUIToLoseJewels(int playerId, List<int> maxJewels)
+    {
+        //모든 클라에 날려서 보석을 잃는 플레이어가 아니면 return
+        if(NetworkClient.localPlayer.netId != playerId) { return; }
+
+        //일단 보석 선택창 띄워야지
+        BattleUIManager.Instance.RequestUpdateRemoveJewels(maxJewels);
+
+        //그다음은요? 일단 플레이어가 선택창에서 선택을 하겠지?
     }
 
     private List<int> FindMaxIndexes(List<int> list)

@@ -44,6 +44,11 @@ public class BattleUIManager : UIManager
         battleUI.UpdateSelectCardPopup();
     }
 
+    public void RequestUpdateRemoveJewels(List<int> maxJewels)
+    {
+        battleUI.UpdateRemoveJewels(maxJewels);
+    }
+
     public void RequestUpdateBonusJewels()
     {
         battleUI.UpdateBonusJewels();
