@@ -19,7 +19,7 @@ public class Card : NetworkBehaviour
     [SerializeField] Image Img_Card;
     [SerializeField] Button Btn_Card;
     [SerializeField] Text Text_Number;
-    [SerializeField] Popup_Select Popup_Select;
+    private Popup_Select Popup_Select;
 
     [Header("Color 0:Red 1:Green 2:Yellow 3:Blue 4:Purple")]
     [SerializeField] List<Sprite> Sprite_color;
@@ -42,7 +42,7 @@ public class Card : NetworkBehaviour
 
     public void OnClick_Card()
     {
-        //NewGameManager에 번호를 localPlayer의 Netid와 함께 넘기기(이거 서버에서만 이루어져야하나?)
+        //NewGameManager에 번호를 localPlayer의 Netid와 함께 넘기기(이건 NewGameManager에서 해줌)
         int cardNum = int.Parse(Text_Number.text);
         NewGameManager.Instance.CmdAddSubmittedCard(NetworkClient.localPlayer, cardNum);
 

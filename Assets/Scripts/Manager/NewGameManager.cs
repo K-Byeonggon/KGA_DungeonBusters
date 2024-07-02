@@ -318,6 +318,8 @@ public class NewGameManager : NetworkBehaviour
 
         bool StageClear = totalDamage >= monsterHp;
 
+        CmdRequestSetUsedCard();
+
         Debug.Log($"totalDamage == {totalDamage}");
         if(StageClear) { CmdChooseRewardedPlayer(); }
         else { /*보석 잃는 로직*/ }
@@ -371,6 +373,16 @@ public class NewGameManager : NetworkBehaviour
     }
 
     [Command(requiresAuthority = false)]
+    public void CmdRequestSetUsedCard()
+    {
+        //-1. 플레이어가 낸 카드들 UsedCard에 저장하고 갱신하기.
+        foreach (var kv in SubmittedCardList)
+        {
+            RpcSetPlayerUsedCard(kv.Key, kv.Value);
+        }
+    }
+
+    [Command(requiresAuthority = false)]
     public void CmdChooseRewardedPlayer()
     {
         //0. 중복 카드 제거
@@ -380,7 +392,8 @@ public class NewGameManager : NetworkBehaviour
         {
             if (CurrentMonster.Reward[reward_n] == null)
                 break;
-            //1. 가장 작은 카드 낸 플레이어 NetId 구하기(그 후 Dic에서 삭제) (1명으로 test하면 보상이 2개 이상일때 에러 발생)
+            //1. 가장 작은 카드 낸 플레이어 NetId 구하기(그 후 Dic에서 삭제)
+            //(1명으로 test하면 보상이 2개 이상일때 에러 발생)
             List<int> playerNetIds = GetMinCardPlayerNetIds();
             int usedCard = SubmittedCardList[playerNetIds[0]];
             SubmittedCardList.Remove(playerNetIds[0]);
@@ -390,10 +403,8 @@ public class NewGameManager : NetworkBehaviour
             foreach (int playerNetId in playerNetIds)
             {
                 RpcPlayerGetReward(playerNetId, reward_n);
-                RpcSetPlayerUsedCard(playerNetId, usedCard);
             }
 
-            //3. 모든 클라의 해당 NetId가진 플레이어 가진 카드, 사용한 카드 갱신 (가진 카드는 모두 바꿀 필요없지만)
             
         }
     }
@@ -425,7 +436,39 @@ public class NewGameManager : NetworkBehaviour
 
     #region 보석 잃는 로직
 
+    public void PutJewelsInBonus()
+    {
+        //1. 가장 작은 카드를 낸 플레이어들의 NetId 구하기
+        List<int> losePlayerNetIds = GetMinCardPlayerNetIds();
 
+        //2. 해당 NetId의 플레이어가 가장 많이 가진 보석의 색깔 구하기.
+        List<int> maxJewels = new List<int>();
+        foreach (int netId in losePlayerNetIds)
+        {
+            MyPlayer player = GetPlayerFromNetId(netId);
+
+            maxJewels = FindMaxIndexes(player.Jewels);
+        }
+
+        //3-1. 보석의 색깔이 여러개면, 플레이어에게 어떤 보석을 버릴지 선택을 시킨다
+        //그냥 보석 색깔 하나라도 플레이어가 클릭하게 하자.
+        //이거는 보석 색깔이 여러개인 플레이어만 시켜야되네. ClientRpc로 실행하고 NetId로 구분할 수 있을까?
+
+    }
+
+    private List<int> FindMaxIndexes(List<int> list)
+    {
+        int maxValue = list.Max();
+        List<int> maxIndexes = new List<int>();
+        for(int i = 0; i < list.Count; i++)
+        {
+            if (list[i] == maxValue)
+            {
+                maxIndexes.Add(i);
+            }
+        }
+        return maxIndexes;
+    }
 
     #endregion
 
