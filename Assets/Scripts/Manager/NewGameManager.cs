@@ -38,6 +38,7 @@ public class NewGameManager : NetworkBehaviour
     public Dictionary<int, Monster> _monsterList = new Dictionary<int, Monster>();
 
     #region 프로퍼티
+
     public int CurrentDungeon
     {
         get { return _currentDungeon; }
@@ -105,6 +106,7 @@ public class NewGameManager : NetworkBehaviour
     #endregion
 
     #region hook함수
+
     private void OnChangeCurrentDungeon(int oldDungeon, int newDungeon)
     {
         BattleUIManager.Instance.RequestUpdateDungeon();
@@ -120,14 +122,13 @@ public class NewGameManager : NetworkBehaviour
         CurrentMonster = DataManager.Instance.GetMonster(newMonsterId);
     }
 
-
-
     private void OnChangeBonusJewels(List<int> oldJewels, List<int> newJewels)
     {
         BattleUIManager.Instance.RequestUpdateBonusJewels();
     }
 
     #endregion
+
 
     private void Awake()
     {
@@ -144,8 +145,7 @@ public class NewGameManager : NetworkBehaviour
     {
         base.OnStartClient();
 
-        InitializeGame();
-        //CmdSendAllStateToClient();
+        if(isServer) InitializeGame();
     }
 
 
@@ -218,23 +218,7 @@ public class NewGameManager : NetworkBehaviour
         CurrentDungeon++;
         this.Enqueue4MonstersFromData(_currentDungeon);
 
-        //RpcUpdateDungeonState(CurrentDungeon);
-
         ChangeState(GameState.StartStage);
-    }
-
-    [Command(requiresAuthority = false)]
-    private void RequestCurrentDungeonInfo()
-    {
-        RpcUpdateDungeonState(CurrentDungeon);
-    }
-
-    // 클라이언트에서 던전 상태 업데이트
-    [ClientRpc]
-    private void RpcUpdateDungeonState(int dungeon)
-    {
-        Debug.Log("ClientRpc: UpdateDungeonState");
-        CurrentDungeon = dungeon;
     }
 
     #endregion
@@ -253,25 +237,6 @@ public class NewGameManager : NetworkBehaviour
         //RpcUpdateStageState(CurrentStage, CurrentMonster);
 
         ChangeState(GameState.SubmitCard);
-    }
-
-    [ClientRpc]
-    private void RpcUpdateStageState(int stage, int monsterId)
-    {
-        Debug.Log("ClientRpc: UpdateStageState");
-        CurrentStage = stage;
-
-        CurrentMonster = DataManager.Instance.GetMonster(monsterId);
-
-        SetLocalPopupSelect();
-    }
-    //StartServer에서 Server를 다 바꾸고, StartClient에서 클라를 갱신
-    [Command(requiresAuthority = false)]
-    private void CmdSendAllStateToClient()
-    {
-        RpcUpdateDungeonState(CurrentDungeon);
-        //여기서 몬스터ID를 주면, 클라에선 다시 xml에서 Id로 몬스터 정보 받기.
-        RpcUpdateStageState(CurrentStage, CurrentMonster.DataId);
     }
 
     #endregion
