@@ -33,8 +33,6 @@ public class Content_Jewel : MonoBehaviour
 
     public void OnClick_Jewel()
     {
-        Debug.Log("왜 튕김?");
-
         //클릭시 플레이어의 netId와 선택한 Jewel의 Index가 NewGameManager의 SelectedJewelIndexList에 저장된다.
         //NewGameManager.Instance.SelectedJewelIndexList.Add(NetworkClient.localPlayer.netId, jewelIndex);
         NewGameManager.Instance.AddSelectedJewelIndexList(jewelIndex);

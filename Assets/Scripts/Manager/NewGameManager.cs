@@ -30,8 +30,6 @@ public class NewGameManager : NetworkBehaviour
         set
         {
             _currentDungeon = value;
-            //여기서 UI 변경? 하면 클라도 값이 변경될테니 UI 변경 되겠지?
-            Debug.Log("Update CurrentDungeon");
             BattleUIManager.Instance.RequestUpdateDungeon();
         }
     }
@@ -42,7 +40,6 @@ public class NewGameManager : NetworkBehaviour
         set
         {
             _currentStage = value;
-            Debug.Log("Update CurrentStage");
             BattleUIManager.Instance.RequestUpdateStage();
         }
     }
@@ -53,7 +50,6 @@ public class NewGameManager : NetworkBehaviour
         set
         {
             _currentMonster = value;
-            Debug.Log("Update CurrentMonster");
             BattleUIManager.Instance.RequestUpdateMonster();
         }
     }
@@ -115,13 +111,14 @@ public class NewGameManager : NetworkBehaviour
     public override void OnStartServer()
     {
         base.OnStartServer();
-        InitializeGame();
+        //InitializeGame();
     }
 
     public override void OnStartClient()
     {
         base.OnStartClient();
         //RequestCurrentDungeonInfo();
+        InitializeGame();
         CmdSendAllStateToClient();
     }
 
@@ -506,6 +503,7 @@ public class NewGameManager : NetworkBehaviour
     }
 
     //4. 패배 플레이어들이 선택 다 했는지 체크.
+    [Command(requiresAuthority = false)]
     public void RemoveJewelsAndSetBonus()
     {
         if (AllPlayerSelectedJewel(NetIdAndJewelsIndex.Count))
