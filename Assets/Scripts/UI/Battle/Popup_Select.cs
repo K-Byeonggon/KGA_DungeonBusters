@@ -21,15 +21,6 @@ public class Popup_Select : MonoBehaviour
     public void SetCards()
     {
         //LocalPlayer가 가지고 있는 카드 목록 받아서,
-        if(NetworkClient.localPlayer == null)
-        {
-            Debug.LogError("localPlayer == null");
-        }
-        else
-        {
-            Debug.Log($"LocalPlayer.name = {NetworkClient.localPlayer.name}");
-        }
-
         MyPlayer player = NetworkClient.localPlayer.GetComponent<MyPlayer>();
 
         if (player == null ) { Debug.LogError("player == null"); return; }

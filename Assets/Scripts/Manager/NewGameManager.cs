@@ -503,16 +503,21 @@ public class NewGameManager : NetworkBehaviour
         }
     }
 
+    [Server]
     private bool AllPlayerSelectedJewel(int dic_count)
     {
         return (dic_count == SelectedJewelIndexList.Count);
     }
 
+    [Server]
     private void OnAllPlayersSelectedJewel()
     {
         AddJewelsToBonus();
 
-        RpcLoseJewels();
+        foreach(var kv in SelectedJewelIndexList)
+        {
+            RpcLoseJewels((int)kv.Key, kv.Value);
+        }
 
         CmdRequestUpdateBonus();
     }
@@ -527,14 +532,13 @@ public class NewGameManager : NetworkBehaviour
         }
     }
 
+
     //클라의 패배 플레이어 Jewel을 없애는 로직
     [ClientRpc]
-    private void RpcLoseJewels()
+    private void RpcLoseJewels(int netId, int jewelIndex)
     {
-        foreach (var kv in SelectedJewelIndexList)
-        {
-            GetPlayerFromNetId((int)kv.Key).Jewels[kv.Value] = 0;
-        }
+        MyPlayer player = GetPlayerFromNetId(netId);
+        player.Jewels[jewelIndex] = 0;
     }
 
     [Command(requiresAuthority = false)]
