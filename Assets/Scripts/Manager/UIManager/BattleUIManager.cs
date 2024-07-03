@@ -41,10 +41,16 @@ public class BattleUIManager : UIManager
         battleUI.RequestCreatePlayerPanel(player_netId);
     }
 
-    public void RequestUpdatePlayer(int player_netId)
+    public void RequestUpdatePlayerJewels(int player_netId)
     {
-        battleUI.RequestUpdatePlayerPanel(player_netId);
+        battleUI.RequestUpdatePlayerJewels(player_netId);
     }
+
+    public void RequestUpdatePlayerUsedCards(int player_netId)
+    {
+        battleUI.RequestUpdatePlayerUsedCards(player_netId);
+    }
+
     #endregion
 
     public void RequestUpdateSelectCard()

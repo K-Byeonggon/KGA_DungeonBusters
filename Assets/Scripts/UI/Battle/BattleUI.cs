@@ -32,15 +32,23 @@ public class BattleUI : MonoBehaviour
     [SerializeField] Popup_Select popup_Select;
     [SerializeField] Popup_RemoveJewels popup_RemoveJewels;
 
+
+    #region Player_Panels
     public void RequestCreatePlayerPanel(int player_netId)
     {  
         panel_Players.CreatePlayerPanel(player_netId);
     }
 
-    public void RequestUpdatePlayerPanel(int player_netId)
+    public void RequestUpdatePlayerJewels(int player_netId)
     {
-        panel_Players.UpdatePlayerPanel(player_netId);
+        panel_Players.UpdatePanelJewels(player_netId);
     }
+
+    public void RequestUpdatePlayerUsedCards(int player_netId)
+    {
+        panel_Players.UpdatePanelUsedCards(player_netId);
+    }
+    #endregion
 
     public void SetEnemy()
     {

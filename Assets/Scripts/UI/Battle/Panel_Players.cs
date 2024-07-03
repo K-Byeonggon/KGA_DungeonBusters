@@ -33,9 +33,14 @@ public class Panel_Players : MonoBehaviour
         PlayerPanelList.Add(player_netId, player1);
     }
 
-    public void UpdatePlayerPanel(int player_netId)
+
+    public void UpdatePanelJewels(int player_netId)
     {
         PlayerPanelList[player_netId].UpdateJewelsInfo(player_netId);
+    }
+
+    public void UpdatePanelUsedCards(int player_netId)
+    {
         PlayerPanelList[player_netId].UpdateUsedCardsInfo(player_netId);
     }
 }

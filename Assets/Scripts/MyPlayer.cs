@@ -31,7 +31,7 @@ public class MyPlayer : NetworkBehaviour
         set
         {
             _jewels = value;
-            BattleUIManager.Instance.RequestUpdatePlayer((int)this.netId);
+            BattleUIManager.Instance.RequestUpdatePlayerJewels((int)this.netId);
         }
     }
     public List<int> UsedCards
@@ -40,7 +40,7 @@ public class MyPlayer : NetworkBehaviour
         set
         {
             _usedCards = value;
-            BattleUIManager.Instance.RequestUpdatePlayer((int)this.netId);
+            BattleUIManager.Instance.RequestUpdatePlayerUsedCards((int)this.netId);
         }
     }
 
