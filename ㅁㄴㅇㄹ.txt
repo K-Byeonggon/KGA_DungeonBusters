@@ -1,0 +1,28 @@
+패배 로직 버그
+
+1. 보석 선택 창 보석 개수 짤림
+- Scroll View 수직으로 늘여주자.
+
+2. 보석 선택 창 보너스 Jewel 반영 안됨.
+- 연결해주자.
+
+3. AllPlayersSelected 안걸림.
+선택 버튼에 넣어놔야할듯.
+
+4. Player_Panel에 Used와 Jewel Update해줘야함.
+
+
+일단 카드 선택후에 튕기니까 그 근처를 찍어보자.
+
+버그 목록
+- 클라에서 Bonus Jewels가 초기화 되어있지않음.
+- 클라에서 카드를 선택하면 튕김.
+
+-netId가 문제?
+
+-netId를 상수로 하면 AllPlayersSubmitted() == false라서
+뒤의 내용이 진행되지 않아서 튕기지 않음.
+
+튕기는 부분은 RpcPlayerGetReward, RpcSetPlayerUsedCard
+
+GetPlayerFromNetId가 정상적으로 MyPlayer를 찾아주지 않는다.

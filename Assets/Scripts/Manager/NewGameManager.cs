@@ -7,30 +7,30 @@ public class NewGameManager : NetworkBehaviour
 {
     public static NewGameManager Instance;
 
-    //°ÔÀÓ »óÅÂ º¯¼ö
+    //ê²Œì„ ìƒíƒœ ë³€ìˆ˜
     [SerializeField] GameState _currentState;
-    [SerializeField] int _currentDungeon;                               //ÇöÀç ÁøÇàÁßÀÎ ´øÀü
-    [SerializeField] int _currentStage;                                 //ÇöÀç ÁøÇàÁßÀÎ ½ºÅ×ÀÌÁö
-    [SerializeField] Monster _currentMonster;                           //ÇöÀç ÀüÅõÁßÀÎ ¸ó½ºÅÍ
-    [SerializeField] Queue<Monster> _currentDungeonMonsterQueue;        //ÇöÀç ÁøÇàÁßÀÎ ´øÀü¿¡ ÀÖ´Â ¸ó½ºÅÍ¸¦ ´ãÀº Queue
-    [SerializeField] Dictionary<int, int> _submittedCardList;           //key:netId, value:Á¦ÃâÇÑ Ä«µåNum
-    [SerializeField] Dictionary<int, int> _duplicationCheck;            //key:CardNum, value:ÇØ´çNumÀÇ °³¼ö
-    [SerializeField] List<int> _bonusJewels;                            //º¸³Ê½º Jewel
-    [SerializeField] Dictionary<uint, int> _selectedJewelIndexList;     //key:netId, value:ÇÃ·¹ÀÌ¾î°¡ ¼±ÅÃÇÑ ¹ö¸± Jewel ÀÎµ¦½º
-    [SerializeField] Dictionary<int, List<int>> _netIdAndJewelsIndex;    //key:netId, value:°¡Àå¸¹ÀºJewelÀÇ ÀÎµ¦½ºList
+    [SerializeField] int _currentDungeon;                               //í˜„ì¬ ì§„í–‰ì¤‘ì¸ ë˜ì „
+    [SerializeField] int _currentStage;                                 //í˜„ì¬ ì§„í–‰ì¤‘ì¸ ìŠ¤í…Œì´ì§€
+    [SerializeField] Monster _currentMonster;                           //í˜„ì¬ ì „íˆ¬ì¤‘ì¸ ëª¬ìŠ¤í„°
+    [SerializeField] Queue<Monster> _currentDungeonMonsterQueue;        //í˜„ì¬ ì§„í–‰ì¤‘ì¸ ë˜ì „ì— ìˆëŠ” ëª¬ìŠ¤í„°ë¥¼ ë‹´ì€ Queue
+    [SerializeField] Dictionary<int, int> _submittedCardList;           //key:netId, value:ì œì¶œí•œ ì¹´ë“œNum
+    [SerializeField] Dictionary<int, int> _duplicationCheck;            //key:CardNum, value:í•´ë‹¹Numì˜ ê°œìˆ˜
+    [SerializeField][SyncVar] List<int> _bonusJewels;                            //ë³´ë„ˆìŠ¤ Jewel
+    [SerializeField] Dictionary<uint, int> _selectedJewelIndexList;     //key:netId, value:í”Œë ˆì´ì–´ê°€ ì„ íƒí•œ ë²„ë¦´ Jewel ì¸ë±ìŠ¤
+    [SerializeField] Dictionary<int, List<int>> _netIdAndJewelsIndex;    //key:netId, value:ê°€ì¥ë§ì€Jewelì˜ ì¸ë±ìŠ¤List
 
     [SerializeField] int _currentMonsterId;
 
     public Dictionary<int, Monster> _monsterList = new Dictionary<int, Monster>();
 
-    #region ÇÁ·ÎÆÛÆ¼
+    #region í”„ë¡œí¼í‹°
     public int CurrentDungeon
     {
         get { return _currentDungeon; }
         set
         {
             _currentDungeon = value;
-            //¿©±â¼­ UI º¯°æ? ÇÏ¸é Å¬¶óµµ °ªÀÌ º¯°æµÉÅ×´Ï UI º¯°æ µÇ°ÚÁö?
+            //ì—¬ê¸°ì„œ UI ë³€ê²½? í•˜ë©´ í´ë¼ë„ ê°’ì´ ë³€ê²½ë í…Œë‹ˆ UI ë³€ê²½ ë˜ê² ì§€?
             Debug.Log("Update CurrentDungeon");
             BattleUIManager.Instance.RequestUpdateDungeon();
         }
@@ -127,7 +127,7 @@ public class NewGameManager : NetworkBehaviour
 
 
 
-    #region »óÅÂ¸Ó½Å
+    #region ìƒíƒœë¨¸ì‹ 
     [Server]
     private void ChangeState(GameState newState)
     {
@@ -166,9 +166,9 @@ public class NewGameManager : NetworkBehaviour
 
 
 
-    #region 1. °ÔÀÓ ÃÊ±âÈ­
+    #region 1. ê²Œì„ ì´ˆê¸°í™”
 
-    //°ÔÀÓ ÃÊ±âÈ­ ÇÔ¼ö(¼­¹ö¿¡¼­¸¸ ½ÇÇà)
+    //ê²Œì„ ì´ˆê¸°í™” í•¨ìˆ˜(ì„œë²„ì—ì„œë§Œ ì‹¤í–‰)
     [Server]
     private void InitializeGame()
     {
@@ -185,9 +185,9 @@ public class NewGameManager : NetworkBehaviour
     #endregion
 
 
-    #region 2. ´øÀü ½ÃÀÛ
+    #region 2. ë˜ì „ ì‹œì‘
 
-    // ´øÀü ½ÃÀÛ ÇÔ¼ö(¼­¹ö¿¡¼­¸¸ ½ÇÇà ÈÄ, ClientRpc·Î °¢ Å¬¶ó¿¡ »óÅÂ ¾÷µ¥ÀÌÆ®)
+    // ë˜ì „ ì‹œì‘ í•¨ìˆ˜(ì„œë²„ì—ì„œë§Œ ì‹¤í–‰ í›„, ClientRpcë¡œ ê° í´ë¼ì— ìƒíƒœ ì—…ë°ì´íŠ¸)
     
     [Server]
     private void StartDungeon()
@@ -206,7 +206,7 @@ public class NewGameManager : NetworkBehaviour
         RpcUpdateDungeonState(CurrentDungeon);
     }
 
-    // Å¬¶óÀÌ¾ğÆ®¿¡¼­ ´øÀü »óÅÂ ¾÷µ¥ÀÌÆ®
+    // í´ë¼ì´ì–¸íŠ¸ì—ì„œ ë˜ì „ ìƒíƒœ ì—…ë°ì´íŠ¸
     [ClientRpc]
     private void RpcUpdateDungeonState(int dungeon)
     {
@@ -216,9 +216,9 @@ public class NewGameManager : NetworkBehaviour
 
     #endregion
 
-    #region 2-1. ½ºÅ×ÀÌÁö ½ÃÀÛ
+    #region 2-1. ìŠ¤í…Œì´ì§€ ì‹œì‘
 
-    //½ºÅ×ÀÌÁö ½ÃÀÛÀü ÃÊ±âÈ­: ÇÃ·¹ÀÌ¾îµéÀÌ Á¦ÃâÇÑ Ä«µå, ÇÃ·¹ÀÌ¾î º¸¼®°³¼ö, »ç¿ëÇÑ Ä«µå
+    //ìŠ¤í…Œì´ì§€ ì‹œì‘ì „ ì´ˆê¸°í™”: í”Œë ˆì´ì–´ë“¤ì´ ì œì¶œí•œ ì¹´ë“œ, í”Œë ˆì´ì–´ ë³´ì„ê°œìˆ˜, ì‚¬ìš©í•œ ì¹´ë“œ
 
     [Server]
     private void StartStage()
@@ -242,18 +242,18 @@ public class NewGameManager : NetworkBehaviour
 
         SetLocalPopupSelect();
     }
-    //StartServer¿¡¼­ Server¸¦ ´Ù ¹Ù²Ù°í, StartClient¿¡¼­ Å¬¶ó¸¦ °»½Å
+    //StartServerì—ì„œ Serverë¥¼ ë‹¤ ë°”ê¾¸ê³ , StartClientì—ì„œ í´ë¼ë¥¼ ê°±ì‹ 
     [Command(requiresAuthority = false)]
     private void CmdSendAllStateToClient()
     {
         RpcUpdateDungeonState(CurrentDungeon);
-        //¿©±â¼­ ¸ó½ºÅÍID¸¦ ÁÖ¸é, Å¬¶ó¿¡¼± ´Ù½Ã xml¿¡¼­ Id·Î ¸ó½ºÅÍ Á¤º¸ ¹Ş±â.
+        //ì—¬ê¸°ì„œ ëª¬ìŠ¤í„°IDë¥¼ ì£¼ë©´, í´ë¼ì—ì„  ë‹¤ì‹œ xmlì—ì„œ Idë¡œ ëª¬ìŠ¤í„° ì •ë³´ ë°›ê¸°.
         RpcUpdateStageState(CurrentStage, CurrentMonster.DataId);
     }
 
     #endregion
 
-    #region 2-2. ÇÃ·¹ÀÌ¾î Ä«µå ¼¼ÆÃ
+    #region 2-2. í”Œë ˆì´ì–´ ì¹´ë“œ ì„¸íŒ…
 
     private void SetLocalPopupSelect()
     {
@@ -264,9 +264,9 @@ public class NewGameManager : NetworkBehaviour
 
 
 
-    #region 3. Ä«µå Á¦Ãâ Ã³¸®
+    #region 3. ì¹´ë“œ ì œì¶œ ì²˜ë¦¬
 
-    // ÀÌ°Ç ¸ğµç Å¬¶ó¿¡¼­ Ä«µå Á¦Ãâ ÇÏ´Â°Ç°¡?
+    // ì´ê±´ ëª¨ë“  í´ë¼ì—ì„œ ì¹´ë“œ ì œì¶œ í•˜ëŠ”ê±´ê°€?
     public void OnSubmitCard(int card)
     {
         if (isClient)
@@ -275,7 +275,7 @@ public class NewGameManager : NetworkBehaviour
         }
     }
 
-    //ÇÃ·¹ÀÌ¾îÀÇ Ä«µå Á¦Ãâ Ã³¸®(Å¬¶ó¿¡¼­ ¿äÃ»ÈÄ, ¼­¹ö¿¡¼­ Ã³¸®)
+    //í”Œë ˆì´ì–´ì˜ ì¹´ë“œ ì œì¶œ ì²˜ë¦¬(í´ë¼ì—ì„œ ìš”ì²­í›„, ì„œë²„ì—ì„œ ì²˜ë¦¬)
     [Command(requiresAuthority = false)]
     public void CmdAddSubmittedCard(int netId, int cardNum)
     {
@@ -304,7 +304,7 @@ public class NewGameManager : NetworkBehaviour
         }
         else
         {
-            Debug.Log("¾ÆÁ÷ Á¦Ãâ¾ÈÇÑ ÇÃ·¹ÀÌ¾î ÀÖÀ½.");
+            Debug.Log("ì•„ì§ ì œì¶œì•ˆí•œ í”Œë ˆì´ì–´ ìˆìŒ.");
         }
     }
 
@@ -355,7 +355,7 @@ public class NewGameManager : NetworkBehaviour
 
 
 
-    #region º¸¼® º¸»ó ·ÎÁ÷
+    #region ë³´ì„ ë³´ìƒ ë¡œì§
     private void RemoveDuplicatedCard()
     {
         foreach (int card in SubmittedCardList.Values)
@@ -377,8 +377,8 @@ public class NewGameManager : NetworkBehaviour
     }
 
 
-    //Åä¹ú ¼º°ø½Ã´Â º¸»óÀ» ¹ŞÀ» °¡Àå ÀÛÀº °ªÀÌ ¿©·¯°³ÀÏ °æ¿ì°¡ ¾øÁö¸¸,
-    //Åä¹ú ½ÇÆĞ½Ã´Â º¸»óÀ» ÀÒÀ» °¡Àå ÀÛÀº °ªÀÌ ¿©·¯°³ÀÏ ¼ö ÀÖ´Ù.
+    //í† ë²Œ ì„±ê³µì‹œëŠ” ë³´ìƒì„ ë°›ì„ ê°€ì¥ ì‘ì€ ê°’ì´ ì—¬ëŸ¬ê°œì¼ ê²½ìš°ê°€ ì—†ì§€ë§Œ,
+    //í† ë²Œ ì‹¤íŒ¨ì‹œëŠ” ë³´ìƒì„ ìƒì„ ê°€ì¥ ì‘ì€ ê°’ì´ ì—¬ëŸ¬ê°œì¼ ìˆ˜ ìˆë‹¤.
     private List<int> GetMinCardPlayerNetIds()
     {
         int minValue = SubmittedCardList.Values.Min();
@@ -391,26 +391,26 @@ public class NewGameManager : NetworkBehaviour
 
     private MyPlayer GetPlayerFromNetId(int playerNetId)
     {   
-        MyPlayer player = null; NetworkIdentity networkIdentity;
-        if (NetworkServer.spawned.TryGetValue((uint)playerNetId, out networkIdentity))
+        NetworkIdentity networkIdentity;
+        if (NetworkClient.spawned.TryGetValue((uint)playerNetId, out networkIdentity))
         {
-            player = networkIdentity.gameObject.GetComponent<MyPlayer>();
+            MyPlayer player = networkIdentity.gameObject.GetComponent<MyPlayer>();
             return player;
         }
-        else { return player; }
+        else { return null; }
     }
 
     //[Command(requiresAuthority = false)]
     [Server]
     public void CmdRequestSetUsedCard()
     {
-        //µğ¹ö±ë¿ë
+        //ë””ë²„ê¹…ìš©
         foreach(var kv in SubmittedCardList)
         {
             Debug.Log($"netId:{kv.Key} Card:{kv.Value}");
         }
 
-        //-1. ÇÃ·¹ÀÌ¾î°¡ ³½ Ä«µåµé UsedCard¿¡ ÀúÀåÇÏ°í °»½ÅÇÏ±â.
+        //-1. í”Œë ˆì´ì–´ê°€ ë‚¸ ì¹´ë“œë“¤ UsedCardì— ì €ì¥í•˜ê³  ê°±ì‹ í•˜ê¸°.
         foreach (var kv in SubmittedCardList)
         {
             RpcSetPlayerUsedCard(kv.Key, kv.Value);
@@ -421,21 +421,21 @@ public class NewGameManager : NetworkBehaviour
     [Server]
     public void CmdChooseRewardedPlayer()
     {
-        //0. Áßº¹ Ä«µå Á¦°Å
+        //0. ì¤‘ë³µ ì¹´ë“œ ì œê±°
         RemoveDuplicatedCard();
         
         for (int reward_n = 0; reward_n < 3; reward_n++)
         {
             if (CurrentMonster.Reward[reward_n] == null)
                 break;
-            //1. °¡Àå ÀÛÀº Ä«µå ³½ ÇÃ·¹ÀÌ¾î NetId ±¸ÇÏ±â(±× ÈÄ Dic¿¡¼­ »èÁ¦)
-            //(1¸íÀ¸·Î testÇÏ¸é º¸»óÀÌ 2°³ ÀÌ»óÀÏ¶§ ¿¡·¯ ¹ß»ı)
+            //1. ê°€ì¥ ì‘ì€ ì¹´ë“œ ë‚¸ í”Œë ˆì´ì–´ NetId êµ¬í•˜ê¸°(ê·¸ í›„ Dicì—ì„œ ì‚­ì œ)
+            //(1ëª…ìœ¼ë¡œ testí•˜ë©´ ë³´ìƒì´ 2ê°œ ì´ìƒì¼ë•Œ ì—ëŸ¬ ë°œìƒ)
             List<int> playerNetIds = GetMinCardPlayerNetIds();
             int usedCard = SubmittedCardList[playerNetIds[0]];
             SubmittedCardList.Remove(playerNetIds[0]);
 
 
-            //2. ¸ğµç Å¬¶óÀÇ ÇØ´ç NetId°¡Áø ÇÃ·¹ÀÌ¾î¿¡ º¸»ó ÁÖ±â.
+            //2. ëª¨ë“  í´ë¼ì˜ í•´ë‹¹ NetIdê°€ì§„ í”Œë ˆì´ì–´ì— ë³´ìƒ ì£¼ê¸°.
             foreach (int playerNetId in playerNetIds)
             {
                 RpcPlayerGetReward(playerNetId, reward_n);
@@ -448,10 +448,10 @@ public class NewGameManager : NetworkBehaviour
     [ClientRpc]
     public void RpcPlayerGetReward(int playerNetId, int reward_n)
     {
-        //2-1. NetIdÀÇ ÇÃ·¹ÀÌ¾î Ã£±â
+        //2-1. NetIdì˜ í”Œë ˆì´ì–´ ì°¾ê¸°
         MyPlayer player = GetPlayerFromNetId(playerNetId);
 
-        //2-2. ÇÃ·¹ÀÌ¾î¿¡ ÇØ´ç RewardÀÇ º¸¼® Ãß°¡.
+        //2-2. í”Œë ˆì´ì–´ì— í•´ë‹¹ Rewardì˜ ë³´ì„ ì¶”ê°€.
         if (CurrentMonster.Reward[reward_n] != null)
         {
             player.Jewels[0] += CurrentMonster.Reward[reward_n][0];
@@ -475,15 +475,15 @@ public class NewGameManager : NetworkBehaviour
 
     #endregion
 
-    #region º¸¼® ÀÒ´Â ·ÎÁ÷
+    #region ë³´ì„ ìƒëŠ” ë¡œì§
 
     [Command(requiresAuthority = false)]
     public void CmdPutJewelsInBonus()
     {
-        //1. °¡Àå ÀÛÀº Ä«µå¸¦ ³½ ÇÃ·¹ÀÌ¾îµéÀÇ NetId ±¸ÇÏ±â
+        //1. ê°€ì¥ ì‘ì€ ì¹´ë“œë¥¼ ë‚¸ í”Œë ˆì´ì–´ë“¤ì˜ NetId êµ¬í•˜ê¸°
         List<int> losePlayerNetIds = GetMinCardPlayerNetIds();
 
-        //2. ÇØ´ç NetIdÀÇ ÇÃ·¹ÀÌ¾î°¡ °¡Àå ¸¹ÀÌ °¡Áø º¸¼®ÀÇ »ö±ò ±¸ÇÏ±â.
+        //2. í•´ë‹¹ NetIdì˜ í”Œë ˆì´ì–´ê°€ ê°€ì¥ ë§ì´ ê°€ì§„ ë³´ì„ì˜ ìƒ‰ê¹” êµ¬í•˜ê¸°.
         foreach (int netId in losePlayerNetIds)
         {
             MyPlayer player = GetPlayerFromNetId(netId);
@@ -491,8 +491,8 @@ public class NewGameManager : NetworkBehaviour
             NetIdAndJewelsIndex.Add(netId, maxJewels);
         }
 
-        //3-1. º¸¼®ÀÇ »ö±òÀÌ ¿©·¯°³¸é, ÇÃ·¹ÀÌ¾î¿¡°Ô ¾î¶² º¸¼®À» ¹ö¸±Áö ¼±ÅÃÀ» ½ÃÅ²´Ù
-        //±×³É º¸¼® »ö±ò ÇÏ³ª¶óµµ ÇÃ·¹ÀÌ¾î°¡ Å¬¸¯ÇÏ°Ô ÇÏÀÚ. ±×·¯¸é ÀÏ°ıÀûÀ¸·Î ClientRpc³¯¸®¸é µÈ´Ù.
+        //3-1. ë³´ì„ì˜ ìƒ‰ê¹”ì´ ì—¬ëŸ¬ê°œë©´, í”Œë ˆì´ì–´ì—ê²Œ ì–´ë–¤ ë³´ì„ì„ ë²„ë¦´ì§€ ì„ íƒì„ ì‹œí‚¨ë‹¤
+        //ê·¸ëƒ¥ ë³´ì„ ìƒ‰ê¹” í•˜ë‚˜ë¼ë„ í”Œë ˆì´ì–´ê°€ í´ë¦­í•˜ê²Œ í•˜ì. ê·¸ëŸ¬ë©´ ì¼ê´„ì ìœ¼ë¡œ ClientRpcë‚ ë¦¬ë©´ ëœë‹¤.
         foreach(var kv in NetIdAndJewelsIndex)
         {
             RpcSetUIToLoseJewels(kv.Key, kv.Value);
@@ -503,12 +503,12 @@ public class NewGameManager : NetworkBehaviour
 
     }
 
-    //4. ÆĞ¹è ÇÃ·¹ÀÌ¾îµéÀÌ ¼±ÅÃ ´Ù Çß´ÂÁö Ã¼Å©.
+    //4. íŒ¨ë°° í”Œë ˆì´ì–´ë“¤ì´ ì„ íƒ ë‹¤ í–ˆëŠ”ì§€ ì²´í¬.
     public void RemoveJewelsAndSetBonus()
     {
         if (AllPlayerSelectedJewel(NetIdAndJewelsIndex.Count))
         {
-            //¼±ÅÃÀ» ¹ÙÅÁÀ¸·Î ¸ğµç Å¬¶ó¿¡¼­ ÆĞ¹è ÇÃ·¹ÀÌ¾îÀÇ Jewel º¸³Ê½º·Î.
+            //ì„ íƒì„ ë°”íƒ•ìœ¼ë¡œ ëª¨ë“  í´ë¼ì—ì„œ íŒ¨ë°° í”Œë ˆì´ì–´ì˜ Jewel ë³´ë„ˆìŠ¤ë¡œ.
             OnAllPlayersSelectedJewel();
         }
     }
@@ -527,7 +527,7 @@ public class NewGameManager : NetworkBehaviour
         CmdRequestUpdateBonus();
     }
 
-    //ServerÀÇ º¸³Ê½º¿¡ ´õÇÏ´Â ·ÎÁ÷
+    //Serverì˜ ë³´ë„ˆìŠ¤ì— ë”í•˜ëŠ” ë¡œì§
     [Server]
     private void AddJewelsToBonus()
     {
@@ -537,7 +537,7 @@ public class NewGameManager : NetworkBehaviour
         }
     }
 
-    //Å¬¶óÀÇ ÆĞ¹è ÇÃ·¹ÀÌ¾î JewelÀ» ¾ø¾Ö´Â ·ÎÁ÷
+    //í´ë¼ì˜ íŒ¨ë°° í”Œë ˆì´ì–´ Jewelì„ ì—†ì• ëŠ” ë¡œì§
     [ClientRpc]
     private void RpcLoseJewels()
     {
@@ -559,17 +559,17 @@ public class NewGameManager : NetworkBehaviour
         BonusJewels = bonus;
     }
 
-    //º¸¼®À» ÀÒÀ» ÇÃ·¹ÀÌ¾î¿¡°Ô UI ¶ç¿öÁÖ±â
+    //ë³´ì„ì„ ìƒì„ í”Œë ˆì´ì–´ì—ê²Œ UI ë„ì›Œì£¼ê¸°
     [ClientRpc]
     private void RpcSetUIToLoseJewels(int playerId, List<int> maxJewels)
     {
-        //¸ğµç Å¬¶ó¿¡ ³¯·Á¼­ º¸¼®À» ÀÒ´Â ÇÃ·¹ÀÌ¾î°¡ ¾Æ´Ï¸é return
+        //ëª¨ë“  í´ë¼ì— ë‚ ë ¤ì„œ ë³´ì„ì„ ìƒëŠ” í”Œë ˆì´ì–´ê°€ ì•„ë‹ˆë©´ return
         if(NetworkClient.localPlayer.netId != playerId) { return; }
 
-        //ÀÏ´Ü º¸¼® ¼±ÅÃÃ¢ ¶ç¿ö¾ßÁö
+        //ì¼ë‹¨ ë³´ì„ ì„ íƒì°½ ë„ì›Œì•¼ì§€
         BattleUIManager.Instance.RequestUpdateRemoveJewels(maxJewels);
 
-        //±×´ÙÀ½Àº¿ä? ÀÏ´Ü ÇÃ·¹ÀÌ¾î°¡ ¼±ÅÃÃ¢¿¡¼­ ¼±ÅÃÀ» ÇÏ°ÚÁö?
+        //ê·¸ë‹¤ìŒì€ìš”? ì¼ë‹¨ í”Œë ˆì´ì–´ê°€ ì„ íƒì°½ì—ì„œ ì„ íƒì„ í•˜ê² ì§€?
     }
 
     private List<int> FindMaxIndexes(List<int> list)
@@ -592,21 +592,21 @@ public class NewGameManager : NetworkBehaviour
     #endregion
 
 
-    #region 4. ÀüÅõ °á°ú °è»ê ¹× º¸»ó ºĞ¹è
-    //ÀüÅõ °á°ú °è»ê ¹× º¸»ó ºĞ¹è (¼­¹ö¿¡¼­ ½ÇÇà ÈÄ, ClientRpc·Î °¢ Å¬¶ó¿¡ »óÅÂ ¾÷µ¥ÀÌÆ®)
+    #region 4. ì „íˆ¬ ê²°ê³¼ ê³„ì‚° ë° ë³´ìƒ ë¶„ë°°
+    //ì „íˆ¬ ê²°ê³¼ ê³„ì‚° ë° ë³´ìƒ ë¶„ë°° (ì„œë²„ì—ì„œ ì‹¤í–‰ í›„, ClientRpcë¡œ ê° í´ë¼ì— ìƒíƒœ ì—…ë°ì´íŠ¸)
     [Server]
     private void CalculateBattleResult()
     {
-        //ÀüÅõ °á°ú °è»ê ¸Ş¼­µå
-        //º¸»ó ºĞ¹è ¸Ş¼­µå
+        //ì „íˆ¬ ê²°ê³¼ ê³„ì‚° ë©”ì„œë“œ
+        //ë³´ìƒ ë¶„ë°° ë©”ì„œë“œ
         RpcUpdateGameState();
     }
 
-    //»óÅÂ µ¿±âÈ­ ÇÔ¼ö
+    //ìƒíƒœ ë™ê¸°í™” í•¨ìˆ˜
     [ClientRpc]
     private void RpcUpdateGameState()
     {
-        //Å¬¶óÀÌ¾ğÆ®¿¡ °ÔÀÓ »óÅÂ ¾÷µ¥ÀÌÆ®
+        //í´ë¼ì´ì–¸íŠ¸ì— ê²Œì„ ìƒíƒœ ì—…ë°ì´íŠ¸
     }
     #endregion
 
