@@ -26,14 +26,10 @@ public class Panel_Player1 : MonoBehaviour
     private void Start()
     {
         SetPlayerInfo();
-        UpdateJewelsInfo();
-        UpdateUsedCardsInfo();
     }
 
     public void SetPlayerInfo()
     {
-        Debug.Log($"Panel_Id:{Panel_Id}, localPlayer.netId{NetworkClient.localPlayer.netId}");
-
         if(Panel_Id == NetworkClient.localPlayer.netId)
         {
             Img_Player.color = Color.red;
