@@ -497,10 +497,12 @@ public class NewGameManager : NetworkBehaviour
         {
             RpcSetUIToLoseJewels(kv.Key, kv.Value);
         }
+    }
 
-        
-
-
+    [Command(requiresAuthority = false)]
+    public void AddSelectedJewelIndexList(int jewelIndex)
+    {
+        SelectedJewelIndexList.Add(NetworkClient.localPlayer.netId, jewelIndex);
     }
 
     //4. 패배 플레이어들이 선택 다 했는지 체크.

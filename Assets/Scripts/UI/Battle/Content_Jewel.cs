@@ -33,13 +33,16 @@ public class Content_Jewel : MonoBehaviour
 
     public void OnClick_Jewel()
     {
-        //Å¬¸¯½Ã ÇÃ·¹ÀÌ¾îÀÇ netId¿Í ¼±ÅÃÇÑ JewelÀÇ Index°¡ NewGameManagerÀÇ SelectedJewelIndexList¿¡ ÀúÀåµÈ´Ù.
-        NewGameManager.Instance.SelectedJewelIndexList.Add(NetworkClient.localPlayer.netId, jewelIndex);
-        
-        //PopupÃ¢ ²¨ÁÜ
+        Debug.Log("ì™œ íŠ•ê¹€?");
+
+        //í´ë¦­ì‹œ í”Œë ˆì´ì–´ì˜ netIdì™€ ì„ íƒí•œ Jewelì˜ Indexê°€ NewGameManagerì˜ SelectedJewelIndexListì— ì €ì¥ëœë‹¤.
+        //NewGameManager.Instance.SelectedJewelIndexList.Add(NetworkClient.localPlayer.netId, jewelIndex);
+        NewGameManager.Instance.AddSelectedJewelIndexList(jewelIndex);
+
+        //Popupì°½ êº¼ì¤Œ
         Popup_RemoveJewels.UISetActive(false);
 
-        //¿©±â¼­ ÆĞ¹èÇÃ·¹ÀÌ¾î°¡ ´Ù Ã¼Å©Çß´ÂÁö Ã¼Å©
+        //ì—¬ê¸°ì„œ íŒ¨ë°°í”Œë ˆì´ì–´ê°€ ë‹¤ ì²´í¬í–ˆëŠ”ì§€ ì²´í¬
         NewGameManager.Instance.RemoveJewelsAndSetBonus();
 
 
