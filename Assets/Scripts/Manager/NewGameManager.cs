@@ -453,9 +453,11 @@ public class NewGameManager : NetworkBehaviour
         MyPlayer player = GetPlayerFromNetId(playerNetId);
         if(player == null) { Debug.LogError("player == null"); return; }
 
+        var list = new List<int>();
         if (player.UsedCards == null) { Debug.LogError("player.UsedCards == null"); return; }
-        player.UsedCards.Add(usedCard);
+        list.Add(usedCard);
 
+        player.UsedCards = list;
 
         player.Cards.Remove(usedCard);
     }

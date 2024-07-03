@@ -26,6 +26,8 @@ public class Panel_Player1 : MonoBehaviour
     private void Start()
     {
         SetPlayerInfo();
+        UpdateJewelsInfo();
+        UpdateUsedCardsInfo();
     }
 
     public void SetPlayerInfo()
@@ -35,29 +37,20 @@ public class Panel_Player1 : MonoBehaviour
         if(Panel_Id == NetworkClient.localPlayer.netId)
         {
             Img_Player.color = Color.red;
+            //이부분은 나중에 프로필을 띄우는 걸로 변경
         }
-
-        UpdateJewelsInfo();
-        UpdateUsedCardsInfo();
-
     }
 
-    private void UpdateJewelsInfo()
+    public void UpdateJewelsInfo()
     {
-        if(NetworkClient.localPlayer != null)
-        {
             MyPlayer player = NetworkClient.localPlayer.GetComponent<MyPlayer>();
             Text_JewelRed_Player.text = $"{player.Jewels[0]}";
             Text_JewelYellow_Player.text = $"{player.Jewels[1]}";
             Text_JewelBlue_Player.text = $"{player.Jewels[2]}";
-        }
-        else { Debug.LogError("localPlayer == null"); }
     }
 
-    private void UpdateUsedCardsInfo()
+    public void UpdateUsedCardsInfo()
     {
-        if(NetworkClient.localPlayer != null)
-        {
             MyPlayer player = NetworkClient.localPlayer.GetComponent<MyPlayer>();
 
             string cards = string.Empty;
@@ -69,7 +62,5 @@ public class Panel_Player1 : MonoBehaviour
 
             Text_UsedCard.text = "Used: " + cards;
 
-        }
-        else { Debug.LogError("localPlayer == null"); }
     }
 }

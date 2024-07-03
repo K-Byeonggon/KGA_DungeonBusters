@@ -8,18 +8,34 @@ public class Panel_Players : MonoBehaviour
     [SerializeField] GameObject Transform_SlotRoot;
     [SerializeField] GameObject Prefab_PlayerSlot;
 
-    public void Start()
-    {
+    [SerializeField] Dictionary<int, Panel_Player1> _playerPanelList;
 
+    public Dictionary<int, Panel_Player1> PlayerPanelList
+    {
+        get { return _playerPanelList; }
+        set { _playerPanelList = value; }
     }
 
-    //GamePlayer°¡ »ı¼ºµÇ°í ÀÌ°Ô È£ÃâµÇ¾î¾ß PanelÀÇ Id¸¦ ¼³Á¤ÇÒ ¼ö ÀÖ´Ù?
-    //¾Æ´Ï¸é ±×³É GamePlayer°¡ »ı¼ºµÉ¶§ netId¸¦ ¾îµò°¡ ÀúÀåÇØ ³ù´Ù°¡ ³ªÁß¿¡ PanelÀÇ Id¸¦ ¼³Á¤ÇØÁÖ´Â°Å´Â?
-    //±Ùµ¥ Å¸ÀÌ¹ÖÀ» ¾ğÁ¦·Î Àâ¾Æ¾ßµÇ´Âµ¥? GamePlayer »ı¼ºµÉ°í ³ª¼­´Â Å¸ÀÌ¹ÖÀÌ ¸íÈ®ÇÑµ¥ 
+    public void Start()
+    {
+        PlayerPanelList = new Dictionary<int, Panel_Player1>();
+    }
+
+    //GamePlayerê°€ ìƒì„±ë˜ê³  ì´ê²Œ í˜¸ì¶œë˜ì–´ì•¼ Panelì˜ Idë¥¼ ì„¤ì •í•  ìˆ˜ ìˆë‹¤?
+    //ì•„ë‹ˆë©´ ê·¸ëƒ¥ GamePlayerê°€ ìƒì„±ë ë•Œ netIdë¥¼ ì–´ë”˜ê°€ ì €ì¥í•´ ë†¨ë‹¤ê°€ ë‚˜ì¤‘ì— Panelì˜ Idë¥¼ ì„¤ì •í•´ì£¼ëŠ”ê±°ëŠ”?
+    //ê·¼ë° íƒ€ì´ë°ì„ ì–¸ì œë¡œ ì¡ì•„ì•¼ë˜ëŠ”ë°? GamePlayer ìƒì„±ë ê³  ë‚˜ì„œëŠ” íƒ€ì´ë°ì´ ëª…í™•í•œë° 
     public void CreatePlayerPanel(int player_netId)
     {
         var gObj = Instantiate(Prefab_PlayerSlot, Transform_SlotRoot.transform);
         var player1 = gObj.GetComponent<Panel_Player1>();
         player1.Panel_Id = player_netId;
+
+        PlayerPanelList.Add(player_netId, player1);
+    }
+
+    public void UpdatePlayerPanel(int player_netId)
+    {
+        PlayerPanelList[player_netId].UpdateJewelsInfo();
+        PlayerPanelList[player_netId].UpdateUsedCardsInfo();
     }
 }

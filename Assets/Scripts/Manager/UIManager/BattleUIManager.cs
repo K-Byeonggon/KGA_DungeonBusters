@@ -34,10 +34,18 @@ public class BattleUIManager : UIManager
         battleUI.UpdateRewardsPanel();
     }
 
+
+    #region Panel_Players
     public void RequestCreatePlayer(int player_netId)
     {
         battleUI.RequestCreatePlayerPanel(player_netId);
     }
+
+    public void RequestUpdatePlayer(int player_netId)
+    {
+        battleUI.RequestUpdatePlayerPanel(player_netId);
+    }
+    #endregion
 
     public void RequestUpdateSelectCard()
     {

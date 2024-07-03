@@ -31,7 +31,7 @@ public class MyPlayer : NetworkBehaviour
         set
         {
             _jewels = value;
-        
+            BattleUIManager.Instance.RequestUpdatePlayer((int)this.netId);
         }
     }
     public List<int> UsedCards
@@ -40,16 +40,16 @@ public class MyPlayer : NetworkBehaviour
         set
         {
             _usedCards = value;
-        
+            BattleUIManager.Instance.RequestUpdatePlayer((int)this.netId);
         }
     }
 
     private void Start()
     {
-        initialSettings();
-
         //이 시점에 패널 생성 요청
         BattleUIManager.Instance.RequestCreatePlayer((int)this.netId);
+
+        initialSettings();
 
         //이 시점에 카드 선택창 생성 요청?
         BattleUIManager.Instance.RequestUpdateSelectCard();

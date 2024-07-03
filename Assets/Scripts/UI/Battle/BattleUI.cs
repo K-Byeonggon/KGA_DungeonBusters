@@ -23,7 +23,7 @@ public class BattleUI : MonoBehaviour
     [SerializeField] Text Text_BonusBlue;
 
 
-    //ÀÌ·¸°Ô °¡Áö°í ÀÖ´Â ¹æ¹ı ¸»°í ´Ù¸¥ ¹æ¹ıÀÌ ÀÖÀ» °ÍÀÌ´Ù.
+    //ì´ë ‡ê²Œ ê°€ì§€ê³  ìˆëŠ” ë°©ë²• ë§ê³  ë‹¤ë¥¸ ë°©ë²•ì´ ìˆì„ ê²ƒì´ë‹¤.
     [Header("Panels")]
     [SerializeField] Panel_Players panel_Players;
     [SerializeField] Panel_Rewards panel_Rewards;
@@ -37,6 +37,10 @@ public class BattleUI : MonoBehaviour
         panel_Players.CreatePlayerPanel(player_netId);
     }
 
+    public void RequestUpdatePlayerPanel(int player_netId)
+    {
+        panel_Players.UpdatePlayerPanel(player_netId);
+    }
 
     public void SetEnemy()
     {
