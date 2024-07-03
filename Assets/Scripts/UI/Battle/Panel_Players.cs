@@ -35,7 +35,7 @@ public class Panel_Players : MonoBehaviour
 
     public void UpdatePlayerPanel(int player_netId)
     {
-        PlayerPanelList[player_netId].UpdateJewelsInfo();
-        PlayerPanelList[player_netId].UpdateUsedCardsInfo();
+        PlayerPanelList[player_netId].UpdateJewelsInfo(player_netId);
+        PlayerPanelList[player_netId].UpdateUsedCardsInfo(player_netId);
     }
 }

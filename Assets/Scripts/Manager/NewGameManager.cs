@@ -376,7 +376,7 @@ public class NewGameManager : NetworkBehaviour
         return minCardPlayerNetIds;
     }
 
-    private MyPlayer GetPlayerFromNetId(int playerNetId)
+    public MyPlayer GetPlayerFromNetId(int playerNetId)
     {   
         NetworkIdentity networkIdentity;
         if (NetworkClient.spawned.TryGetValue((uint)playerNetId, out networkIdentity))
