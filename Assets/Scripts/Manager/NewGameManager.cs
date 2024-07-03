@@ -9,17 +9,22 @@ public class NewGameManager : NetworkBehaviour
 
     //게임 상태 변수
     [SerializeField] GameState _currentState;
-    [SerializeField] int _currentDungeon;                               //현재 진행중인 던전
-    [SerializeField] int _currentStage;                                 //현재 진행중인 스테이지
-    [SerializeField] Monster _currentMonster;                           //현재 전투중인 몬스터
+    [SerializeField][SyncVar(hook = nameof(OnChangeCurrentDungeon))] int _currentDungeon;                               //현재 진행중인 던전
+    [SerializeField][SyncVar] int _currentStage;                                 //현재 진행중인 스테이지
+    [SerializeField][SyncVar] Monster _currentMonster;                           //현재 전투중인 몬스터
+    [SerializeField][SyncVar] List<int> _bonusJewels;                            //보너스 Jewel
     [SerializeField] Queue<Monster> _currentDungeonMonsterQueue;        //현재 진행중인 던전에 있는 몬스터를 담은 Queue
     [SerializeField] Dictionary<int, int> _submittedCardList;           //key:netId, value:제출한 카드Num
     [SerializeField] Dictionary<int, int> _duplicationCheck;            //key:CardNum, value:해당Num의 개수
-    [SerializeField][SyncVar] List<int> _bonusJewels;                            //보너스 Jewel
     [SerializeField] Dictionary<uint, int> _selectedJewelIndexList;     //key:netId, value:플레이어가 선택한 버릴 Jewel 인덱스
     [SerializeField] Dictionary<int, List<int>> _netIdAndJewelsIndex;    //key:netId, value:가장많은Jewel의 인덱스List
 
     [SerializeField] int _currentMonsterId;
+
+    private void Check(int oldDungeon, int newDungeon)
+    {
+        Debug.Log($"SyncVar변경감지 {oldDungeon}->{newDungeon}");
+    }
 
     public Dictionary<int, Monster> _monsterList = new Dictionary<int, Monster>();
 
@@ -30,8 +35,13 @@ public class NewGameManager : NetworkBehaviour
         set
         {
             _currentDungeon = value;
-            BattleUIManager.Instance.RequestUpdateDungeon();
+            //BattleUIManager.Instance.RequestUpdateDungeon();
         }
+    }
+
+    private void OnChangeCurrentDungeon(int oldDungeon, int newDungeon)
+    {
+        BattleUIManager.Instance.RequestUpdateDungeon();
     }
 
     public int CurrentStage
@@ -111,15 +121,14 @@ public class NewGameManager : NetworkBehaviour
     public override void OnStartServer()
     {
         base.OnStartServer();
-        //InitializeGame();
     }
 
     public override void OnStartClient()
     {
         base.OnStartClient();
-        //RequestCurrentDungeonInfo();
+
         InitializeGame();
-        CmdSendAllStateToClient();
+        //CmdSendAllStateToClient();
     }
 
 
@@ -221,8 +230,8 @@ public class NewGameManager : NetworkBehaviour
     private void StartStage()
     {
         CurrentStage++;
-        this.DequeueMonsterCurrentStage();
-
+        CurrentMonster = this.DequeueMonsterCurrentStage();
+        CurrentMonsterId = CurrentMonster.DataId;
         //CurrentMonster = DataManager.Instance.GetMonster(0);
         //RpcUpdateStageState(CurrentStage, CurrentMonster);
 

@@ -19,28 +19,20 @@ public static class NewGameManagerExtension
         }
     }
 
-    public static void DequeueMonsterCurrentStage(this NewGameManager gm)
+    public static Monster DequeueMonsterCurrentStage(this NewGameManager gm)
     {
         if(gm.CurrentDungeonMonsterQueue.Count > 0)
         {
            var monster  = gm.CurrentDungeonMonsterQueue.Dequeue();
 
-            
-            if (gm._monsterList.ContainsKey(monster.DataId))
-            {
-                gm._monsterList[monster.DataId] = monster;
-            }
-            else
-            {
-                gm._monsterList.Add(monster.DataId, monster);
-            }
-            
-            gm.CurrentMonster = monster;
-            gm.CurrentMonsterId = monster.DataId;
+            return monster;
+            //gm.CurrentMonster = monster;
+            //gm.CurrentMonsterId = monster.DataId;
         }
         else
         {
             Debug.LogError("gm.CurrentDungeonMonsterQueue is Empty");
+            return null;
         }
     }
 
