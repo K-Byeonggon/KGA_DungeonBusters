@@ -48,13 +48,16 @@ public class MyPlayer : NetworkBehaviour
     {
         initialSettings();
 
-        //ÀÌ ½ÃÁ¡¿¡ ÆĞ³Î »ı¼º ¿äÃ»
+        //ì´ ì‹œì ì— íŒ¨ë„ ìƒì„± ìš”ì²­
         BattleUIManager.Instance.RequestCreatePlayer((int)this.netId);
+
+        //ì´ ì‹œì ì— ì¹´ë“œ ì„ íƒì°½ ìƒì„± ìš”ì²­?
+        BattleUIManager.Instance.RequestUpdateSelectCard();
     }
 
     private void initialSettings()
     {
-        Cards = new List<int>() { 1,2,3,4,5,6,7 };  //3ÀÎ °ÔÀÓ: 2~7, 4~5ÀÎ °ÔÀÓ: 1~6
+        Cards = new List<int>() { 1,2,3,4,5,6,7 };  //3ì¸ ê²Œì„: 2~7, 4~5ì¸ ê²Œì„: 1~6
         UsedCards = new List<int>();
         Jewels = new List<int>() { 1, 1, 1 };       //RED:0, YELLOW:1, BLUE:2
     }
@@ -68,7 +71,7 @@ public class MyPlayer : NetworkBehaviour
             _cards.Remove(num);
             return num;
         }
-        return -1;  //¿¡·¯
+        return -1;  //ì—ëŸ¬
     }
 
     public void InitCards()
@@ -82,7 +85,7 @@ public class MyPlayer : NetworkBehaviour
         _jewels[(int)color] += num;
     }
     
-    //ÇØ´ç »öÀÇ º¸¼®À» ÀüºÎ ÀÒ°í Áß¾Ó¿¡ ½×¾ÆµĞ´Ù.
+    //í•´ë‹¹ ìƒ‰ì˜ ë³´ì„ì„ ì „ë¶€ ìƒê³  ì¤‘ì•™ì— ìŒ“ì•„ë‘”ë‹¤.
     public int LoseJewel(Jewel color)
     {
         int result = _jewels[(int)color];

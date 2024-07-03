@@ -170,6 +170,7 @@ public class NewGameManager : NetworkBehaviour
                 StartStage();
                 break;
             case GameState.SubmitCard:
+                SetLocalPopupSelect();
                 break;
             case GameState.WaitForPlayers:
                 break;
@@ -233,8 +234,6 @@ public class NewGameManager : NetworkBehaviour
         CurrentStage++;
         CurrentMonster = this.DequeueMonsterCurrentStage();
         CurrentMonsterId = CurrentMonster.DataId;
-        //CurrentMonster = DataManager.Instance.GetMonster(0);
-        //RpcUpdateStageState(CurrentStage, CurrentMonster);
 
         ChangeState(GameState.SubmitCard);
     }

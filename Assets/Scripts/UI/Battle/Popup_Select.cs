@@ -20,10 +20,21 @@ public class Popup_Select : MonoBehaviour
 
     public void SetCards()
     {
-        //LocalPlayer°¡ °¡Áö°í ÀÖ´Â Ä«µå ¸ñ·Ï ¹Ş¾Æ¼­,
+        //LocalPlayerê°€ ê°€ì§€ê³  ìˆëŠ” ì¹´ë“œ ëª©ë¡ ë°›ì•„ì„œ,
+        if(NetworkClient.localPlayer == null)
+        {
+            Debug.LogError("localPlayer == null");
+        }
+        else
+        {
+            Debug.Log($"LocalPlayer.name = {NetworkClient.localPlayer.name}");
+        }
+
         MyPlayer player = NetworkClient.localPlayer.GetComponent<MyPlayer>();
 
-        //Prefab¿¡ ¼ıÀÚµé Ã¤¿ö¼­ »ı¼ºÇÏ¸é µÉµí.
+        if (player == null ) { Debug.LogError("player == null"); return; }
+
+        //Prefabì— ìˆ«ìë“¤ ì±„ì›Œì„œ ìƒì„±í•˜ë©´ ë ë“¯.
         foreach (int card in player.Cards)
         {
             var gObj = Instantiate(Prefab_CardRed, Transform_SlotRoot.transform);
@@ -42,7 +53,7 @@ public class Popup_Select : MonoBehaviour
 
     public void OnClick_FrontClose()
     {
-        //´ëÃæ Àü¸é ´İ±â
+        //ëŒ€ì¶© ì „ë©´ ë‹«ê¸°
         UISetActive(false);
     }
 }
