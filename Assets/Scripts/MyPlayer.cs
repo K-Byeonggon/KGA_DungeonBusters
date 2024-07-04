@@ -44,25 +44,6 @@ public class MyPlayer : NetworkBehaviour
         }
     }
 
-    private void Start()
-    {
-        //점검용
-        foreach (var kv in NetworkClient.spawned)
-        {
-            Debug.Log($"{kv.Key}:{kv.Value.name}");
-        }
-
-        /*
-        //이 시점에 패널 생성 요청
-        BattleUIManager.Instance.RequestCreatePlayer((int)this.netId);
-
-        initialSettings();
-
-        //이 시점에 카드 선택창 생성 요청?
-        BattleUIManager.Instance.RequestUpdateSelectCard();
-        */
-    }
-
     public override void OnStartClient()
     {
         base.OnStartClient();

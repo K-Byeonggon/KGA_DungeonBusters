@@ -216,6 +216,8 @@ public class NewGameManager : NetworkBehaviour
     {
         //Dungeon시작시 초기화
         CurrentStage = 0;
+        //모든 클라 플레이어 UsedCards, Cards 초기화
+        RpcInitPlayerUsedCards();
 
         //Dungeon시작시 변경
         CurrentDungeon++;
@@ -223,6 +225,24 @@ public class NewGameManager : NetworkBehaviour
 
         //상태변화
         ChangeState(GameState.StartStage);
+    }
+
+    [ClientRpc]
+    private void RpcInitPlayerUsedCards()
+    {
+        foreach (NetworkIdentity identity in NetworkClient.spawned.Values)
+        {
+            MyPlayer player = identity.GetComponent<MyPlayer>();
+            if(player == null) continue;
+
+            player.UsedCards = new List<int>();
+            player.Cards = new List<int> {1,2,3,4,5,6,7};
+        }
+    }
+    [ClientRpc]
+    private void RpcInitPlayerCards()
+    {
+
     }
 
     #endregion
@@ -369,8 +389,8 @@ public class NewGameManager : NetworkBehaviour
         MyPlayer player = GetPlayerFromNetId(playerNetId);
         if (player == null) { Debug.LogError("player == null"); return; }
 
-        var list = new List<int>();
         if (player.UsedCards == null) { Debug.LogError("player.UsedCards == null"); return; }
+        var list = player.UsedCards;
         list.Add(usedCard);
 
         player.UsedCards = list;
@@ -394,15 +414,14 @@ public class NewGameManager : NetworkBehaviour
             //1. 가장 작은 카드 낸 플레이어 NetId 구하기(그 후 Dic에서 삭제)
             //(1명으로 test하면 보상이 2개 이상일때 에러 발생)
             List<int> playerNetIds = GetMinCardPlayerNetIds();
-            int usedCard = SubmittedCardList[playerNetIds[0]];
+
+            if (playerNetIds.Count > 1) 
+            { Debug.LogError("MinCardPlayer > 1"); }
+
             SubmittedCardList.Remove(playerNetIds[0]);
 
-
             //2. 모든 클라의 해당 NetId가진 플레이어에 보상 주기.
-            foreach (int playerNetId in playerNetIds)
-            {
-                RpcPlayerGetReward(playerNetId, reward_n);
-            }
+            RpcPlayerGetReward(playerNetIds[0], reward_n);
         }
 
         //상태변화
