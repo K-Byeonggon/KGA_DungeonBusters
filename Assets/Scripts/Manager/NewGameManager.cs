@@ -14,14 +14,15 @@ public class NewGameManager : NetworkBehaviour
     
     [SerializeField][SyncVar(hook = nameof(OnChangeCurrentStage))]
     int _currentStage;                                 //현재 진행중인 스테이지
+
     [SerializeField]
     Monster _currentMonster;                           //현재 전투중인 몬스터
-    [SerializeField][SyncVar(hook = nameof(OnChangeBonusJewels))]
-    List<int> _bonusJewels;                            //보너스 Jewel
-
     [SerializeField][SyncVar(hook = nameof(OnChangeCurrentMonsterId))]
-    int _currentMonsterId;
+    int _currentMonsterId;                              //클라에선 MonsterId를 받아 currentMonster를 변경한다.
 
+    [SerializeField]
+    [SyncVar(hook = nameof(OnChangeBonusJewels))]
+    List<int> _bonusJewels;                            //보너스 Jewel
 
     [SerializeField] Queue<Monster> _currentDungeonMonsterQueue;        //현재 진행중인 던전에 있는 몬스터를 담은 Queue
     [SerializeField] Dictionary<int, int> _submittedCardList;           //key:netId, value:제출한 카드Num
@@ -166,15 +167,23 @@ public class NewGameManager : NetworkBehaviour
             case GameState.SubmitCard:
                 SetLocalPopupSelect();
                 break;
-            case GameState.WaitForPlayers:
-                break;
             case GameState.CalculateResults:
+                ServerDecideStageResult();
                 break;
             case GameState.GetJewels:
+                ServerChooseRewardedPlayer();
                 break;
             case GameState.LoseJewels:
+                ServerChooseLoseJewelsPlayer();
+                break;
+            case GameState.EndStage:
+                ServerCheckStageOver();
+                break;
+            case GameState.EndDungeon:
+                ServerCheckDungeonOver();
                 break;
             case GameState.EndGame:
+                TempEndGame();
                 break;
         }
     }
@@ -191,12 +200,7 @@ public class NewGameManager : NetworkBehaviour
     private void InitializeGame()
     {
         CurrentDungeon = 0;
-        CurrentStage = 0;
-        SubmittedCardList = new Dictionary<int, int>();
-        DuplicationCheck = new Dictionary<int, int>();
         BonusJewels = new List<int>() { 0, 0, 0 };
-        SelectedJewelIndexList = new Dictionary<uint, int>();
-        NetIdAndJewelsIndex = new Dictionary<int, List<int>>();
         ChangeState(GameState.StartDungeon);
     }
 
@@ -210,25 +214,35 @@ public class NewGameManager : NetworkBehaviour
     [Server]
     private void StartDungeon()
     {
+        //Dungeon시작시 초기화
+        CurrentStage = 0;
+
+        //Dungeon시작시 변경
         CurrentDungeon++;
         this.Enqueue4MonstersFromData(_currentDungeon);
 
+        //상태변화
         ChangeState(GameState.StartStage);
     }
 
     #endregion
 
     #region 2-1. 스테이지 시작
-
-    //스테이지 시작전 초기화: 플레이어들이 제출한 카드, 플레이어 보석개수, 사용한 카드
-
     [Server]
     private void StartStage()
     {
+        //Stage시작시 초기화
+        SubmittedCardList = new Dictionary<int, int>();
+        DuplicationCheck = new Dictionary<int, int>();
+        SelectedJewelIndexList = new Dictionary<uint, int>();
+        NetIdAndJewelsIndex = new Dictionary<int, List<int>>();
+
+        //Stage시작시 변경
         CurrentStage++;
         CurrentMonster = this.DequeueMonsterCurrentStage();
         CurrentMonsterId = CurrentMonster.DataId;
 
+        //상태변화
         ChangeState(GameState.SubmitCard);
     }
 
@@ -288,7 +302,7 @@ public class NewGameManager : NetworkBehaviour
     [Server]
     private void ServerOnAllPlayersSubmitted()
     {
-        ServerDecideStageResult();
+        ChangeState(GameState.CalculateResults);
     }
 
     [Server]
@@ -300,8 +314,8 @@ public class NewGameManager : NetworkBehaviour
 
         ServerRequestSetUsedCard();
 
-        if(StageClear) { ServerChooseRewardedPlayer(); }
-        else { ServerChooseLoseJewelsPlayer(); }
+        if(StageClear) { ChangeState(GameState.GetJewels); }
+        else { ChangeState(GameState.LoseJewels); }
     }
 
     [Server]
@@ -390,6 +404,9 @@ public class NewGameManager : NetworkBehaviour
                 RpcPlayerGetReward(playerNetId, reward_n);
             }
         }
+
+        //상태변화
+        ChangeState(GameState.EndStage);
     }
 
     private void RemoveDuplicatedCard()
@@ -544,7 +561,9 @@ public class NewGameManager : NetworkBehaviour
             //실제로 플레이어의 보석이 빠져나가는 부분.
             RpcPlayerLoseJewels((int)kv.Key, kv.Value);
         }
-    
+
+        //상태변화
+        ChangeState(GameState.EndStage);
     }
 
     //Server의 보너스에 더하는 로직
@@ -578,24 +597,32 @@ public class NewGameManager : NetworkBehaviour
 
     #endregion
 
-
-    #region 4. 전투 결과 계산 및 보상 분배
-    //전투 결과 계산 및 보상 분배 (서버에서 실행 후, ClientRpc로 각 클라에 상태 업데이트)
+    #region EndStage
     [Server]
-    private void CalculateBattleResult()
+    private void ServerCheckStageOver()
     {
-        //전투 결과 계산 메서드
-        //보상 분배 메서드
-        RpcUpdateGameState();
-    }
-
-    //상태 동기화 함수
-    [ClientRpc]
-    private void RpcUpdateGameState()
-    {
-        //클라이언트에 게임 상태 업데이트
+        if(CurrentDungeonMonsterQueue.Count > 0) { ChangeState(GameState.StartStage); }
+        else { ChangeState(GameState.EndDungeon); }
     }
     #endregion
 
+    #region EndDungeon
+    [Server]
+    private void ServerCheckDungeonOver()
+    {
+        if (CurrentDungeon == 3) { ChangeState(GameState.EndGame); }
+        else { ChangeState(GameState.StartDungeon); }
+    }
+    #endregion
 
+    #region EndGame
+    //플레이어들이 가진 보석으로 점수 계산,
+    //가장 점수가 높은 플레이어가 우승.
+    //Lobby로 돌아옴.
+    [Server]
+    private void TempEndGame()
+    {
+        Debug.LogError("이제 가망이 없어.");
+    }
+    #endregion
 }

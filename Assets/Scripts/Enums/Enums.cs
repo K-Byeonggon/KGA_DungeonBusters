@@ -7,5 +7,7 @@ public enum GameState
     CalculateResults,
     GetJewels,
     LoseJewels,
+    EndStage,
+    EndDungeon,
     EndGame
 }
