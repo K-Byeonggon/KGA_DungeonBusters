@@ -1,0 +1,154 @@
+보석 잃는 로직
+
+netId와 빠져나갈 보석종류를 가리키는 index.
+
+
+BonusJewel SyncVar 적용되게하고 Cmd함수 지웠더니
+
+클라에서 보석 잃어도 서버에서 잃어버리게 만듬.
+
+?왜?
+
+먹는건 클라/서버 둘다 잘되는데 
+클라에서 잃는게 이상하네?
+
+먹는거랑 잃는거 비교를 해보자
+
+아니 생각해보니 보너스Jewel 바꿨는데
+왜 플레이어 Jewel에 문제가 생기는 거임?
+
+
+보상 얻기
+[Server] CalculDamage
+-> [Server] CmdChooseRewardedPlayer
+-> [ClientRpc] RpcPlayerGetReward (player.Jewels 값변경)
+-> (hook)
+
+보석 잃기
+[Server] CalculDamage
+-> [Command] CmdPutJewelsInBonus
+-> [ClientRpc] RpcSetUIToLoseJewels (잃을 보석 선택 UI띄우기)
+-> 플레이어 선택
+-> [Command] RemoveJewelsAndSetBonus
+-> [Server] OnAllPlayersSelectedJewel
+-> [ClientRpc] RpcLoseJewels (player.Jewels 값변경)
+-> (hook)
+
+이제 뭐해야 되지
+
+이제 Stage 진행되도록 바꿔야지
+Stage 진행되면 Dungeon진행되게 바꾸고.
+
+
+State
+
+StartDungeon:
+StartStage:
+SubmitCard:
+
+이게 게임이.. State에 따라 진행되지 않는다.
+State에 따라 진행되게 만들려면 어떻게 해야할까..
+
+게임 시작시 초기화 되어야 하는 것들
+- CurrentDungeon (0)
+- BonusJewels {0, 0, 0} (아마? 해야? 하지 않을까?)
+
+Dungeon시작시 초기화 되어야 하는 것들
+- CurrentStage (0)
+- 모든 플레이어의 UsedCards, Cards
+
+Dungeon시작시 변경되어야 하는 것들
+- CurrentDungeon (+1)
+- CurrentDungeonMonsterQueue (currentDungeon에 맞춰 다시 Enqueue)
+(Stage를 모두 진행하면 Queue가 비어있긴 할 테지만, 체크해주는 게 좋을듯)
+
+Stage시작시 초기화 되어야 하는 것들
+- SubmittedCardList
+- DuplicationCheck
+- SelectedJewelIndexList
+- NetIdAndJewelsIndex
+
+Stage시작시 변경 되어야 하는 것들
+- CurrentStage (+1)
+- CurrentMonster
+- CuttentMonsterId
+
+어차피 State는 서버에서 만 바뀌니까
+모든 플레이어가 카드 제출했을 때
+
+State.CalculateResults 로 바꾸고,
+
+State.EndStage
+State.EndDungeon
+State.EndGame
+
+EndStage에서는
+- Queue에 남은 몬스터 있는지 체크, 있으면 StartStage로
+- 없으면 EndDungeon으로
+
+EndDungeon에서는
+- CurrentDungeon == 3인지 체크, 3이면 EndGame으로
+- 아니면 StartDungeon으로
+
+EndGame에서는
+- 플레이어들이 가진 보석으로 점수 계산,
+- 가장 점수가 높은 플레이어가 우승.
+- Lobby로 돌아옴.
+
+
+bug: 보상이 2개 이상일때 토벌 성공시
+클라에는 보상이 제대로 들어가는데 서버에는 제대로 안들어옴
+서버에서 보상이 Reward2가 1등한테 들어가고 2등한테 아무것도 안들어옴?
+
+
+지금 보상 로직
+
+중복된 카드를 낸 플레이어는 Dic에서 제거한다.
+
+GetMinCardPlayerNetIds로 가장 작은 숫자 낸 플레이어들을 Dic에서 고른다.
+Dic에서는 이 플레이어들을 제거한다.
+
+Rpc로 모든 클라에 이 플레이어들에 보상을 준다.
+
+Reward번호를 증가해서 반복.
+
+
+뭔가 이상함.
+
+클라에서 Cards 갱신안됨.
+UsedCard가 2Stage 이상에서 갱신안됨.
+UsedCard가 하나로 갱신되어서 하나만 뜸.
+
+
+
+확실히 현 스테이지가 아니라 다음 스테이지의 보상을 받는 버그가 있다.
+RpcPlayerGetReward에서 
+CurrentMonster.Reward 가 다음 스테이지 몬스터의 것으로 되어있다.
+
+
+로그를 보니까
+왜인지는 모르겠는데
+
+ServerChooseRewardedPlayer가 불린다음에,
+안에서 RpcPlayerGetReward까지 불린다음에서야
+State가 바뀌어서 다음 스테이지로 넘어가 몬스터가 바뀌어야 하는데,
+
+ServerChooseRewardedPlayer안에서
+몬스터가 바뀐다음에
+RpcPlayerGetReward가 불린다.
+
+for문안에서 돌다가
+RpcPlayerGetReward줄을 지나고,
+다시 돌아와서 break;만나서 터지면
+
+RpcPlayerGetReward를 먼저 실행하는게 아니고
+밑의 StateChange 가 먼저 실행된다.
+
+오늘의 꿀팁: ClientRpc의 호출은 비동기적으로 처리된다.
+실제 클라이언트에서의 실행은 나중에 일어날 수 있어서
+보이는 흐름대로 실행되지 않을 수 있다.
+
+이제 뭐해야되지
+
+- Stage넘어가서 Cards UI에 초기화하는거 만들어야지
+- BonusJewel 전투 승리시 챙기는 로직도 만들어야한다.
