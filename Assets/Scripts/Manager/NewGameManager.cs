@@ -432,9 +432,8 @@ public class NewGameManager : NetworkBehaviour
 
         }
 
-        //위의 for문에서 하나씩 처리하려고 했지만, ClientRpc는 비동기처리라서 순차적으로 실행이 안된다.
-        //그래서 이렇게 모아서 한꺼번에 처리함. 데이터 보내지라고 Array로 바꿔서 보냄. List나 Dic은 무거워서 안됨.
-        RpcDistributeRewards(playerIds.ToArray(), rewardIndexs.ToArray());
+        int curMonsterId = CurrentMonster.DataId;
+        RpcDistributeRewards(playerIds.ToArray(), rewardIndexs.ToArray(), curMonsterId);
 
         //상태변화
         ChangeState(GameState.EndStage);
@@ -485,19 +484,18 @@ public class NewGameManager : NetworkBehaviour
     }
 
     [ClientRpc]
-    private void RpcDistributeRewards(int[] playerIds, int[] rewardIndexs)
+    private void RpcDistributeRewards(int[] playerIds, int[] rewardIndexs, int curMonsterId)
     {
         for(int i = 0; i < playerIds.Length; i++)
         {
             int playerId = playerIds[i];
             int rewardIndex = rewardIndexs[i];
 
-            PlayerGetReward(playerId, rewardIndex);
-        }
+            PlayerGetReward(playerId, rewardIndex, curMonsterId);
+        }    
     }
 
-
-    private void PlayerGetReward(int playerNetId, int reward_n)
+    private void PlayerGetReward(int playerNetId, int reward_n, int curMonsterId)
     {
         //2-1. NetId의 플레이어 찾기
         MyPlayer player = GetPlayerFromNetId(playerNetId);
@@ -505,12 +503,15 @@ public class NewGameManager : NetworkBehaviour
         //2-2-1. 플레이어.Jewels에 대입할 List<int> 생성
         List<int> newJewels = player.Jewels;
 
+        //몬스터 꺼내서
+        Monster curMonster = DataManager.Instance.GetMonster(curMonsterId);
+
         //2-2-2. newJewels에 해당 Reward의 보석 추가.
-        if (CurrentMonster.Reward[reward_n] != null)
+        if (curMonster.Reward[reward_n] != null)
         {
-            newJewels[0] += CurrentMonster.Reward[reward_n][0];
-            newJewels[1] += CurrentMonster.Reward[reward_n][1];
-            newJewels[2] += CurrentMonster.Reward[reward_n][2];
+            newJewels[0] += curMonster.Reward[reward_n][0];
+            newJewels[1] += curMonster.Reward[reward_n][1];
+            newJewels[2] += curMonster.Reward[reward_n][2];
         }
 
         //2-2-3. player.Jewels에 대입(이래야 프로퍼티가 불린다)
