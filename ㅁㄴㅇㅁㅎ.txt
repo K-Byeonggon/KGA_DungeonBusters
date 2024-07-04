@@ -1,0 +1,102 @@
+GetPlayerFromNetId(int playerNetId)는
+NetId로 MyPlayer를 찾는 메서드
+
+근데 NetworkServer.spawned는 서버에서만 제대로 동작한다.
+
+다른 방식으로 만들거나, GetPlayerFromNetId를 안쓰는 방법을 찾자.
+
+
+
+보석 선택창을 띄울때 튕김.
+
+NewGameManager의 BonusJewels가
+클라에서는 null이기 때문에 에러가 난듯.
+- Syncvar로 만듬.
+
+그냥 클라에서도 보여야 하는거 다 SyncVar로 만들면 안되나?
+- 현재 던전
+- 현재 스테이지
+- 현재 몬스터(이름, HP, 보상)
+- 현재 보너스
+
+값변경 요청만 Command로 하는거임
+
+
+SelectedJewelIndexList는 UI상에 드러나는 부분도 아니라서
+정말 Server에서의 값변경만 있으면 되니까 Command로 값변경.
+
+
+RemoveJewelsAndSetBonus()
+- 모든 패배 플레이어가 Jewel 선택했는지 체크
+
+
+SyncVar로 만들면 Server에서 변경 있으면 클라에서 자동 변경 되는거 아님?
+
+그럼 변경은 됐는데 UI반영이 안됐구나.
+오늘의 꿀팁: SyncVar로 값이 변경되어도 프로퍼티는 불리지 않는다.
+hook으로 직접 호출해줘야함.
+
+monster왜 정보 못받냐?
+보너스 쥬얼은 왜?
+
+아 혹시 SyncVar로 Monster는 무거워서 못넘기는거 아님?
+int는 쉽게 넘기잖아
+
+그러면 SyncVar로 MonsterId를 넘기고
+Monster는 MonsterId로 찾아야겠네.
+
+
+Server에서 Monster Dequeue해서 받으면,
+Server의 CurrentMonster가 바뀌고,
+
+카드를 선택해주세요 에 카드가 안뜨는 버그
+
+왜 SetCards에서 player를 못찾았을까?
+
+NetworkClient.localPlayer가 RoomPlayer를 가리킨다.
+왜?
+그러면 이전에는 RoomPlayer가 아니라 Player를 가리켰다는 건데.
+뭐가 바뀌어서 RoomPlayer를 가리키게 되었을까?
+
+Player가 생성되기 전에 요청하는걸까?
+
+또 클라에서 SelectedJewelIndexList가 없어서 에러가 나는듯
+
+각 클라의 모든 패배 플레이어가 선택한 보석을 잃어야 하는데,
+(ClientRpc해야하는데)
+SelectedJewelIndexList는 Server에만 갱신되어있어 참조가 안됨.
+(netId, index)
+
+
+서버에서 참조가능한것
+SelectedJewelIndexList(netId, index)
+
+[Command]
+RequestLoseJewels(){
+ foreach(var kv in SelectedJewelIndexList){
+  RpcLoseJewels(kv.Key, kv.Value)
+ }
+}
+
+[ClientRpc]
+RpcLoseJewels(int netId, int jewelIndex){
+ MyPlayer player = GetPlayerFromNetId(netId);
+ player.Jewels[kv.Value] = 0;
+}
+
+
+UsedCards와 Jewels UI 연결해주자. 
+PanelPlayer1와 연결해야될거 같은데.
+
+Panel1은 생성되는 것들인데 어떻게 Player랑 Panel을 연결하지?
+생성할때 BattleUI에 딕셔너리로 저장해놓을까?
+근데 localPlayer의 netId 말고 알 수 있는 부분이 있나?
+Player 생성될때 패널 생성 요청하니 this.netId를 알 수 있다.
+그러면 
+
+옵저버블 컬렉션 
+
+
+오늘의 꿀팁: list, Dictionary의 .Add, .Remove는 프로퍼티 못부른다.
+new list를 대입해주자.
+

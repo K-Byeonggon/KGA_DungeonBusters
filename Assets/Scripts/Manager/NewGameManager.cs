@@ -438,13 +438,19 @@ public class NewGameManager : NetworkBehaviour
         //2-1. NetId의 플레이어 찾기
         MyPlayer player = GetPlayerFromNetId(playerNetId);
 
-        //2-2. 플레이어에 해당 Reward의 보석 추가.
+        //2-2-1. 플레이어.Jewels에 대입할 List<int> 생성
+        List<int> newJewels = player.Jewels;
+
+        //2-2-2. newJewels에 해당 Reward의 보석 추가.
         if (CurrentMonster.Reward[reward_n] != null)
         {
-            player.Jewels[0] += CurrentMonster.Reward[reward_n][0];
-            player.Jewels[1] += CurrentMonster.Reward[reward_n][1];
-            player.Jewels[2] += CurrentMonster.Reward[reward_n][2];
+            newJewels[0] += CurrentMonster.Reward[reward_n][0];
+            newJewels[1] += CurrentMonster.Reward[reward_n][1];
+            newJewels[2] += CurrentMonster.Reward[reward_n][2];
         }
+
+        //2-2-3. player.Jewels에 대입(이래야 프로퍼티가 불린다)
+        player.Jewels = newJewels;
     }
 
     [ClientRpc]
@@ -481,7 +487,7 @@ public class NewGameManager : NetworkBehaviour
         }
 
         //3-1. 보석의 색깔이 여러개면, 플레이어에게 어떤 보석을 버릴지 선택을 시킨다
-        //그냥 보석 색깔 하나라도 플레이어가 클릭하게 하자. 그러면 일괄적으로 ClientRpc날리면 된다.
+        //이거는 그냥 UI만 띄우는 거고, 실제 보석 버리기는 Content_Jewel을 통해 시킴.
         foreach(var kv in NetIdAndJewelsIndex)
         {
             RpcSetUIToLoseJewels(kv.Key, kv.Value);
@@ -518,6 +524,7 @@ public class NewGameManager : NetworkBehaviour
 
         foreach(var kv in SelectedJewelIndexList)
         {
+            //실제로 플레이어의 보석이 빠져나가는 부분.
             RpcLoseJewels((int)kv.Key, kv.Value);
         }
 
@@ -540,7 +547,10 @@ public class NewGameManager : NetworkBehaviour
     private void RpcLoseJewels(int netId, int jewelIndex)
     {
         MyPlayer player = GetPlayerFromNetId(netId);
-        player.Jewels[jewelIndex] = 0;
+
+        List<int> newJewels = player.Jewels;
+        newJewels[jewelIndex] = 0;
+        player.Jewels = newJewels;
     }
 
     [Command(requiresAuthority = false)]
