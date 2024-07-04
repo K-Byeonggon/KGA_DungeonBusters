@@ -29,12 +29,6 @@ public class NewGameManager : NetworkBehaviour
     [SerializeField] Dictionary<uint, int> _selectedJewelIndexList;     //key:netId, value:플레이어가 선택한 버릴 Jewel 인덱스
     [SerializeField] Dictionary<int, List<int>> _netIdAndJewelsIndex;    //key:netId, value:가장많은Jewel의 인덱스List
 
-
-    private void Check(int oldDungeon, int newDungeon)
-    {
-        Debug.Log($"SyncVar변경감지 {oldDungeon}->{newDungeon}");
-    }
-
     public Dictionary<int, Monster> _monsterList = new Dictionary<int, Monster>();
 
     #region 프로퍼티
@@ -253,41 +247,31 @@ public class NewGameManager : NetworkBehaviour
 
     #region 3. 카드 제출 처리
 
-    // 이건 모든 클라에서 카드 제출 하는건가?
-    public void OnSubmitCard(int card)
-    {
-        if (isClient)
-        {
-            //CmdSubmitCard(NetworkClient.connection.identity.GetComponent<MyPlayer>().playerId, card);
-        }
-    }
 
+    #region 카드 제출 후 토벌 성공/실패 결정 전 까지
     //플레이어의 카드 제출 처리(클라에서 요청후, 서버에서 처리)
     [Command(requiresAuthority = false)]
-    public void CmdAddSubmittedCard(int netId, int cardNum)
+    public void CmdAddSubmittedCard_OnClick_Card(int player_netId, int cardNum)
     {
-        int playerNetId = netId;
-
-        if (SubmittedCardList.ContainsKey(playerNetId))
+        if (SubmittedCardList.ContainsKey(player_netId))
         {
-            SubmittedCardList[playerNetId] = cardNum;
+            SubmittedCardList[player_netId] = cardNum;
         }
         else
         {
-            SubmittedCardList.Add(playerNetId, cardNum);
+            SubmittedCardList.Add(player_netId, cardNum);
         }
-        Debug.Log($"Added- netId:{playerNetId}, num:{SubmittedCardList[playerNetId]}");
+        Debug.Log($"Added- netId:{player_netId}, num:{SubmittedCardList[player_netId]}");
 
-        CmdCheckAllPlayerSubmitted();
+        ServerCheckAllPlayerSubmitted();
     }
 
-    //[Command(requiresAuthority = false)]
     [Server]
-    public void CmdCheckAllPlayerSubmitted()
+    public void ServerCheckAllPlayerSubmitted()
     {
-        if (AllPlayersSubmitted())
+        if (ServerAllPlayersSubmitted())
         {
-            OnAllPlayersSubmitted();
+            ServerOnAllPlayersSubmitted();
         }
         else
         {
@@ -295,22 +279,36 @@ public class NewGameManager : NetworkBehaviour
         }
     }
 
-    private bool AllPlayersSubmitted()
+    [Server]
+    private bool ServerAllPlayersSubmitted()
     {
         return NetworkServer.connections.Count == SubmittedCardList.Count;
     }
 
-    private void OnAllPlayersSubmitted()
+    [Server]
+    private void ServerOnAllPlayersSubmitted()
     {
-        CalculateDamage();
+        ServerDecideStageResult();
     }
 
     [Server]
-    private void CalculateDamage()
+    private void ServerDecideStageResult()
     {
         int monsterHp = CurrentMonster.HP;
+        int totalDamage = ServerCalculTotalDamage();
+        bool StageClear = totalDamage >= monsterHp;
+
+        ServerRequestSetUsedCard();
+
+        if(StageClear) { ServerChooseRewardedPlayer(); }
+        else { ServerChooseLoseJewelsPlayer(); }
+    }
+
+    [Server]
+    private int ServerCalculTotalDamage()
+    {
         int totalDamage = 0;
-        
+
         foreach (var card in SubmittedCardList.Values)
         {
             if (DuplicationCheck.ContainsKey(card))
@@ -323,7 +321,7 @@ public class NewGameManager : NetworkBehaviour
             }
         }
 
-        foreach(var kvp in SubmittedCardList)
+        foreach (var kvp in SubmittedCardList)
         {
             if (DuplicationCheck[kvp.Value] == 1)
             {
@@ -331,18 +329,69 @@ public class NewGameManager : NetworkBehaviour
             }
         }
 
-        bool StageClear = totalDamage >= monsterHp;
-
-        CmdRequestSetUsedCard();
-
         Debug.Log($"totalDamage == {totalDamage}");
-        if(StageClear) { CmdChooseRewardedPlayer(); }
-        else { CmdPutJewelsInBonus(); }
+        return totalDamage;
     }
 
+    [Server]
+    public void ServerRequestSetUsedCard()
+    {
+        //디버깅용
+        foreach (var kv in SubmittedCardList)
+        {
+            Debug.Log($"netId:{kv.Key} Card:{kv.Value}");
+        }
+
+        //-1. 플레이어가 낸 카드들 UsedCard에 저장하고 갱신하기.
+        foreach (var kv in SubmittedCardList)
+        {
+            RpcSetPlayerUsedCard(kv.Key, kv.Value);
+        }
+    }
+
+    [ClientRpc]
+    public void RpcSetPlayerUsedCard(int playerNetId, int usedCard)
+    {
+        MyPlayer player = GetPlayerFromNetId(playerNetId);
+        if (player == null) { Debug.LogError("player == null"); return; }
+
+        var list = new List<int>();
+        if (player.UsedCards == null) { Debug.LogError("player.UsedCards == null"); return; }
+        list.Add(usedCard);
+
+        player.UsedCards = list;
+
+        player.Cards.Remove(usedCard);
+    }
+    #endregion
 
 
-    #region 보석 보상 로직
+    #region 토벌 성공
+    [Server]
+    public void ServerChooseRewardedPlayer()
+    {
+        //0. 중복 카드 제거
+        RemoveDuplicatedCard();
+
+        for (int reward_n = 0; reward_n < 3; reward_n++)
+        {
+            if (CurrentMonster.Reward[reward_n] == null)
+                break;
+            //1. 가장 작은 카드 낸 플레이어 NetId 구하기(그 후 Dic에서 삭제)
+            //(1명으로 test하면 보상이 2개 이상일때 에러 발생)
+            List<int> playerNetIds = GetMinCardPlayerNetIds();
+            int usedCard = SubmittedCardList[playerNetIds[0]];
+            SubmittedCardList.Remove(playerNetIds[0]);
+
+
+            //2. 모든 클라의 해당 NetId가진 플레이어에 보상 주기.
+            foreach (int playerNetId in playerNetIds)
+            {
+                RpcPlayerGetReward(playerNetId, reward_n);
+            }
+        }
+    }
+
     private void RemoveDuplicatedCard()
     {
         foreach (int card in SubmittedCardList.Values)
@@ -362,7 +411,6 @@ public class NewGameManager : NetworkBehaviour
             }
         }
     }
-
 
     //토벌 성공시는 보상을 받을 가장 작은 값이 여러개일 경우가 없지만,
     //토벌 실패시는 보상을 잃을 가장 작은 값이 여러개일 수 있다.
@@ -387,50 +435,6 @@ public class NewGameManager : NetworkBehaviour
         else { return null; }
     }
 
-    //[Command(requiresAuthority = false)]
-    [Server]
-    public void CmdRequestSetUsedCard()
-    {
-        //디버깅용
-        foreach(var kv in SubmittedCardList)
-        {
-            Debug.Log($"netId:{kv.Key} Card:{kv.Value}");
-        }
-
-        //-1. 플레이어가 낸 카드들 UsedCard에 저장하고 갱신하기.
-        foreach (var kv in SubmittedCardList)
-        {
-            RpcSetPlayerUsedCard(kv.Key, kv.Value);
-        }
-    }
-
-    //[Command(requiresAuthority = false)]
-    [Server]
-    public void CmdChooseRewardedPlayer()
-    {
-        //0. 중복 카드 제거
-        RemoveDuplicatedCard();
-        
-        for (int reward_n = 0; reward_n < 3; reward_n++)
-        {
-            if (CurrentMonster.Reward[reward_n] == null)
-                break;
-            //1. 가장 작은 카드 낸 플레이어 NetId 구하기(그 후 Dic에서 삭제)
-            //(1명으로 test하면 보상이 2개 이상일때 에러 발생)
-            List<int> playerNetIds = GetMinCardPlayerNetIds();
-            int usedCard = SubmittedCardList[playerNetIds[0]];
-            SubmittedCardList.Remove(playerNetIds[0]);
-
-
-            //2. 모든 클라의 해당 NetId가진 플레이어에 보상 주기.
-            foreach (int playerNetId in playerNetIds)
-            {
-                RpcPlayerGetReward(playerNetId, reward_n);
-            }
-
-            
-        }
-    }
 
     [ClientRpc]
     public void RpcPlayerGetReward(int playerNetId, int reward_n)
@@ -452,28 +456,13 @@ public class NewGameManager : NetworkBehaviour
         //2-2-3. player.Jewels에 대입(이래야 프로퍼티가 불린다)
         player.Jewels = newJewels;
     }
-
-    [ClientRpc]
-    public void RpcSetPlayerUsedCard(int playerNetId, int usedCard)
-    {
-        MyPlayer player = GetPlayerFromNetId(playerNetId);
-        if(player == null) { Debug.LogError("player == null"); return; }
-
-        var list = new List<int>();
-        if (player.UsedCards == null) { Debug.LogError("player.UsedCards == null"); return; }
-        list.Add(usedCard);
-
-        player.UsedCards = list;
-
-        player.Cards.Remove(usedCard);
-    }
-
     #endregion
 
-    #region 보석 잃는 로직
 
-    [Command(requiresAuthority = false)]
-    public void CmdPutJewelsInBonus()
+    #region 토벌 실패
+
+    [Server]
+    public void ServerChooseLoseJewelsPlayer()
     {
         //1. 가장 작은 카드를 낸 플레이어들의 NetId 구하기
         List<int> losePlayerNetIds = GetMinCardPlayerNetIds();
@@ -494,57 +483,89 @@ public class NewGameManager : NetworkBehaviour
         }
     }
 
-    [Command(requiresAuthority = false)]
-    public void AddSelectedJewelIndexList(int jewelIndex)
+    private List<int> FindMaxIndexes(List<int> list)
     {
+        int maxValue = list.Max();
+        List<int> maxIndexes = new List<int>();
+        for (int i = 0; i < list.Count; i++)
+        {
+            if (list[i] == maxValue)
+            {
+                maxIndexes.Add(i);
+            }
+        }
+        return maxIndexes;
+    }
+
+    //보석을 잃을 플레이어에게 UI 띄워주기
+    [ClientRpc]
+    private void RpcSetUIToLoseJewels(int playerId, List<int> maxJewels)
+    {
+        //모든 클라에 날려서 보석을 잃는 플레이어가 아니면 return
+        if (NetworkClient.localPlayer.netId != playerId) { return; }
+
+        //패배 플레이어에 잃을 보석을 선택하는 UI를 띄워준다.
+        BattleUIManager.Instance.RequestUpdateRemoveJewels(maxJewels);
+
+        //UI에서 Content_Jewel OnClick 시 보석 잃는 로직으로.
+    }
+
+    [Command(requiresAuthority = false)]
+    public void CmdAddSelectedJewelIndexList_OnClick(int jewelIndex)
+    {
+        //중복 선택으로 패배하면 여기서 무슨일이 생긴다
         SelectedJewelIndexList.Add(NetworkClient.localPlayer.netId, jewelIndex);
     }
 
     //4. 패배 플레이어들이 선택 다 했는지 체크.
     [Command(requiresAuthority = false)]
-    public void RemoveJewelsAndSetBonus()
+    public void CmdCheckAllPlayerSelectedJewel_OnClick()
     {
-        if (AllPlayerSelectedJewel(NetIdAndJewelsIndex.Count))
+        if (ServerAllPlayerSelectedJewel(NetIdAndJewelsIndex.Count))
         {
             //선택을 바탕으로 모든 클라에서 패배 플레이어의 Jewel 보너스로.
-            OnAllPlayersSelectedJewel();
+            ServerOnAllPlayersSelectedJewel();
         }
     }
 
     [Server]
-    private bool AllPlayerSelectedJewel(int dic_count)
+    private bool ServerAllPlayerSelectedJewel(int dic_count)
     {
         return (dic_count == SelectedJewelIndexList.Count);
     }
 
     [Server]
-    private void OnAllPlayersSelectedJewel()
+    private void ServerOnAllPlayersSelectedJewel()
     {
-        AddJewelsToBonus();
+        ServerAddJewelsToBonus();
 
         foreach(var kv in SelectedJewelIndexList)
         {
             //실제로 플레이어의 보석이 빠져나가는 부분.
-            RpcLoseJewels((int)kv.Key, kv.Value);
+            RpcPlayerLoseJewels((int)kv.Key, kv.Value);
         }
-
-        CmdRequestUpdateBonus();
+    
     }
 
     //Server의 보너스에 더하는 로직
     [Server]
-    private void AddJewelsToBonus()
+    private void ServerAddJewelsToBonus()
     {
+        List<int> newBonus = new List<int>();
+        //그냥 newBonus에 BonusJewels를 대입하면 참조 복사가 일어나 값 변경시 hook이 발생하지 않음.
+        BonusJewels.ForEach(item => newBonus.Add(item));
+
         foreach (var kv in SelectedJewelIndexList)
         {
-            BonusJewels[kv.Value] += GetPlayerFromNetId((int)kv.Key).Jewels[kv.Value];
+            newBonus[kv.Value] += GetPlayerFromNetId((int)kv.Key).Jewels[kv.Value];
         }
+        BonusJewels = newBonus;
     }
 
 
     //클라의 패배 플레이어 Jewel을 없애는 로직
     [ClientRpc]
-    private void RpcLoseJewels(int netId, int jewelIndex)
+    private void RpcPlayerLoseJewels(int netId, int jewelIndex)
     {
         MyPlayer player = GetPlayerFromNetId(netId);
 
@@ -552,6 +573,8 @@ public class NewGameManager : NetworkBehaviour
         newJewels[jewelIndex] = 0;
         player.Jewels = newJewels;
     }
+
+
 
     [Command(requiresAuthority = false)]
     private void CmdRequestUpdateBonus()
@@ -563,33 +586,6 @@ public class NewGameManager : NetworkBehaviour
     private void UpdateBonus(List<int> bonus)
     {
         BonusJewels = bonus;
-    }
-
-    //보석을 잃을 플레이어에게 UI 띄워주기
-    [ClientRpc]
-    private void RpcSetUIToLoseJewels(int playerId, List<int> maxJewels)
-    {
-        //모든 클라에 날려서 보석을 잃는 플레이어가 아니면 return
-        if(NetworkClient.localPlayer.netId != playerId) { return; }
-
-        //일단 보석 선택창 띄워야지
-        BattleUIManager.Instance.RequestUpdateRemoveJewels(maxJewels);
-
-        //그다음은요? 일단 플레이어가 선택창에서 선택을 하겠지?
-    }
-
-    private List<int> FindMaxIndexes(List<int> list)
-    {
-        int maxValue = list.Max();
-        List<int> maxIndexes = new List<int>();
-        for(int i = 0; i < list.Count; i++)
-        {
-            if (list[i] == maxValue)
-            {
-                maxIndexes.Add(i);
-            }
-        }
-        return maxIndexes;
     }
 
     #endregion

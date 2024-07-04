@@ -35,13 +35,13 @@ public class Content_Jewel : MonoBehaviour
     {
         //클릭시 플레이어의 netId와 선택한 Jewel의 Index가 NewGameManager의 SelectedJewelIndexList에 저장된다.
         //NewGameManager.Instance.SelectedJewelIndexList.Add(NetworkClient.localPlayer.netId, jewelIndex);
-        NewGameManager.Instance.AddSelectedJewelIndexList(jewelIndex);
+        NewGameManager.Instance.CmdAddSelectedJewelIndexList_OnClick(jewelIndex);
 
         //Popup창 꺼줌
         Popup_RemoveJewels.UISetActive(false);
 
         //여기서 패배플레이어가 다 체크했는지 체크
-        NewGameManager.Instance.RemoveJewelsAndSetBonus();
+        NewGameManager.Instance.CmdCheckAllPlayerSelectedJewel_OnClick();
 
 
     }

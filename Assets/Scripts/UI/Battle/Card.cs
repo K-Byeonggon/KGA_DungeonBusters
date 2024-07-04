@@ -42,13 +42,13 @@ public class Card : NetworkBehaviour
 
     public void OnClick_Card()
     {
-        //NewGameManager¿¡ ¹øÈ£¸¦ localPlayerÀÇ Netid¿Í ÇÔ²² ³Ñ±â±â(ÀÌ°Ç NewGameManager¿¡¼­ ÇØÁÜ)
+        //NewGameManagerì— ë²ˆí˜¸ë¥¼ localPlayerì˜ Netidì™€ í•¨ê»˜ ë„˜ê¸°ê¸°(ì´ê±´ NewGameManagerì—ì„œ í•´ì¤Œ)
         int cardNum = int.Parse(Text_Number.text);
         //NetworkClient.localPlayer
         int netId = (int)NetworkClient.localPlayer.netId;
-        NewGameManager.Instance.CmdAddSubmittedCard(netId, cardNum);
+        NewGameManager.Instance.CmdAddSubmittedCard_OnClick_Card(netId, cardNum);
 
-        //±×¸®°í ¼±ÅÃÃ¢ ´İ±â(ÀÌ°Ç ¸ğµç Å¬¶ó¿¡¼­ ÀÌ·ç¾îÁ®¾ßÇØ)
+        //ê·¸ë¦¬ê³  ì„ íƒì°½ ë‹«ê¸°(ì´ê±´ ëª¨ë“  í´ë¼ì—ì„œ ì´ë£¨ì–´ì ¸ì•¼í•´)
         Popup_Select.UISetActive(false);
     }
 
