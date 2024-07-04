@@ -511,10 +511,10 @@ public class NewGameManager : NetworkBehaviour
     }
 
     [Command(requiresAuthority = false)]
-    public void CmdAddSelectedJewelIndexList_OnClick(int jewelIndex)
+    public void CmdAddSelectedJewelIndexList_OnClick(uint playerNetId, int jewelIndex)
     {
         //중복 선택으로 패배하면 여기서 무슨일이 생긴다
-        SelectedJewelIndexList.Add(NetworkClient.localPlayer.netId, jewelIndex);
+        SelectedJewelIndexList.Add(playerNetId, jewelIndex);
     }
 
     //4. 패배 플레이어들이 선택 다 했는지 체크.
@@ -562,7 +562,6 @@ public class NewGameManager : NetworkBehaviour
         BonusJewels = newBonus;
     }
 
-
     //클라의 패배 플레이어 Jewel을 없애는 로직
     [ClientRpc]
     private void RpcPlayerLoseJewels(int netId, int jewelIndex)
@@ -572,20 +571,6 @@ public class NewGameManager : NetworkBehaviour
         List<int> newJewels = player.Jewels;
         newJewels[jewelIndex] = 0;
         player.Jewels = newJewels;
-    }
-
-
-
-    [Command(requiresAuthority = false)]
-    private void CmdRequestUpdateBonus()
-    {
-        UpdateBonus(BonusJewels);
-    }
-
-    [ClientRpc]
-    private void UpdateBonus(List<int> bonus)
-    {
-        BonusJewels = bonus;
     }
 
     #endregion
