@@ -1,4 +1,5 @@
 using Mirror;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -407,6 +408,9 @@ public class NewGameManager : NetworkBehaviour
         //0. 중복 카드 제거
         RemoveDuplicatedCard();
 
+        List<int> playerIds = new List<int>();
+        List<int> rewardIndexs = new List<int>();
+
         for (int reward_n = 0; reward_n < 3; reward_n++)
         {
             if (CurrentMonster.Reward[reward_n] == null)
@@ -420,13 +424,22 @@ public class NewGameManager : NetworkBehaviour
 
             SubmittedCardList.Remove(playerNetIds[0]);
 
+            playerIds.Add(playerNetIds[0]);
+            rewardIndexs.Add(reward_n);
+
             //2. 모든 클라의 해당 NetId가진 플레이어에 보상 주기.
-            RpcPlayerGetReward(playerNetIds[0], reward_n);
+            //RpcPlayerGetReward(playerNetIds[0], reward_n);
+
         }
+
+        //위의 for문에서 하나씩 처리하려고 했지만, ClientRpc는 비동기처리라서 순차적으로 실행이 안된다.
+        //그래서 이렇게 모아서 한꺼번에 처리함. 데이터 보내지라고 Array로 바꿔서 보냄. List나 Dic은 무거워서 안됨.
+        RpcDistributeRewards(playerIds.ToArray(), rewardIndexs.ToArray());
 
         //상태변화
         ChangeState(GameState.EndStage);
     }
+
 
     private void RemoveDuplicatedCard()
     {
@@ -471,9 +484,20 @@ public class NewGameManager : NetworkBehaviour
         else { return null; }
     }
 
-
     [ClientRpc]
-    public void RpcPlayerGetReward(int playerNetId, int reward_n)
+    private void RpcDistributeRewards(int[] playerIds, int[] rewardIndexs)
+    {
+        for(int i = 0; i < playerIds.Length; i++)
+        {
+            int playerId = playerIds[i];
+            int rewardIndex = rewardIndexs[i];
+
+            PlayerGetReward(playerId, rewardIndex);
+        }
+    }
+
+
+    private void PlayerGetReward(int playerNetId, int reward_n)
     {
         //2-1. NetId의 플레이어 찾기
         MyPlayer player = GetPlayerFromNetId(playerNetId);
