@@ -20,20 +20,25 @@ public class Popup_Select : MonoBehaviour
 
     public void SetCards()
     {
+        List<int> cards;
         //LocalPlayer가 가지고 있는 카드 목록 받아서,
         MyPlayer player = NetworkClient.localPlayer.GetComponent<MyPlayer>();
+        if (player == null) { Debug.LogError("player == null. Can't Set Cards"); return; }
+        cards = player.Cards;
 
-        if (player == null ) { Debug.LogError("player == null"); return; }
-
+        /*
+            int players = MyNetworkRoomManager.Instance.minPlayers;
+            if (players < 4) { cards = new List<int>() { 2, 3, 4, 5, 6, 7 }; }
+            else { cards = new List<int>() { 1, 2, 3, 4, 5, 6 }; }
+        */
         //Prefab에 숫자들 채워서 생성하면 될듯.
-        foreach (int card in player.Cards)
+        foreach (int card in cards)
         {
             var gObj = Instantiate(Prefab_CardRed, Transform_SlotRoot.transform);
             var card_n = gObj.GetComponent<Card>();
             card_n.SetNumber(card);
             card_n.SetPopupSelectUI(this);
         }
-
     }
 
     public void UISetActive(bool active)

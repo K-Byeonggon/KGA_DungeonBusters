@@ -1,0 +1,53 @@
+이번에도
+
+ClientRpc가 비동기처리되어서 실제 처리는 늦게 되는 바람에
+카드 목록이 갱신이 안된다.
+
+StartDungeon에서 RpcInitPlayerUsedCards로
+플레이어가 가진 Cards와 UsedCards를 초기화하고 있지만,
+
+정작 실행되는 것은 ChangeState를 지나서
+SetLocalPopupSelect가 지난 후인 것 같다.
+UsedCard는 Prefab생성이 아니라 실시간으로 UI에 적용됨.
+
+그런데 Stage 진행중에는 왜 Popup이 제대로 떴냐?
+카드 선택 시점에서 Cards가 바뀌는데
+다음 새 스테이지 시작 할 때 까지는 바뀌나보다.
+던전 시작에서 바꾸면 새스테이지 시작까지 안바뀌나보다.
+
+그러면 SetLocalPopupSelect에서 bool변수 받아서 DungeonStart == true면
+고정된 {1,2,3,4,5,6,7} 뭐 이런걸로 초기화 하죠?
+
+DungeonStart는 어떻게 넘겨줄건데?
+SetLocalPopupSelect는 상태변화에서만 실행되는데?
+currentDungeon값 비교해서 증가해있으면 DungeonStart == true로 해보자.
+그러면 전역변수 하나 더 써야되는데..
+MonsterQueue에 몬스터 3마리면 DungeonStart == true로 할까?
+
+
+Player 생성될때 init
+Popup에서 init
+던전 시작할떄 Manager에서 init
+이거 통합 안되나 
+
+
+2Stage 넘어가서 첫번째 몬스터를 만나서 카드를 사용하고 2번째 몬스터를 만나
+카드를 선택하려고 Popup을 열어보면 내가 사용한 카드가 안빠져 있다.
+그리고 3번째 몬스터에서 Popup을 열어보면 1,2번째에서 사용한 카드가 빠져 있다.
+
+inspector창에는 내가 사용한 카드 제대로 나와있으니
+Popup창 문제이지 않을까 싶다.
+아마 dungeonStart가 2번째에도 true인것 같은데..
+
+2번째에만 다나오는게 아니라 전투 승리하면 뭔가 카드가 안 빠진다.
+
+이게 다 Popup에서 플레이어 카드를 받는게 아니라 알아서 만들어서 그런거 아녀?
+플레이어 카드 바뀌면 SetCard하게 바꾸면 되자너 SubmitCard단에서 SetCard하지 말고
+그냥 플레이어 카드 바뀌면이 아니고 로컬플레이어 카드가 바뀌면 이어야된다.
+
+OnPlayerCardsChanged(){
+ if(this.islocalPlayer == false) return;
+ BattleUIManager.Instance.RequestUpdatePopupSelect() 
+}
+
+하면 되지 않을까? SubmitCard()에서 카드 세팅하는거 빼버리고

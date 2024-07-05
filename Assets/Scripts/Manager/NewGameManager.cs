@@ -166,7 +166,7 @@ public class NewGameManager : NetworkBehaviour
                 StartStage();
                 break;
             case GameState.SubmitCard:
-                SetLocalPopupSelect();
+                //SetLocalPopupSelect();
                 break;
             case GameState.CalculateResults:
                 ServerDecideStageResult();
@@ -237,7 +237,8 @@ public class NewGameManager : NetworkBehaviour
             if(player == null) continue;
 
             player.UsedCards = new List<int>();
-            player.Cards = new List<int> {1,2,3,4,5,6,7};
+            if(MyNetworkRoomManager.Instance.minPlayers < 4) { player.Cards = new List<int>() { 2,3,4,5,6,7}; }
+            else { player.Cards = new List<int>() { 1, 2, 3, 4, 5, 6 }; }
         }
     }
     [ClientRpc]
@@ -273,6 +274,9 @@ public class NewGameManager : NetworkBehaviour
 
     private void SetLocalPopupSelect()
     {
+        bool dungeonStart = (CurrentDungeonMonsterQueue.Count == 3);
+
+        //이 부분은 게임 시작할때는 플레이어 못찾아서 세팅 안됨. 그래서 MyPlayer에서 한번더 부르고 있음.
         BattleUIManager.Instance.RequestUpdateSelectCard();
     }
 
@@ -391,12 +395,14 @@ public class NewGameManager : NetworkBehaviour
         if (player == null) { Debug.LogError("player == null"); return; }
 
         if (player.UsedCards == null) { Debug.LogError("player.UsedCards == null"); return; }
-        var list = player.UsedCards;
-        list.Add(usedCard);
+        var newUsedCards = player.UsedCards;
+        newUsedCards.Add(usedCard);
+        player.UsedCards = newUsedCards;
 
-        player.UsedCards = list;
-
-        player.Cards.Remove(usedCard);
+        if(player.Cards == null) { Debug.LogError("player.Cards == null"); return; }
+        var newCards = player.Cards;
+        newCards.Remove(usedCard);
+        player.Cards = newCards;
     }
     #endregion
 

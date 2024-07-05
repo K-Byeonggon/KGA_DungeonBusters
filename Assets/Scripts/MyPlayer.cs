@@ -22,7 +22,11 @@ public class MyPlayer : NetworkBehaviour
     public List<int> Cards
     {
         get { return  _cards; }
-        set { _cards = value; }
+        set
+        {
+            _cards = value;
+            OnPlayerCardsChanged();
+        }
     }
 
     public List<int> Jewels
@@ -44,6 +48,14 @@ public class MyPlayer : NetworkBehaviour
         }
     }
 
+    private void OnPlayerCardsChanged()
+    {
+        if (this.isLocalPlayer == false) return;
+        BattleUIManager.Instance.RequestUpdateSelectCard();
+    }
+
+
+
     public override void OnStartClient()
     {
         base.OnStartClient();
@@ -64,7 +76,10 @@ public class MyPlayer : NetworkBehaviour
 
     private void initialSettings()
     {
-        Cards = new List<int>() { 1,2,3,4,5,6,7 };  //3인 게임: 2~7, 4~5인 게임: 1~6
+        int players = MyNetworkRoomManager.Instance.minPlayers;
+        if(players < 4) { Cards = new List<int>() { 2,3,4,5,6,7 }; }
+        else { Cards = new List<int>() { 1, 2, 3, 4, 5, 6 }; }
+        
         UsedCards = new List<int>();
         Jewels = new List<int>() { 1, 1, 1 };       //RED:0, YELLOW:1, BLUE:2
     }
