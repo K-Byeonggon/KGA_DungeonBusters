@@ -599,12 +599,24 @@ public class NewGameManager : NetworkBehaviour
         //배분이 덜 끝났으면, 다음 사람에게 UI띄운다.
         _currentSelectBonusPlayerIndex = (_currentSelectBonusPlayerIndex+1) % WinPlayerIds.Count;
 
+        //여기서 모든 클라의 GetBonusUI 꺼주자.
+        RpcUnsetUIGetBonus();
+
         bool isBonusEmpty = new HashSet<int>(BonusJewels).SetEquals(new List<int>() { 0, 0, 0 });
-        if(isBonusEmpty) { ChangeState(GameState.EndStage); }
+        if(isBonusEmpty)
+        {
+            ChangeState(GameState.EndStage);
+        }
         else
         {
             RpcSetUIBonusSelect(WinPlayerIds[_currentSelectBonusPlayerIndex]);
         }
+    }
+
+    [ClientRpc]
+    private void RpcUnsetUIGetBonus()
+    {
+        BattleUIManager.Instance.RequestUnsetGetBonus();
     }
 
     #endregion

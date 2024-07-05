@@ -77,5 +77,10 @@ public class BattleUIManager : UIManager
     {
         battleUI.UpdateGetBonus(playerNetId);
     }
+
+    public void RequestUnsetGetBonus()
+    {
+        battleUI.UnsetGetBonus();
+    }
     #endregion
 }

@@ -122,6 +122,11 @@ public class BattleUI : MonoBehaviour
         popup_GetBonus.UISetPanelType(getBonus);    //true==보너스 받는 사람.
         popup_GetBonus.UISetActive(true);
     }
+
+    public void UnsetGetBonus()
+    {
+        popup_GetBonus.UISetActive(false);
+    }
     #endregion
 
 }
