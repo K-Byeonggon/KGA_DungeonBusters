@@ -36,7 +36,7 @@ public class Content_BonusJewel : MonoBehaviour
         //LocalPlayer의 해당 index의 보너스 Jewel +1
         NewGameManager.Instance.CmdSubBonusJewel_OnClick((int)NetworkClient.localPlayer.netId, jewelIndex);
 
-        //Popup창 꺼줌
+        //Popup창 꺼줌(야 근데 다른 클라의 UI는 어떻게 꺼주냐?)
         Popup_GetBonus.UISetActive(false);
 
         NewGameManager.Instance.CmdCheckAllBonusDistributed_OnClick();
