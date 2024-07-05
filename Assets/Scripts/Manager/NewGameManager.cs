@@ -411,32 +411,39 @@ public class NewGameManager : NetworkBehaviour
     [Server]
     public void ServerChooseRewardedPlayer()
     {
-        //0. 중복 카드 제거
+        //0. SubmittedCardList에서 중복 카드 제거
         RemoveDuplicatedCard();
 
-        List<int> playerIds = new List<int>();
-        List<int> rewardIndexs = new List<int>();
-
-        for (int reward_n = 0; reward_n < 3; reward_n++)
+        //1. 승리자 List 만들기(작은 카드를 낸 플레이어 순서대로 Id저장)
+        List<int> winPlayerIds = new List<int>();
+        int whileCount = 0;
+        while (SubmittedCardList.Count > 0)
         {
-            if (CurrentMonster.Reward[reward_n] == null)
-                break;
-            //1. 가장 작은 카드 낸 플레이어 NetId 구하기(그 후 Dic에서 삭제)
-            //(1명으로 test하면 보상이 2개 이상일때 에러 발생)
-            List<int> playerNetIds = GetMinCardPlayerNetIds();
+            List<int> minCardPlayerId = GetMinCardPlayerNetIds();
+            if (minCardPlayerId.Count > 1) { Debug.LogError("DuplicatedCard Exists"); }
+            winPlayerIds.Add(minCardPlayerId[0]);
+            SubmittedCardList.Remove(minCardPlayerId[0]);
 
-            if (playerNetIds.Count > 1) 
-            { Debug.LogError("MinCardPlayer > 1"); }
-
-            SubmittedCardList.Remove(playerNetIds[0]);
-
-            playerIds.Add(playerNetIds[0]);
-            rewardIndexs.Add(reward_n);
+            whileCount++;
+            if (whileCount > 100) { Debug.LogError("while > 100"); break; }
         }
 
-        //2. 모든 클라의 해당 NetId가진 플레이어에 reward 주기
+        //2. 승리자 List를 토대로 보상 분배
+        List<int> rewardedPlayerIds = new List<int>();
+        List<int> rewardIndexs = new List<int>();
+
+        for (int i = 0; i < 3; i++)
+        {
+            if (CurrentMonster.Reward[i] == null)
+                break;
+
+            rewardedPlayerIds.Add(winPlayerIds[i]);
+            rewardIndexs.Add(i);
+        }
+
+        //3. 모든 클라의 해당 NetId가진 플레이어에 reward 주기
         int curMonsterId = CurrentMonster.DataId;
-        RpcDistributeRewards(playerIds.ToArray(), rewardIndexs.ToArray(), curMonsterId);
+        RpcDistributeRewards(rewardedPlayerIds.ToArray(), rewardIndexs.ToArray(), curMonsterId);
 
 
         //3. 승자 Player에게 BonusJewel의 어떤 색 보석을 가질지 물어보기(BonusJewel이 다 동날때 까지)
