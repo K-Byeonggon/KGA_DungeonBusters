@@ -474,6 +474,9 @@ MonoBehaviour:
   _currentState: 0
   _currentDungeon: 0
   _currentStage: 0
+  _currentMonsterId: 0
+  _bonusJewels: 
+  _winPlayerIds: 
 --- !u!4 &765025277
 Transform:
   m_ObjectHideFlags: 0
@@ -604,6 +607,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   UIRoot: {fileID: 1219767752}
+  battleUI: {fileID: 0}
 --- !u!1 &1428711650
 GameObject:
   m_ObjectHideFlags: 0

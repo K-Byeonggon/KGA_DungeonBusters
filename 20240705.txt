@@ -82,3 +82,56 @@ OnPlayerCardsChanged(){
 - 승리자 List에서 순서대로 Bonus선택하도록 함.
 
 
+int whileCount = 0;
+while(SubmittedCardList.Count > 0){
+List<int> minCardPlayerId = GetMinCardPlayerNetIds();
+if(minCardPlayerId.Count > 1) { Debug.LogError("DuplicatedCard Exists"); }
+winPlayerIds.Add(minCardPlayerId[0]);
+SubmittedCardList.Remove(minCardPlayerId[0]);
+
+whileCount++;
+if(whileCount > 100) { Debug.LogError("while > 100"); break; }
+}
+
+
+보너스 보석 선택하게 하는 로직.
+
+0. 보너스 보석을 받을 승리자Id List가 있음.
+1. 0번 플레이어가 local인 클라에 Popup UI 띄워줌.
+1-1. 다른 플레이어들에게 대기 UI 띄워줌.
+2. 0번 플레이어가 보석을 고르면(OnClick) 해당 보석 Bonus[index]--  Jewels[index]++
+3. 1번 플레이어가 local인 클라에 PopupUI 띄워줌.
+...
+
+일단 UI띄우는거 자체는 쉽다. 그냥 띄우게 하면 된다.
+
+플레이어1이 보너스 보석을 고르고
+보너스 보석이 차감된 상태로 다음 플레이어가 골라야하는데?
+
+
+//NewGameManager
+currentPlayerIndex
+
+RpcUpdateSelectionUI()
+: currentPlayerIndex의 플레이어에게 보너스 선택 UI띄운다.
+
+CmdPlayerMadeSelection(int selection)
+: currentPlayerIndex++;
+아직 선택할 것이 남았으면, RpcUpdateSelectionUI()를 부른다.
+
+//Content_BonusJewel
+MakeSelection(int selection)
+: NewGameManager의 CmdPlayerMadeSelection(selection)을 부른다.
+
+
+일단 순서가 많이 꼬인다.
+
+사실 안꼬인다.
+
+
+이제 뭐하지.
+
+게임 엔딩을 만들어야지.
+- 점수 정산.
+- 누가 승리했다고 띄워주기
+- Lobby로 돌아오기.
