@@ -159,7 +159,15 @@ public class NewGameManager : NetworkBehaviour
     private void ChangeState(GameState newState)
     {
         _currentState = newState;
-        OnStateEnter(newState);
+
+        OnStateEnter(_currentState);
+        //StartCoroutine(ChangeStateCoroutine());
+    }
+
+    private IEnumerator ChangeStateCoroutine()
+    {
+        yield return new WaitForSeconds(0.5f);
+        OnStateEnter(_currentState);
     }
 
     [Server]
@@ -563,7 +571,9 @@ public class NewGameManager : NetworkBehaviour
     [Command(requiresAuthority = false)]
     public void CmdSubBonusJewel_OnClick(int playerNetId, int jewelIndex)
     {
-        List<int> newBonus = BonusJewels;
+        List<int> newBonus = new List<int>();
+        //그냥 newBonus에 BonusJewels를 대입하면 참조 복사가 일어나 값 변경시 hook이 발생하지 않음.
+        BonusJewels.ForEach(item => newBonus.Add(item));
         newBonus[jewelIndex]--;
         BonusJewels = newBonus;
 
