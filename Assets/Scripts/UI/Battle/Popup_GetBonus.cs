@@ -6,8 +6,12 @@ using UnityEngine;
 public class Popup_GetBonus : MonoBehaviour
 {
     [Header("SelectColor")]
+    [SerializeField] GameObject Panel_SelectColor;
     [SerializeField] GameObject Transform_SlotRoot;
     [SerializeField] GameObject Prefab_Jewel;
+
+    [Header("WaitForSelect")]
+    [SerializeField] GameObject Panel_WaitForSelect;
 
     public void RemoveJewels()
     {
@@ -34,5 +38,11 @@ public class Popup_GetBonus : MonoBehaviour
     public void UISetActive(bool active)
     {
         this.gameObject.SetActive(active);
+    }
+
+    public void UISetPanelType(bool getBonus)
+    {
+        Panel_SelectColor.SetActive(getBonus);
+        Panel_WaitForSelect.SetActive(!getBonus);
     }
 }

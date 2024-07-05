@@ -30,6 +30,8 @@ public class NewGameManager : NetworkBehaviour
     [SerializeField] Dictionary<int, int> _duplicationCheck;            //key:CardNum, value:해당Num의 개수
     [SerializeField] Dictionary<uint, int> _selectedJewelIndexList;     //key:netId, value:플레이어가 선택한 버릴 Jewel 인덱스
     [SerializeField] Dictionary<int, List<int>> _netIdAndJewelsIndex;    //key:netId, value:가장많은Jewel의 인덱스List
+    [SerializeField] List<int> _winPlayerIds;
+    private int _currentSelectBonusPlayerIndex;
 
     public Dictionary<int, Monster> _monsterList = new Dictionary<int, Monster>();
 
@@ -97,6 +99,12 @@ public class NewGameManager : NetworkBehaviour
     {
         get { return _netIdAndJewelsIndex; }
         set { _netIdAndJewelsIndex = value; }
+    }
+
+    public List<int> WinPlayerIds
+    {
+        get { return _winPlayerIds; }
+        set { _winPlayerIds = value; }
     }
 
     #endregion
@@ -173,6 +181,9 @@ public class NewGameManager : NetworkBehaviour
                 break;
             case GameState.GetJewels:
                 ServerChooseRewardedPlayer();
+                break;
+            case GameState.GetBonus:
+                ServerStartGetBonusProcess();
                 break;
             case GameState.LoseJewels:
                 ServerChooseLoseJewelsPlayer();
@@ -258,6 +269,7 @@ public class NewGameManager : NetworkBehaviour
         DuplicationCheck = new Dictionary<int, int>();
         SelectedJewelIndexList = new Dictionary<uint, int>();
         NetIdAndJewelsIndex = new Dictionary<int, List<int>>();
+        WinPlayerIds = new List<int>();
 
         //Stage시작시 변경
         CurrentStage++;
@@ -415,13 +427,12 @@ public class NewGameManager : NetworkBehaviour
         RemoveDuplicatedCard();
 
         //1. 승리자 List 만들기(작은 카드를 낸 플레이어 순서대로 Id저장)
-        List<int> winPlayerIds = new List<int>();
         int whileCount = 0;
         while (SubmittedCardList.Count > 0)
         {
             List<int> minCardPlayerId = GetMinCardPlayerNetIds();
             if (minCardPlayerId.Count > 1) { Debug.LogError("DuplicatedCard Exists"); }
-            winPlayerIds.Add(minCardPlayerId[0]);
+            WinPlayerIds.Add(minCardPlayerId[0]);
             SubmittedCardList.Remove(minCardPlayerId[0]);
 
             whileCount++;
@@ -437,7 +448,7 @@ public class NewGameManager : NetworkBehaviour
             if (CurrentMonster.Reward[i] == null)
                 break;
 
-            rewardedPlayerIds.Add(winPlayerIds[i]);
+            rewardedPlayerIds.Add(WinPlayerIds[i]);
             rewardIndexs.Add(i);
         }
 
@@ -445,17 +456,11 @@ public class NewGameManager : NetworkBehaviour
         int curMonsterId = CurrentMonster.DataId;
         RpcDistributeRewards(rewardedPlayerIds.ToArray(), rewardIndexs.ToArray(), curMonsterId);
 
-
-        //3. 승자 Player에게 BonusJewel의 어떤 색 보석을 가질지 물어보기(BonusJewel이 다 동날때 까지)
-        // Dic에 netId와 고른 Bonus저장해놓고 선택이 다 끝난뒤에 보석 더해주기.
-
-
-
-
         //상태변화
-        ChangeState(GameState.EndStage);
+        bool isBonusEmpty = new HashSet<int>(BonusJewels).SetEquals(new List<int>() { 0, 0, 0});
+        if (isBonusEmpty) { ChangeState(GameState.EndStage); }
+        else { ChangeState(GameState.GetBonus); }
     }
-
 
     private void RemoveDuplicatedCard()
     {
@@ -534,6 +539,64 @@ public class NewGameManager : NetworkBehaviour
         //2-2-3. player.Jewels에 대입(이래야 프로퍼티가 불린다)
         player.Jewels = newJewels;
     }
+    #endregion
+
+
+    #region GetBonus
+    [Server]
+    private void ServerStartGetBonusProcess()
+    {
+        _currentSelectBonusPlayerIndex = 0;
+        RpcSetUIBonusSelect(WinPlayerIds[_currentSelectBonusPlayerIndex]);
+    }
+
+    [ClientRpc]
+    private void RpcSetUIBonusSelect(int playerNetId)
+    {
+        //모든 플레이어에게 Popup_GetBonus 띄운다.
+        //보너스 선택 플레이어가 아니면 WaitForSelect로 화면 바꾼다.
+        BattleUIManager.Instance.RequestUpdateGetBonus(playerNetId);
+
+        //선택은 Content_BonusJewel에서 이뤄지겠지?
+    }
+
+    [Command(requiresAuthority = false)]
+    public void CmdSubBonusJewel_OnClick(int playerNetId, int jewelIndex)
+    {
+        List<int> newBonus = BonusJewels;
+        newBonus[jewelIndex]--;
+        BonusJewels = newBonus;
+
+        //모든 클라의 해당 NetID플레이어에 Jewel 더하기
+        RpcAddjewelToPlayer(playerNetId, jewelIndex);
+    }
+
+    [ClientRpc]
+    private void RpcAddjewelToPlayer(int playerNetId, int jewelIndex)
+    {
+        MyPlayer player = GetPlayerFromNetId(playerNetId);
+
+        List<int> newJewels = player.Jewels;
+        newJewels[jewelIndex]++;
+        player.Jewels = newJewels;
+    }
+
+    [Command(requiresAuthority = false)]
+    public void CmdCheckAllBonusDistributed_OnClick()
+    {
+        //Content_BonusJewel에서 클릭후 NewGameManager의 모든 BonusJewles가 배분되었는지 확인.
+        //배분 완료되면, 다음 State로
+        //배분이 덜 끝났으면, 다음 사람에게 UI띄운다.
+        _currentSelectBonusPlayerIndex = (_currentSelectBonusPlayerIndex+1) % WinPlayerIds.Count;
+
+        bool isBonusEmpty = new HashSet<int>(BonusJewels).SetEquals(new List<int>() { 0, 0, 0 });
+        if(isBonusEmpty) { ChangeState(GameState.EndStage); }
+        else
+        {
+            RpcSetUIBonusSelect(WinPlayerIds[_currentSelectBonusPlayerIndex]);
+        }
+    }
+
     #endregion
 
 

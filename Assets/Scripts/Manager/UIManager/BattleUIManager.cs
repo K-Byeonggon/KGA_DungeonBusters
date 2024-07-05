@@ -18,6 +18,7 @@ public class BattleUIManager : UIManager
         battleUI = GetCreatedUI(UIType.Battle).GetComponent<BattleUI>();
     }
 
+    #region BattleUI
     public void RequestUpdateDungeon()
     {
         battleUI.UpdateDungeon();
@@ -31,9 +32,14 @@ public class BattleUIManager : UIManager
     public void RequestUpdateMonster()
     {
         battleUI.UpdateEnemyPanel();
-        battleUI.UpdateRewardsPanel();
+        battleUI.UpdateRewardsPanel();  //Panel_Rewards
     }
 
+    public void RequestUpdateBonusJewels()
+    {
+        battleUI.UpdateBonusJewels();
+    }
+    #endregion
 
     #region Panel_Players
     public void RequestCreatePlayer(int player_netId)
@@ -50,21 +56,26 @@ public class BattleUIManager : UIManager
     {
         battleUI.RequestUpdatePlayerUsedCards(player_netId);
     }
-
     #endregion
 
+    #region Popup_Select
     public void RequestUpdateSelectCard()
     {
         battleUI.UpdateSelectCardPopup();
     }
+    #endregion
 
+    #region Popup_Remove
     public void RequestUpdateRemoveJewels(List<int> maxJewels)
     {
         battleUI.UpdateRemoveJewels(maxJewels);
     }
+    #endregion
 
-    public void RequestUpdateBonusJewels()
+    #region Popup_GetBonus
+    public void RequestUpdateGetBonus(int playerNetId)
     {
-        battleUI.UpdateBonusJewels();
+        battleUI.UpdateGetBonus(playerNetId);
     }
+    #endregion
 }

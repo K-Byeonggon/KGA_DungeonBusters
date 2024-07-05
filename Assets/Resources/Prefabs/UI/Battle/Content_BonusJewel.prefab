@@ -120,8 +120,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: Content_Jewel, Assembly-CSharp
+      - m_Target: {fileID: 2607636987673644723}
+        m_TargetAssemblyTypeName: Content_BonusJewel, Assembly-CSharp
         m_MethodName: OnClick_Jewel
         m_Mode: 1
         m_Arguments:

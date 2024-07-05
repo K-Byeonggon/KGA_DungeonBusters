@@ -6,6 +6,7 @@ public enum GameState
     WaitForPlayers,
     CalculateResults,
     GetJewels,
+    GetBonus,
     LoseJewels,
     EndStage,
     EndDungeon,

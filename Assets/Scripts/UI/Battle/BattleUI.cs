@@ -1,3 +1,4 @@
+using Mirror;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -31,9 +32,42 @@ public class BattleUI : MonoBehaviour
     [Header("Popups")]
     [SerializeField] Popup_Select popup_Select;
     [SerializeField] Popup_RemoveJewels popup_RemoveJewels;
+    [SerializeField] Popup_GetBonus popup_GetBonus;
 
 
-    #region Player_Panels
+    #region BattleUI
+    public void UpdateDungeon()
+    {
+        Text_CurrentDungeon.text = $"Dungeon {NewGameManager.Instance.CurrentDungeon}";
+    }
+
+    public void UpdateStage()
+    {
+        Text_CurrentStage.text = $"{NewGameManager.Instance.CurrentStage}/4";
+    }
+
+    public void UpdateEnemyPanel()
+    {
+        var monster = NewGameManager.Instance.CurrentMonster;
+        Text_MonsterName.text = monster.Name;
+        Text_Hp.text = $"{monster.HP}";
+    }
+
+    public void UpdateBonusJewels()
+    {
+        Text_BonusRed.text = $"{NewGameManager.Instance.BonusJewels[0]}";
+        Text_BonusYellow.text = $"{NewGameManager.Instance.BonusJewels[1]}";
+        Text_BonusBlue.text = $"{NewGameManager.Instance.BonusJewels[2]}";
+    }
+
+    public void OnClick_SelectCard()
+    {
+        popup_Select.gameObject.SetActive(true);
+    }
+    #endregion
+
+
+    #region Panel_Players
     public void RequestCreatePlayerPanel(int player_netId)
     {  
         panel_Players.CreatePlayerPanel(player_netId);
@@ -50,56 +84,23 @@ public class BattleUI : MonoBehaviour
     }
     #endregion
 
-    public void SetEnemy()
-    {
-        var monster = GameManager.Instance.CurrentMonster;
-        Text_MonsterName.text = monster.Name;
-        Text_Hp.text = $"{monster.HP}";
-    }
-
-    public void SetDungeon()
-    {
-        Text_CurrentDungeon.text = $"Dungeon {GameManager.Instance.CurrentDungeon}";
-        Text_CurrentStage.text = $"{GameManager.Instance.CurrentStage}/4";
-    }
-
-
-    public void UpdateEnemyPanel()
-    {
-        var monster = NewGameManager.Instance.CurrentMonster;
-        Text_MonsterName.text = monster.Name;
-        Text_Hp.text = $"{monster.HP}";
-    }
-
-    public void UpdateDungeon()
-    {
-        Text_CurrentDungeon.text = $"Dungeon {NewGameManager.Instance.CurrentDungeon}";
-    }
-
-    public void UpdateStage()
-    {
-        Text_CurrentStage.text = $"{NewGameManager.Instance.CurrentStage}/4";
-    }
-
+    #region Panel_Rewards
     public void UpdateRewardsPanel()
     {
         panel_Rewards.RemoveRewards();
         panel_Rewards.SetRewardUI();
     }
+    #endregion
 
+    #region Popup_Select
     public void UpdateSelectCardPopup()
     {
         popup_Select.RemoveCards();
         popup_Select.SetCards();
     }
+    #endregion
 
-    public void UpdateBonusJewels()
-    {
-        Text_BonusRed.text = $"{NewGameManager.Instance.BonusJewels[0]}";
-        Text_BonusYellow.text = $"{NewGameManager.Instance.BonusJewels[1]}";
-        Text_BonusBlue.text = $"{NewGameManager.Instance.BonusJewels[2]}";
-    }
-
+    #region Popup_RemoveJewels
     public void UpdateRemoveJewels(List<int> maxJewels)
     {
         popup_RemoveJewels.RemoveJewels();
@@ -107,11 +108,20 @@ public class BattleUI : MonoBehaviour
         popup_RemoveJewels.SetBonus();
         popup_RemoveJewels.UISetActive(true);
     }
+    #endregion
 
-    public void OnClick_SelectCard()
+    #region Popup_GetBonus
+    public void UpdateGetBonus(int playerNetId)
     {
-        popup_Select.gameObject.SetActive(true);
-    }
+        popup_GetBonus.RemoveJewels();
+        popup_GetBonus.SetJewels();
 
+        bool getBonus;
+        if(NetworkClient.localPlayer.netId == playerNetId) getBonus = true;
+        else getBonus = false;
+        popup_GetBonus.UISetPanelType(getBonus);    //true==보너스 받는 사람.
+        popup_GetBonus.UISetActive(true);
+    }
+    #endregion
 
 }
