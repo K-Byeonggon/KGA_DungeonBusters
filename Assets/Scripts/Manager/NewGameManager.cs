@@ -407,7 +407,7 @@ public class NewGameManager : NetworkBehaviour
     #endregion
 
 
-    #region 토벌 성공
+    #region GetJewels
     [Server]
     public void ServerChooseRewardedPlayer()
     {
@@ -432,14 +432,18 @@ public class NewGameManager : NetworkBehaviour
 
             playerIds.Add(playerNetIds[0]);
             rewardIndexs.Add(reward_n);
-
-            //2. 모든 클라의 해당 NetId가진 플레이어에 보상 주기.
-            //RpcPlayerGetReward(playerNetIds[0], reward_n);
-
         }
 
+        //2. 모든 클라의 해당 NetId가진 플레이어에 reward 주기
         int curMonsterId = CurrentMonster.DataId;
         RpcDistributeRewards(playerIds.ToArray(), rewardIndexs.ToArray(), curMonsterId);
+
+
+        //3. 승자 Player에게 BonusJewel의 어떤 색 보석을 가질지 물어보기(BonusJewel이 다 동날때 까지)
+        // Dic에 netId와 고른 Bonus저장해놓고 선택이 다 끝난뒤에 보석 더해주기.
+
+
+
 
         //상태변화
         ChangeState(GameState.EndStage);
@@ -526,7 +530,7 @@ public class NewGameManager : NetworkBehaviour
     #endregion
 
 
-    #region 토벌 실패
+    #region LoseJewels
 
     [Server]
     public void ServerChooseLoseJewelsPlayer()
