@@ -9,7 +9,8 @@ public enum UIType
     Lobby,
     SetPlayerNumPopup,
     Room,
-    Battle
+    Battle,
+    Point
 }
 
 public class UIManager : MonoBehaviour
@@ -26,11 +27,11 @@ public class UIManager : MonoBehaviour
         }
     }
 
-    //UI Resources.Load·Î ºÒ·¯³»µµ·Ï °³¼±ÇÏ±â
-    //_createdUIDic : »ı¼ºµÈ UIµéÀ» ÀúÀå
+    //UI Resources.Loadë¡œ ë¶ˆëŸ¬ë‚´ë„ë¡ ê°œì„ í•˜ê¸°
+    //_createdUIDic : ìƒì„±ëœ UIë“¤ì„ ì €ì¥
     private Dictionary<UIType, GameObject> _createdUIDic = new Dictionary<UIType, GameObject>();
 
-    //_openedUIDic : È°¼ºÈ­µÈ UIµéÀ» ÀúÀå
+    //_openedUIDic : í™œì„±í™”ëœ UIë“¤ì„ ì €ì¥
     private HashSet<UIType> _openedUIDic = new HashSet<UIType>();
 
     private void Awake()
@@ -43,7 +44,7 @@ public class UIManager : MonoBehaviour
         if(_createdUIDic.ContainsKey(uiType) == false) 
         {
             string path = GetUIPath(uiType);
-            GameObject loadedUIPrefab = (GameObject)Resources.Load(path);    //UI ÇÁ¸®Æé
+            GameObject loadedUIPrefab = (GameObject)Resources.Load(path);    //UI í”„ë¦¬í©
             GameObject createdUI = Instantiate(loadedUIPrefab, UIRoot.transform);
             if(createdUI != null)
             {
@@ -74,6 +75,9 @@ public class UIManager : MonoBehaviour
                 break;
             case UIType.Battle:
                 path = "Prefabs/UI/Battle/UI_Battle";
+                break;
+            case UIType.Point:
+                path = "Prefabs/UI/UI_Point";
                 break;
         }
         return path;

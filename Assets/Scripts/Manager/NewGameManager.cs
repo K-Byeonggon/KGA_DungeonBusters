@@ -768,7 +768,13 @@ public class NewGameManager : NetworkBehaviour
     [Server]
     private void TempEndGame()
     {
-        Debug.LogError("이제 가망이 없어.");
+        RpcRequestOpenPointUI();
     }
     #endregion
+
+    [ClientRpc]
+    private void RpcRequestOpenPointUI()
+    {
+        BattleUIManager.Instance.OpenEndGame();
+    }
 }

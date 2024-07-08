@@ -83,4 +83,10 @@ public class BattleUIManager : UIManager
         battleUI.UnsetGetBonus();
     }
     #endregion
+
+    public void OpenEndGame()
+    {
+        CloseSpecificUI(UIType.Battle);
+        OpenSpecificUI(UIType.Point);
+    }
 }
