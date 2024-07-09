@@ -111,13 +111,16 @@ public class BattleUI : MonoBehaviour
     #endregion
 
     #region Popup_GetBonus
-    public void UpdateGetBonus(int playerNetId)
+    public void UpdateGetBonus()
     {
         popup_GetBonus.RemoveJewels();
         popup_GetBonus.SetJewels();
+    }
 
+    public void SetGetBonus(int playerNetId)
+    {
         bool getBonus;
-        if(NetworkClient.localPlayer.netId == playerNetId) getBonus = true;
+        if (NetworkClient.localPlayer.netId == playerNetId) getBonus = true;
         else getBonus = false;
         popup_GetBonus.UISetPanelType(getBonus);    //true==보너스 받는 사람.
         popup_GetBonus.UISetActive(true);

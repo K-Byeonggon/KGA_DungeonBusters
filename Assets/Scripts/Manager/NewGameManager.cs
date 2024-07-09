@@ -129,6 +129,7 @@ public class NewGameManager : NetworkBehaviour
     private void OnChangeBonusJewels(List<int> oldJewels, List<int> newJewels)
     {
         BattleUIManager.Instance.RequestUpdateBonusJewels();
+        BattleUIManager.Instance.RequestUpdateGetBonus();
     }
 
     #endregion
@@ -563,7 +564,9 @@ public class NewGameManager : NetworkBehaviour
     {
         //모든 플레이어에게 Popup_GetBonus 띄운다.
         //보너스 선택 플레이어가 아니면 WaitForSelect로 화면 바꾼다.
-        BattleUIManager.Instance.RequestUpdateGetBonus(playerNetId);
+        //BattleUIManager.Instance.RequestUpdateGetBonus(playerNetId);
+
+        BattleUIManager.Instance.RequestSetGetBonus(playerNetId);
 
         //선택은 Content_BonusJewel에서 이뤄지겠지?
     }

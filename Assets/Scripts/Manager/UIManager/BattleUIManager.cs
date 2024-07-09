@@ -73,9 +73,14 @@ public class BattleUIManager : UIManager
     #endregion
 
     #region Popup_GetBonus
-    public void RequestUpdateGetBonus(int playerNetId)
+    public void RequestUpdateGetBonus()
     {
-        battleUI.UpdateGetBonus(playerNetId);
+        battleUI.UpdateGetBonus();
+    }
+
+    public void RequestSetGetBonus(int playerNetId)
+    {
+        battleUI.SetGetBonus(playerNetId);
     }
 
     public void RequestUnsetGetBonus()
