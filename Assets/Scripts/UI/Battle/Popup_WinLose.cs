@@ -12,7 +12,7 @@ public class Popup_WinLose : MonoBehaviour
     [SerializeField] GameObject Transform_SlotRoot;
     [SerializeField] GameObject Prefab_Content_Card;
 
-    public void UpdateText()
+    public void UpdateWinLoseText()
     {
         bool stageClear = NewGameManager.Instance.StageClear;
 

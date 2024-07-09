@@ -5,6 +5,7 @@ public enum GameState
     SubmitCard,
     WaitForPlayers,
     CalculateResults,
+    ShowWinLose,
     GetJewels,
     GetBonus,
     LoseJewels,

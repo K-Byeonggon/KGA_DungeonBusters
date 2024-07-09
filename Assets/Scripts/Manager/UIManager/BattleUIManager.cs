@@ -89,6 +89,23 @@ public class BattleUIManager : UIManager
     }
     #endregion
 
+    #region Popup_WinLose
+    public void RequestUpdateWinLoseText()
+    {
+        battleUI.UpdateText();
+    }
+
+    public void RequestUpdateWinLoseCards()
+    {
+        battleUI.UpdateWinLoseCards();
+    }
+
+    public void RequestSetWinLose()
+    {
+        battleUI.SetWinLose(true);
+    }
+    #endregion
+
     public void OpenEndGame()
     {
         CloseSpecificUI(UIType.Battle);

@@ -26,15 +26,19 @@ public class NewGameManager : NetworkBehaviour
     List<int> _bonusJewels;                            //보너스 Jewel
 
     [SerializeField]
-    Dictionary<int, int> _savedCardList;
+    [SyncVar(hook = nameof(OnChangeStageClear))]
+    bool _stageClear;
 
+    
     [SerializeField] Queue<Monster> _currentDungeonMonsterQueue;        //현재 진행중인 던전에 있는 몬스터를 담은 Queue
     [SerializeField] Dictionary<int, int> _submittedCardList;           //key:netId, value:제출한 카드Num
     [SerializeField] Dictionary<int, int> _duplicationCheck;            //key:CardNum, value:해당Num의 개수
     [SerializeField] Dictionary<uint, int> _selectedJewelIndexList;     //key:netId, value:플레이어가 선택한 버릴 Jewel 인덱스
     [SerializeField] Dictionary<int, List<int>> _netIdAndJewelsIndex;    //key:netId, value:가장많은Jewel의 인덱스List
     [SerializeField] List<int> _winPlayerIds;
-    [SerializeField] bool _stageClear;
+    [SerializeField] Dictionary<int, int> _savedCardList;
+    [SerializeField] Dictionary<int, bool> _checkedPlayerList;
+
     private int _currentSelectBonusPlayerIndex;
 
     
@@ -123,6 +127,12 @@ public class NewGameManager : NetworkBehaviour
         set { _savedCardList = value; }
     }
 
+    public Dictionary<int, bool> CheckedPlayerList
+    {
+        get { return _checkedPlayerList; }
+        set { _checkedPlayerList = value; }
+    }
+
     #endregion
 
     #region hook함수
@@ -146,6 +156,11 @@ public class NewGameManager : NetworkBehaviour
     {
         BattleUIManager.Instance.RequestUpdateBonusJewels();
         BattleUIManager.Instance.RequestUpdateGetBonus();
+    }
+
+    private void OnChangeStageClear(bool oldStageClear, bool newStageClear)
+    {
+        BattleUIManager.Instance.RequestSetWinLose();
     }
 
     #endregion
@@ -203,6 +218,9 @@ public class NewGameManager : NetworkBehaviour
                 break;
             case GameState.CalculateResults:
                 ServerDecideStageResult();
+                break;
+            case GameState.ShowWinLose:
+                ServerStartShowResultsProcess();
                 break;
             case GameState.GetJewels:
                 ServerChooseRewardedPlayer();
@@ -276,11 +294,6 @@ public class NewGameManager : NetworkBehaviour
             if(MyNetworkRoomManager.Instance.minPlayers < 4) { player.Cards = new List<int>() { 2,3,4,5,6,7}; }
             else { player.Cards = new List<int>() { 1, 2, 3, 4, 5, 6 }; }
         }
-    }
-    [ClientRpc]
-    private void RpcInitPlayerCards()
-    {
-
     }
 
     #endregion
@@ -391,8 +404,7 @@ public class NewGameManager : NetworkBehaviour
 
         ServerRequestSetUsedCard();
 
-        if(StageClear) { ChangeState(GameState.GetJewels); }
-        else { ChangeState(GameState.LoseJewels); }
+        ChangeState(GameState.ShowWinLose);
     }
 
     [Server]
@@ -456,6 +468,58 @@ public class NewGameManager : NetworkBehaviour
         newCards.Remove(usedCard);
         player.Cards = newCards;
     }
+    #endregion
+
+
+    #region ShowWinLose
+    [Server]
+    public void ServerStartShowResultsProcess()
+    {
+        RpcShowWinLose();
+    }
+
+    [ClientRpc]
+    private void RpcShowWinLose()
+    {
+        BattleUIManager.Instance.RequestUpdateWinLoseCards();
+        BattleUIManager.Instance.RequestSetWinLose();
+    } 
+
+    //확인버튼을 누르면~
+    [Command(requiresAuthority = false)]
+    public void Cmd_OnClick_Check()
+    {
+
+    }
+
+    [Server]
+    public void ServerCheckAllPlayerChecked()
+    {
+        if (ServerAllPlayersChecked())
+        {
+            ServerOnAllPlayerChecked();
+        }
+        else
+        {
+            Debug.Log("아직 확인 안한 플레이어 있음.");
+        }
+    }
+
+    [Server]
+    private bool ServerAllPlayersChecked()
+    {
+        //아무튼 플레이어 확인했는지 체크하기
+        return false;
+    }
+
+    [Server]
+    private void ServerOnAllPlayerChecked()
+    {
+        if (StageClear) { ChangeState(GameState.GetJewels); }
+        else { ChangeState(GameState.LoseJewels); }
+    }
+
+
     #endregion
 
 

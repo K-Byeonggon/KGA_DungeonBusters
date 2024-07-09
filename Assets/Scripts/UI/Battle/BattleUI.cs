@@ -33,6 +33,7 @@ public class BattleUI : MonoBehaviour
     [SerializeField] Popup_Select popup_Select;
     [SerializeField] Popup_RemoveJewels popup_RemoveJewels;
     [SerializeField] Popup_GetBonus popup_GetBonus;
+    [SerializeField] Popup_WinLose popup_WinLose;
 
 
     #region BattleUI
@@ -132,4 +133,21 @@ public class BattleUI : MonoBehaviour
     }
     #endregion
 
+    #region Popup_WinLose
+    public void UpdateText()
+    {
+        popup_WinLose.UpdateWinLoseText();
+    }
+
+    public void UpdateWinLoseCards()
+    {
+        popup_WinLose.RemoveCards();
+        popup_WinLose.SetCards();
+    }
+
+    public void SetWinLose(bool setActive)
+    {
+        popup_WinLose.UISetActive(setActive);
+    }
+    #endregion
 }
