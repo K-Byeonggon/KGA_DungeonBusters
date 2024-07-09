@@ -31,9 +31,12 @@ public class NewGameManager : NetworkBehaviour
     [SerializeField] Dictionary<uint, int> _selectedJewelIndexList;     //key:netId, value:플레이어가 선택한 버릴 Jewel 인덱스
     [SerializeField] Dictionary<int, List<int>> _netIdAndJewelsIndex;    //key:netId, value:가장많은Jewel의 인덱스List
     [SerializeField] List<int> _winPlayerIds;
+    [SerializeField] bool _stageClear;
     private int _currentSelectBonusPlayerIndex;
-
-    public Dictionary<int, Monster> _monsterList = new Dictionary<int, Monster>();
+    [SerializeField]
+    [SyncVar(hook = nameof(OnChangeSavedCardList))]
+    Dictionary<int, int> _savedCardList;
+    
 
     #region 프로퍼티
 
@@ -107,6 +110,18 @@ public class NewGameManager : NetworkBehaviour
         set { _winPlayerIds = value; }
     }
 
+    public bool StageClear
+    {
+        get { return _stageClear; }
+        set { _stageClear = value; }
+    }
+
+    public Dictionary<int, int> SavedCardList
+    {
+        get { return _savedCardList; }
+        set { _savedCardList = value; }
+    }
+
     #endregion
 
     #region hook함수
@@ -130,6 +145,11 @@ public class NewGameManager : NetworkBehaviour
     {
         BattleUIManager.Instance.RequestUpdateBonusJewels();
         BattleUIManager.Instance.RequestUpdateGetBonus();
+    }
+
+    private void OnChangeSavedCardList(Dictionary<int,int> oldList, Dictionary<int,int> newList)
+    {
+        //여기서 WinLose의 카드 세팅하기
     }
 
     #endregion
@@ -348,6 +368,7 @@ public class NewGameManager : NetworkBehaviour
     [Server]
     private void ServerOnAllPlayersSubmitted()
     {
+        SavedCardList = new Dictionary<int, int>(SubmittedCardList);
         ChangeState(GameState.CalculateResults);
     }
 
@@ -356,7 +377,7 @@ public class NewGameManager : NetworkBehaviour
     {
         int monsterHp = CurrentMonster.HP;
         int totalDamage = ServerCalculTotalDamage();
-        bool StageClear = totalDamage >= monsterHp;
+        StageClear = totalDamage >= monsterHp;
 
         ServerRequestSetUsedCard();
 

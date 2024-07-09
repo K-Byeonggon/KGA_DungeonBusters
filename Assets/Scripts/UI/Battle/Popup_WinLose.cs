@@ -13,9 +13,9 @@ public class Popup_WinLose : MonoBehaviour
 
     public void UpdateText()
     {
-        bool stageWin = false;//NewGameManager에 StageWinLose만들고 그거 가져오자.
+        bool stageClear = NewGameManager.Instance.StageClear;
 
-        if(stageWin) { Text_WinLose.text = "토벌 성공!"; }
+        if(stageClear) { Text_WinLose.text = "토벌 성공!"; }
         else { Text_WinLose.text = "토벌 실패.."; }
     }
 
