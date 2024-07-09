@@ -477,6 +477,7 @@ MonoBehaviour:
   _currentMonsterId: 0
   _bonusJewels: 
   _winPlayerIds: 
+  _stageClear: 0
 --- !u!4 &765025277
 Transform:
   m_ObjectHideFlags: 0

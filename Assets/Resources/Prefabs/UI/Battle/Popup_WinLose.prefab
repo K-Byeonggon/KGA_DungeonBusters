@@ -53,7 +53,7 @@ MonoBehaviour:
   Btn_FrontClose: {fileID: 602729926899632029}
   Text_WinLose: {fileID: 2062883326456491178}
   Transform_SlotRoot: {fileID: 3700983817732836819}
-  Prefab_CardRed: {fileID: 7386076115930275034, guid: cc0a50c7105bebc42af38b460ca3150c, type: 3}
+  Prefab_Content_Card: {fileID: 0}
 --- !u!1 &1324112148373091872
 GameObject:
   m_ObjectHideFlags: 0
@@ -530,8 +530,8 @@ MonoBehaviour:
     m_Right: 0
     m_Top: 0
     m_Bottom: 0
-  m_ChildAlignment: 0
-  m_Spacing: 0
+  m_ChildAlignment: 4
+  m_Spacing: 5
   m_ChildForceExpandWidth: 1
   m_ChildForceExpandHeight: 1
   m_ChildControlWidth: 0

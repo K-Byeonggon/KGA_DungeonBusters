@@ -367,8 +367,8 @@ public class NewGameManager : NetworkBehaviour
         SavedCardList = new Dictionary<int, int>(SubmittedCardList);
         int[] playerNetIds = SavedCardList.Keys.ToArray();
         int[] cardNums = SavedCardList.Values.ToArray();
-        
         RpcUpdateSavedCardList(playerNetIds, cardNums);
+
         ChangeState(GameState.CalculateResults);
     }
 
