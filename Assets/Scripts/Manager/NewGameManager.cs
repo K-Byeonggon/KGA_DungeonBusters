@@ -25,6 +25,9 @@ public class NewGameManager : NetworkBehaviour
     [SyncVar(hook = nameof(OnChangeBonusJewels))]
     List<int> _bonusJewels;                            //보너스 Jewel
 
+    [SerializeField]
+    Dictionary<int, int> _savedCardList;
+
     [SerializeField] Queue<Monster> _currentDungeonMonsterQueue;        //현재 진행중인 던전에 있는 몬스터를 담은 Queue
     [SerializeField] Dictionary<int, int> _submittedCardList;           //key:netId, value:제출한 카드Num
     [SerializeField] Dictionary<int, int> _duplicationCheck;            //key:CardNum, value:해당Num의 개수
@@ -33,9 +36,7 @@ public class NewGameManager : NetworkBehaviour
     [SerializeField] List<int> _winPlayerIds;
     [SerializeField] bool _stageClear;
     private int _currentSelectBonusPlayerIndex;
-    [SerializeField]
-    [SyncVar(hook = nameof(OnChangeSavedCardList))]
-    Dictionary<int, int> _savedCardList;
+
     
 
     #region 프로퍼티
@@ -145,11 +146,6 @@ public class NewGameManager : NetworkBehaviour
     {
         BattleUIManager.Instance.RequestUpdateBonusJewels();
         BattleUIManager.Instance.RequestUpdateGetBonus();
-    }
-
-    private void OnChangeSavedCardList(Dictionary<int,int> oldList, Dictionary<int,int> newList)
-    {
-        //여기서 WinLose의 카드 세팅하기
     }
 
     #endregion
@@ -369,7 +365,21 @@ public class NewGameManager : NetworkBehaviour
     private void ServerOnAllPlayersSubmitted()
     {
         SavedCardList = new Dictionary<int, int>(SubmittedCardList);
+        int[] playerNetIds = SavedCardList.Keys.ToArray();
+        int[] cardNums = SavedCardList.Values.ToArray();
+        
+        RpcUpdateSavedCardList(playerNetIds, cardNums);
         ChangeState(GameState.CalculateResults);
+    }
+
+    [ClientRpc]
+    private void RpcUpdateSavedCardList(int[] playerNetIds, int[] cardNums)
+    {
+        SavedCardList = new Dictionary<int, int>();
+        for (int i = 0; i < playerNetIds.Length; i++)
+        {
+            SavedCardList.Add(playerNetIds[i], cardNums[i]);
+        }
     }
 
     [Server]
