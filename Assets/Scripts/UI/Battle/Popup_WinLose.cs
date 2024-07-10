@@ -11,6 +11,8 @@ public class Popup_WinLose : MonoBehaviour
     [SerializeField] Text Text_WinLose;
     [SerializeField] GameObject Transform_SlotRoot;
     [SerializeField] GameObject Prefab_Content_Card;
+    [SerializeField] Button Btn_Check;
+    [SerializeField] Text Text_Btn_Check;
 
     public void UpdateWinLoseText()
     {
@@ -26,6 +28,8 @@ public class Popup_WinLose : MonoBehaviour
         {
             Destroy(Transform_SlotRoot.transform.GetChild(i).gameObject);
         }
+
+        Text_Btn_Check.text = "확인";
     }
 
     public void SetCards()
@@ -54,6 +58,14 @@ public class Popup_WinLose : MonoBehaviour
     public void OnClick_FrontClose()
     {
         //대충 전면 닫기
-        UISetActive(false);
+        //UISetActive(false);
+    }
+
+    public void OnClick_Check()
+    {
+        Text_Btn_Check.text = "대기중..";
+
+        int playerNetId = (int)NetworkClient.localPlayer.netId;
+        NewGameManager.Instance.Cmd_OnClick_Check(playerNetId, true);
     }
 }

@@ -160,7 +160,8 @@ public class NewGameManager : NetworkBehaviour
 
     private void OnChangeStageClear(bool oldStageClear, bool newStageClear)
     {
-        BattleUIManager.Instance.RequestSetWinLose();
+        BattleUIManager.Instance.RequestUpdateWinLoseCards();
+        BattleUIManager.Instance.RequestUpdateWinLoseText();
     }
 
     #endregion
@@ -308,6 +309,7 @@ public class NewGameManager : NetworkBehaviour
         SelectedJewelIndexList = new Dictionary<uint, int>();
         NetIdAndJewelsIndex = new Dictionary<int, List<int>>();
         WinPlayerIds = new List<int>();
+        CheckedPlayerList = new Dictionary<int, bool>();
 
         //Stage시작시 변경
         CurrentStage++;
@@ -482,14 +484,23 @@ public class NewGameManager : NetworkBehaviour
     private void RpcShowWinLose()
     {
         BattleUIManager.Instance.RequestUpdateWinLoseCards();
-        BattleUIManager.Instance.RequestSetWinLose();
+        BattleUIManager.Instance.RequestSetWinLose(true);
     } 
 
     //확인버튼을 누르면~
     [Command(requiresAuthority = false)]
-    public void Cmd_OnClick_Check()
+    public void Cmd_OnClick_Check(int playerNetId, bool check)
     {
+        if (CheckedPlayerList.ContainsKey(playerNetId))
+        {
+            CheckedPlayerList[playerNetId] = check;
+        }
+        else
+        {
+            CheckedPlayerList.Add(playerNetId, check);
+        }
 
+        ServerCheckAllPlayerChecked();
     }
 
     [Server]
@@ -509,16 +520,22 @@ public class NewGameManager : NetworkBehaviour
     private bool ServerAllPlayersChecked()
     {
         //아무튼 플레이어 확인했는지 체크하기
-        return false;
+        return NetworkServer.connections.Count == CheckedPlayerList.Count;
     }
 
     [Server]
     private void ServerOnAllPlayerChecked()
     {
+        RpcUnsetWinLoseUI();
         if (StageClear) { ChangeState(GameState.GetJewels); }
         else { ChangeState(GameState.LoseJewels); }
     }
 
+    [ClientRpc]
+    private void RpcUnsetWinLoseUI()
+    {
+        BattleUIManager.Instance.RequestSetWinLose(false);
+    }
 
     #endregion
 

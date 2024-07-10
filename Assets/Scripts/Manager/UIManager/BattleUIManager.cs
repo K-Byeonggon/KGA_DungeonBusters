@@ -100,9 +100,9 @@ public class BattleUIManager : UIManager
         battleUI.UpdateWinLoseCards();
     }
 
-    public void RequestSetWinLose()
+    public void RequestSetWinLose(bool setActive)
     {
-        battleUI.SetWinLose(true);
+        battleUI.SetWinLose(setActive);
     }
     #endregion
 

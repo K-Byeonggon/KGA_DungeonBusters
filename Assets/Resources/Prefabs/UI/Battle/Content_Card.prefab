@@ -164,6 +164,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7932041224122733858}
   - component: {fileID: 8816172275579307}
+  - component: {fileID: 4944327281901527329}
   m_Layer: 5
   m_Name: Content_Card
   m_TagString: Untagged
@@ -200,3 +201,23 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7386076115930275034}
   m_CullTransparentMesh: 1
+--- !u!114 &4944327281901527329
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7386076115930275034}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe308a63420ab0a448da05a7e345ef47, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Img_Card: {fileID: 218360686321876334}
+  Text_Number: {fileID: 7213095620979618522}
+  Sprite_color:
+  - {fileID: -1566623720, guid: 4ef39ff1ebd46ba4bbc1bb66995f4bba, type: 3}
+  - {fileID: -364366952, guid: 4ef39ff1ebd46ba4bbc1bb66995f4bba, type: 3}
+  - {fileID: -1789673266, guid: 4ef39ff1ebd46ba4bbc1bb66995f4bba, type: 3}
+  - {fileID: 1602821133, guid: 4ef39ff1ebd46ba4bbc1bb66995f4bba, type: 3}
+  - {fileID: -223000144, guid: 4ef39ff1ebd46ba4bbc1bb66995f4bba, type: 3}
