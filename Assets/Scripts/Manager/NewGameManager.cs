@@ -585,21 +585,28 @@ public class NewGameManager : NetworkBehaviour
 
     private void RemoveDuplicatedCard()
     {
+        //Mirror를 사용하면서 컬렉션을 수정하는 도중에 그 컬렉션을 열거하려고 하면 문제가 발생함.
+        // 제거할 키들을 저장할 리스트
+        List<int> keysToRemove = new List<int>();
+
+        // 첫 번째 루프: 제거할 키를 수집
         foreach (int card in SubmittedCardList.Values)
         {
             if (DuplicationCheck[card] > 1)
             {
                 int valueToRemove = card;
-                var keysToRemove = SubmittedCardList.Where(kvp => kvp.Value == valueToRemove)
-                    .Select(kvp => kvp.Key)
-                    .ToList();
-
-                foreach (var key in keysToRemove)
-                {
-                    SubmittedCardList.Remove(key);
-                    Debug.Log($"Key {key} with Value {valueToRemove} removed");
-                }
+                var keys = SubmittedCardList.Where(kvp => kvp.Value == valueToRemove)
+                                            .Select(kvp => kvp.Key)
+                                            .ToList();
+                keysToRemove.AddRange(keys);
             }
+        }
+
+        // 두 번째 루프: 수집된 키들을 제거
+        foreach (var key in keysToRemove)
+        {
+            SubmittedCardList.Remove(key);
+            Debug.Log($"Key {key} removed");
         }
     }
 
