@@ -9,7 +9,7 @@ public class DataManager : MonoBehaviour
 
     public Dictionary<int, Monster> LoadedMonsterList {  get; private set; }
 
-    private readonly string _dataRootPath = "C:/Unity/DungeonBusters/DataParser";
+    private readonly string _dataRootPath = "C:/Unity/KGA_DungeonBusters/DataParser";
 
     private void Awake()
     {
@@ -37,7 +37,14 @@ public class DataManager : MonoBehaviour
     {
         LoadedMonsterList = new Dictionary<int, Monster>();
 
-        XDocument doc = XDocument.Load($"{_dataRootPath}/{tableName}.xml");
+        TextAsset xmlTextAsset = Resources.Load<TextAsset>($"Xml/{tableName}");
+        if(xmlTextAsset == null)
+        {
+            Debug.LogError($"Failed to load XML file: {tableName}.xml");
+            return;
+        }
+
+        XDocument doc = XDocument.Parse(xmlTextAsset.text);
         var dataElements = doc.Descendants("data");
 
         foreach (var data in dataElements)
