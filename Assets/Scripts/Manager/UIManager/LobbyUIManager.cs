@@ -6,6 +6,6 @@ public class LobbyUIManager : UIManager
 {
     private void Start()
     {
-        OpenSpecificUI(UIType.Login);
+        OpenSpecificUI(UIType.Lobby);
     }
 }
