@@ -1,0 +1,34 @@
+게임 진행상황에 따라 캐릭터가 움직여야함.
+GameState
+    StartDungeon,
+    StartStage,
+    SubmitCard,
+    WaitForPlayers,
+    CalculateResults,
+    ShowWinLose,
+    GetJewels,
+    GetBonus,
+    LoseJewels,
+    EndStage,
+    EndDungeon,
+    EndGame
+
+
+startDungeon
+ - 여기서 몬스터 만나기 전까지 달리는 애니메이션
+startStage
+ - 여기서 몬스터 만남
+ - 플레이어 캐릭터 Idle
+submitCard
+ - 플레이어 캐릭터 Idle
+showWinLose
+ - 여기서 카드 제출 내역 공개하고,
+ - 토벌 성공시
+	- 공격에 성공한 플레이어는 공격하는 애니메이션, 몬스터는 맞는 애니메이션
+	- 공격에 실패한 플레이어는 넘어지는 애니메이션
+ - 토벌 실패시
+	- 플레이어 전부 넘어지는 애니메이션
+GetJewels
+ - 여기서 보석을 얻기 전에 전투 승리 애니메이션
+LoseJewels
+ - 여기서 넘어진 플레이어 일어나는 애니메이션
