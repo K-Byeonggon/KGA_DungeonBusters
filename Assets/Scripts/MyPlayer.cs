@@ -48,23 +48,12 @@ public class MyPlayer : NetworkBehaviour
         }
     }
 
-    private void Awake()
-    {
-        GameState spawnTiming = NewGameManager.Instance.CurrentState;
-        Debug.Log($"<color=red>spawnTiming = {spawnTiming}</color>");
-    }
 
     public override void OnStartClient()
     {
         base.OnStartClient();
 
         RegisterPlayer();
-
-
-        foreach (var kv in NetworkClient.spawned)
-        {
-            Debug.Log($"{kv.Key}:{kv.Value.name}");
-        }
 
         //이 시점에 패널 생성 요청
         BattleUIManager.Instance.RequestCreatePlayer((int)this.netId);
@@ -82,18 +71,6 @@ public class MyPlayer : NetworkBehaviour
         NewGameManager.Instance.PlayerList = newList;
     }
 
-    public override void OnStartLocalPlayer()
-    {
-        base.OnStartLocalPlayer();
-
-        Debug.Log($"<color=red>!!</color>");
-    }
-
-    private void Start()
-    {
-        Debug.Log($"<color=red>??</color>");
-
-    }
 
 
     private void OnPlayerCardsChanged()

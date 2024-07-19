@@ -209,12 +209,10 @@ public class NewGameManager : NetworkBehaviour
         if(isServer) InitializeGame();
     }
 
-    public override void OnStartLocalPlayer()
+    private void OnAllPlayerRegistered()
     {
-        base.OnStartLocalPlayer();
-        Debug.Log("OnStartLocalPlayer");
+        if(isServer) InitializeGame();
     }
-
 
 
     #region 상태머신
@@ -239,9 +237,11 @@ public class NewGameManager : NetworkBehaviour
         switch (state)
         {
             case GameState.StartDungeon:
+                Debug.Log("Before StartDungeon");
                 StartDungeon();
                 break;
             case GameState.StartStage:
+                Debug.Log("Before StartStage");
                 StartStage();
                 break;
             case GameState.SubmitCard:
@@ -285,6 +285,7 @@ public class NewGameManager : NetworkBehaviour
     [Server]
     private void InitializeGame()
     {
+        Debug.Log("InitializeGame");
         CurrentDungeon = 0;
         BonusJewels = new List<int>() { 0, 0, 0 };
         ChangeState(GameState.StartDungeon);
