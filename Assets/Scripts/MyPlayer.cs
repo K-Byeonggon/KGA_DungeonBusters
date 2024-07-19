@@ -15,9 +15,9 @@ public class MyPlayer : NetworkBehaviour
     public List<int> _cards;
     [SerializeField] List<int> _usedCards;
     [SerializeField] List<int> _jewels; //RED:0, YELLOW:1, BLUE:2
-    public int _currentCard;
-    public bool _isAttackSuccessed;
-    public int rewardOrder;
+
+    public Animator _animator;
+
 
     public List<int> Cards
     {
@@ -55,7 +55,6 @@ public class MyPlayer : NetworkBehaviour
     }
 
 
-
     public override void OnStartClient()
     {
         base.OnStartClient();
@@ -84,34 +83,11 @@ public class MyPlayer : NetworkBehaviour
         Jewels = new List<int>() { 1, 1, 1 };       //RED:0, YELLOW:1, BLUE:2
     }
 
-    public int PopCard(int num)
+
+    public void SetAnimator()
     {
-        
-        if (_cards.Contains(num))
-        {
-            _usedCards.Add(num);
-            _cards.Remove(num);
-            return num;
-        }
-        return -1;  //에러
+        _animator.SetBool("Run", true);
+
     }
 
-    public void InitCards()
-    {
-        _cards = new List<int>() { 1,2,3,4,5,6,7 };
-        _usedCards = new List<int>();
-    }
-
-    public void AddJewel(Jewel color, int num)
-    {
-        _jewels[(int)color] += num;
-    }
-    
-    //해당 색의 보석을 전부 잃고 중앙에 쌓아둔다.
-    public int LoseJewel(Jewel color)
-    {
-        int result = _jewels[(int)color];
-        _jewels[(int)color] = 0;
-        return result;
-    }
 }

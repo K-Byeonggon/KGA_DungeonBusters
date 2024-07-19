@@ -279,6 +279,13 @@ public class NewGameManager : NetworkBehaviour
         CurrentDungeon++;
         this.Enqueue4MonstersFromData(_currentDungeon);
 
+
+        //애니메이션 재생용 코루틴
+        StartCoroutine(TempRun());
+
+
+
+
         //상태변화
         ChangeState(GameState.StartStage);
     }
@@ -296,6 +303,27 @@ public class NewGameManager : NetworkBehaviour
             else { player.Cards = new List<int>() { 1, 2, 3, 4, 5, 6 }; }
         }
     }
+
+    [Server]
+    private IEnumerator TempRun()
+    {
+        RpcTempRun();
+        yield return new WaitForSeconds(4f);
+        RpcTempIdle();
+        yield return new WaitForSeconds(1f);
+    }
+
+    [ClientRpc]
+    private void RpcTempRun()
+    {
+        
+    }
+    [ClientRpc]
+    private void RpcTempIdle()
+    {
+
+    }
+
 
     #endregion
 

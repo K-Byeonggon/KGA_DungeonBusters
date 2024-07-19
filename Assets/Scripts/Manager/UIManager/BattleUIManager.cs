@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class BattleUIManager : UIManager
 {
-    public BattleUI battleUI;
+    private BattleUI battleUI;
     public static new BattleUIManager Instance;
 
     private void Awake()
