@@ -38,12 +38,33 @@ public class NewGameManager : NetworkBehaviour
     [SerializeField] List<int> _winPlayerIds;
     [SerializeField] Dictionary<int, int> _savedCardList;
     [SerializeField] Dictionary<int, bool> _checkedPlayerList;
+    
+    //MyPlayer가 생성되면 OnStartClient에서 자신을 여기에 등록한다.
+    private Dictionary<uint, MyPlayer> _playerList;
 
     private int _currentSelectBonusPlayerIndex;
 
     
 
     #region 프로퍼티
+
+    public GameState CurrentState
+    {
+        get { return _currentState; }
+    }
+
+    public Dictionary<uint, MyPlayer> PlayerList
+    {
+        get { return _playerList; }
+        set
+        {
+            _playerList = value;
+            foreach(var kvp in _playerList)
+            {
+                Debug.Log($"{kvp.Key} {kvp.Value} Registered");
+            }
+        }
+    }
 
     public int CurrentDungeon
     {
@@ -170,19 +191,28 @@ public class NewGameManager : NetworkBehaviour
     private void Awake()
     {
         Instance = this;
+        PlayerList = new Dictionary<uint, MyPlayer>();
     }
 
 
     public override void OnStartServer()
     {
         base.OnStartServer();
+        Debug.Log("OnStartServer");
     }
 
     public override void OnStartClient()
     {
         base.OnStartClient();
-
+        Debug.Log("OnStartClient");
+        //여기서 아직 Player가 Scene에 추가되지 않았음..
         if(isServer) InitializeGame();
+    }
+
+    public override void OnStartLocalPlayer()
+    {
+        base.OnStartLocalPlayer();
+        Debug.Log("OnStartLocalPlayer");
     }
 
 
@@ -260,6 +290,7 @@ public class NewGameManager : NetworkBehaviour
         ChangeState(GameState.StartDungeon);
     }
 
+
     #endregion
 
 
@@ -270,6 +301,7 @@ public class NewGameManager : NetworkBehaviour
     [Server]
     private void StartDungeon()
     {
+
         //Dungeon시작시 초기화
         CurrentStage = 0;
         //모든 클라 플레이어 UsedCards, Cards 초기화
@@ -282,9 +314,6 @@ public class NewGameManager : NetworkBehaviour
 
         //애니메이션 재생용 코루틴
         StartCoroutine(TempRun());
-
-
-
 
         //상태변화
         ChangeState(GameState.StartStage);

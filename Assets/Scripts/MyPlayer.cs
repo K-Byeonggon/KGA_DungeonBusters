@@ -48,16 +48,18 @@ public class MyPlayer : NetworkBehaviour
         }
     }
 
-    private void OnPlayerCardsChanged()
+    private void Awake()
     {
-        if (this.isLocalPlayer == false) return;
-        BattleUIManager.Instance.RequestUpdateSelectCard();
+        GameState spawnTiming = NewGameManager.Instance.CurrentState;
+        Debug.Log($"<color=red>spawnTiming = {spawnTiming}</color>");
     }
-
 
     public override void OnStartClient()
     {
         base.OnStartClient();
+
+        RegisterPlayer();
+
 
         foreach (var kv in NetworkClient.spawned)
         {
@@ -72,6 +74,38 @@ public class MyPlayer : NetworkBehaviour
         //이 시점에 카드 선택창 생성 요청?
         BattleUIManager.Instance.RequestUpdateSelectCard();
     }
+
+    private void RegisterPlayer()
+    {
+        var newList = new Dictionary<uint, MyPlayer> (NewGameManager.Instance.PlayerList);
+        newList.Add(this.netId, this);
+        NewGameManager.Instance.PlayerList = newList;
+    }
+
+    public override void OnStartLocalPlayer()
+    {
+        base.OnStartLocalPlayer();
+
+        Debug.Log($"<color=red>!!</color>");
+    }
+
+    private void Start()
+    {
+        Debug.Log($"<color=red>??</color>");
+
+    }
+
+
+    private void OnPlayerCardsChanged()
+    {
+        if (this.isLocalPlayer == false) return;
+        BattleUIManager.Instance.RequestUpdateSelectCard();
+    }
+
+
+
+
+
 
     private void initialSettings()
     {
