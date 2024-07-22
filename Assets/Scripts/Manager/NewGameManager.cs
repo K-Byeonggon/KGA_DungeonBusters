@@ -29,6 +29,8 @@ public class NewGameManager : NetworkBehaviour
     [SyncVar(hook = nameof(OnChangeStageClear))]
     bool _stageClear;
 
+
+    [SerializeField] List<CorridorController> _corridors;
     
     [SerializeField] Queue<Monster> _currentDungeonMonsterQueue;        //현재 진행중인 던전에 있는 몬스터를 담은 Queue
     [SerializeField] Dictionary<int, int> _submittedCardList;           //key:netId, value:제출한 카드Num
@@ -343,6 +345,12 @@ public class NewGameManager : NetworkBehaviour
     private IEnumerator DungeonAnim()
     {
         RpcTempRun();
+
+        foreach(var corridor in _corridors)
+        {
+            corridor.StartMove(3f);
+        }
+
         yield return new WaitForSeconds(3f);
         RpcTempIdle();
         yield return new WaitForSeconds(1f);
@@ -390,6 +398,12 @@ public class NewGameManager : NetworkBehaviour
         ChangeState(GameState.SubmitCard);
     }
 
+    [Server]
+    private void StageAnim()
+    {
+
+    }
+
     #endregion
 
     #region 2-2. 플레이어 카드 세팅
@@ -405,11 +419,6 @@ public class NewGameManager : NetworkBehaviour
     #endregion
 
 
-
-    #region 3. 카드 제출 처리
-
-
-    #region 카드 제출 후 토벌 성공/실패 결정 전 까지
     //플레이어의 카드 제출 처리(클라에서 요청후, 서버에서 처리)
     [Command(requiresAuthority = false)]
     public void CmdAddSubmittedCard_OnClick_Card(int player_netId, int cardNum)
@@ -467,6 +476,8 @@ public class NewGameManager : NetworkBehaviour
         }
     }
 
+
+    #region CalculateResults
     [Server]
     private void ServerDecideStageResult()
     {
@@ -543,6 +554,7 @@ public class NewGameManager : NetworkBehaviour
     #endregion
 
 
+
     #region ShowWinLose
     [Server]
     public void ServerStartShowResultsProcess()
@@ -606,6 +618,7 @@ public class NewGameManager : NetworkBehaviour
     {
         BattleUIManager.Instance.RequestSetWinLose(false);
     }
+
 
     #endregion
 
@@ -933,7 +946,6 @@ public class NewGameManager : NetworkBehaviour
     #endregion
 
 
-    #endregion
 
     #region EndStage
     [Server]
