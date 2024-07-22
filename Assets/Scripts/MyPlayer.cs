@@ -10,6 +10,12 @@ public enum Jewel
     BLUE
 }
 
+public enum PlayerAnim
+{
+    Idle,
+    Run
+}
+
 public class MyPlayer : NetworkBehaviour
 {
     public List<int> _cards;
@@ -95,10 +101,18 @@ public class MyPlayer : NetworkBehaviour
     }
 
 
-    public void SetAnimator()
+    public void SetAnimator(PlayerAnim anim)
     {
-        _animator.SetBool("Run", true);
-
+        //enum으로 바꾸자
+        switch (anim)
+        {
+            case PlayerAnim.Idle:
+                break;
+            case PlayerAnim.Run:
+                _animator.SetBool("Run", true);
+                break;
+        }
+        
     }
 
 }

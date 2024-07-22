@@ -351,7 +351,10 @@ public class NewGameManager : NetworkBehaviour
     [ClientRpc]
     private void RpcTempRun()
     {
-        
+        foreach(var player in PlayerList.Values)
+        {
+            player.SetAnimator(PlayerAnim.Run);
+        }
     }
     [ClientRpc]
     private void RpcTempIdle()
