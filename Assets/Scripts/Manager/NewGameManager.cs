@@ -64,7 +64,7 @@ public class NewGameManager : NetworkBehaviour
                 Debug.Log($"{kvp.Key} {kvp.Value} Registered");
             }
 
-            if(_playerList.Count == MyNetworkRoomManager.Instance.minPlayers)
+            if(_playerList.Count >= MyNetworkRoomManager.Instance.minPlayers)
             {
                 OnAllPlayerRegistered();
             }
@@ -319,10 +319,10 @@ public class NewGameManager : NetworkBehaviour
 
 
         //애니메이션 재생용 코루틴
-        StartCoroutine(TempRun());
+        StartCoroutine(DungeonAnim());
 
         //상태변화
-        ChangeState(GameState.StartStage);
+        //ChangeState(GameState.StartStage);
     }
 
     [ClientRpc]
@@ -340,12 +340,13 @@ public class NewGameManager : NetworkBehaviour
     }
 
     [Server]
-    private IEnumerator TempRun()
+    private IEnumerator DungeonAnim()
     {
         RpcTempRun();
-        yield return new WaitForSeconds(4f);
+        yield return new WaitForSeconds(3f);
         RpcTempIdle();
         yield return new WaitForSeconds(1f);
+        ChangeState(GameState.StartStage);
     }
 
     [ClientRpc]
@@ -359,7 +360,10 @@ public class NewGameManager : NetworkBehaviour
     [ClientRpc]
     private void RpcTempIdle()
     {
-
+        foreach(var player in PlayerList.Values)
+        {
+            player.SetAnimator(PlayerAnim.Idle);
+        }
     }
 
 

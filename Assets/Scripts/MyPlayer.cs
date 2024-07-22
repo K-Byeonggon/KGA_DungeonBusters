@@ -107,6 +107,7 @@ public class MyPlayer : NetworkBehaviour
         switch (anim)
         {
             case PlayerAnim.Idle:
+                _animator.SetBool("Run", false);
                 break;
             case PlayerAnim.Run:
                 _animator.SetBool("Run", true);
