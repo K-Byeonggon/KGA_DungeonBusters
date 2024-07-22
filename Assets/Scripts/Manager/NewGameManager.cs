@@ -63,6 +63,11 @@ public class NewGameManager : NetworkBehaviour
             {
                 Debug.Log($"{kvp.Key} {kvp.Value} Registered");
             }
+
+            if(_playerList.Count == MyNetworkRoomManager.Instance.minPlayers)
+            {
+                OnAllPlayerRegistered();
+            }
         }
     }
 
@@ -206,7 +211,7 @@ public class NewGameManager : NetworkBehaviour
         base.OnStartClient();
         Debug.Log("OnStartClient");
         //여기서 아직 Player가 Scene에 추가되지 않았음..
-        if(isServer) InitializeGame();
+        //if(isServer) InitializeGame();
     }
 
     private void OnAllPlayerRegistered()
