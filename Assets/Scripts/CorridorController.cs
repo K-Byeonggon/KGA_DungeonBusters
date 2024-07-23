@@ -17,22 +17,21 @@ public class CorridorController : MonoBehaviour
     private IEnumerator MoveCorridor(float moveDuration)
     {
         float elapsedTime = 0f;
-        while (true)
+
+        while(elapsedTime < moveDuration)
         {
-            while(elapsedTime < moveDuration)
+            transform.Translate(Vector3.back * moveSpeed * Time.deltaTime);
+
+            if(transform.position.z <= resetPositionZ)
             {
-                transform.Translate(Vector3.back * moveSpeed * Time.deltaTime);
-
-                if(transform.position.z <= resetPositionZ)
-                {
-                    Vector3 newPosition = transform.position;
-                    newPosition.z = initialPositionZ;
-                    transform.position = newPosition;
-                }
-
-                elapsedTime += Time.deltaTime;
-                yield return null;
+                Vector3 newPosition = transform.position;
+                newPosition.z = initialPositionZ;
+                transform.position = newPosition;
             }
+
+            elapsedTime += Time.deltaTime;
+            yield return null;
         }
+        
     }
 }
