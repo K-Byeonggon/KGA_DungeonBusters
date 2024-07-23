@@ -83,7 +83,7 @@ public class BattleUIManager : UIManager
         battleUI.UpdateGetBonus();
     }
 
-    public void RequestSetGetBonus(int playerNetId)
+    public void RequestSetGetBonus(uint playerNetId)
     {
         battleUI.SetGetBonus(playerNetId);
     }

@@ -127,7 +127,7 @@ public class BattleUI : MonoBehaviour
         popup_GetBonus.SetJewels();
     }
 
-    public void SetGetBonus(int playerNetId)
+    public void SetGetBonus(uint playerNetId)
     {
         bool getBonus;
         if (NetworkClient.localPlayer.netId == playerNetId) getBonus = true;

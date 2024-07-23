@@ -36,7 +36,7 @@ public class Content_Point : MonoBehaviour
         }
     }
 
-    public void SetPointInfo(int playerNetId)
+    public void SetPointInfo(uint playerNetId)
     {
         MyPlayer player = NewGameManager.Instance.GetPlayerFromNetId(playerNetId);
         int pointRed = player.Jewels[0];

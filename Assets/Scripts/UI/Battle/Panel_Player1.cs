@@ -37,7 +37,7 @@ public class Panel_Player1 : MonoBehaviour
         }
     }
 
-    public void UpdateJewelsInfo(int player_netId)
+    public void UpdateJewelsInfo(uint player_netId)
     {
         MyPlayer player = NewGameManager.Instance.GetPlayerFromNetId(player_netId);
         Text_JewelRed_Player.text = $"{player.Jewels[0]}";
@@ -45,7 +45,7 @@ public class Panel_Player1 : MonoBehaviour
         Text_JewelBlue_Player.text = $"{player.Jewels[2]}";
     }
 
-    public void UpdateUsedCardsInfo(int player_netId)
+    public void UpdateUsedCardsInfo(uint player_netId)
     {
         //여기가 LocalPlayer만 부르니까 동일하게 된거 같은데? 같은 Player의 UsedCard만 참고 하게 되자너
         //MyPlayer player = NetworkClient.localPlayer.GetComponent<MyPlayer>();

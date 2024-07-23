@@ -37,10 +37,10 @@ public class NewGameManager : NetworkBehaviour
     [SerializeField] Dictionary<uint, int> _submittedCardList;           //key:netId, value:제출한 카드Num
     [SerializeField] Dictionary<int, int> _duplicationCheck;            //key:CardNum, value:해당Num의 개수
     [SerializeField] Dictionary<uint, int> _selectedJewelIndexList;     //key:netId, value:플레이어가 선택한 버릴 Jewel 인덱스
-    [SerializeField] Dictionary<int, List<int>> _netIdAndJewelsIndex;    //key:netId, value:가장많은Jewel의 인덱스List
+    [SerializeField] Dictionary<uint, List<int>> _netIdAndJewelsIndex;    //key:netId, value:가장많은Jewel의 인덱스List
     
-    [SerializeField] List<int> _winPlayerIds;
-    [SerializeField] Dictionary<int, int> _savedCardList;
+    [SerializeField] List<uint> _winPlayerIds;
+    [SerializeField] Dictionary<uint, int> _savedCardList;
     [SerializeField] Dictionary<int, bool> _checkedPlayerList;
     
     //MyPlayer가 생성되면 OnStartClient에서 자신을 여기에 등록한다.
@@ -137,13 +137,13 @@ public class NewGameManager : NetworkBehaviour
         set { _selectedJewelIndexList = value; }
     }
 
-    public Dictionary<int, List<int>> NetIdAndJewelsIndex
+    public Dictionary<uint, List<int>> NetIdAndJewelsIndex
     {
         get { return _netIdAndJewelsIndex; }
         set { _netIdAndJewelsIndex = value; }
     }
 
-    public List<int> WinPlayerIds
+    public List<uint> WinPlayerIds
     {
         get { return _winPlayerIds; }
         set { _winPlayerIds = value; }
@@ -155,7 +155,7 @@ public class NewGameManager : NetworkBehaviour
         set { _stageClear = value; }
     }
 
-    public Dictionary<int, int> SavedCardList
+    public Dictionary<uint, int> SavedCardList
     {
         get { return _savedCardList; }
         set { _savedCardList = value; }
@@ -398,8 +398,8 @@ public class NewGameManager : NetworkBehaviour
         SubmittedCardList = new Dictionary<uint, int>();
         DuplicationCheck = new Dictionary<int, int>();
         SelectedJewelIndexList = new Dictionary<uint, int>();
-        NetIdAndJewelsIndex = new Dictionary<int, List<int>>();
-        WinPlayerIds = new List<int>();
+        NetIdAndJewelsIndex = new Dictionary<uint, List<int>>();
+        WinPlayerIds = new List<uint>();
         CheckedPlayerList = new Dictionary<int, bool>();
         //Stage시작시 변경
         CurrentStage++;
@@ -473,7 +473,7 @@ public class NewGameManager : NetworkBehaviour
     private void ServerOnAllPlayersSubmitted()
     {
         SavedCardList = new Dictionary<uint, int>(SubmittedCardList);
-        int[] playerNetIds = SavedCardList.Keys.ToArray();
+        uint[] playerNetIds = SavedCardList.Keys.ToArray();
         int[] cardNums = SavedCardList.Values.ToArray();
         RpcUpdateSavedCardList(playerNetIds, cardNums);
         //RpcUpdateAtkSuccessList();
@@ -482,9 +482,9 @@ public class NewGameManager : NetworkBehaviour
     }
 
     [ClientRpc]
-    private void RpcUpdateSavedCardList(int[] playerNetIds, int[] cardNums)
+    private void RpcUpdateSavedCardList(uint[] playerNetIds, int[] cardNums)
     {
-        SavedCardList = new Dictionary<int, int>();
+        SavedCardList = new Dictionary<uint, int>();
         for (int i = 0; i < playerNetIds.Length; i++)
         {
             SavedCardList.Add(playerNetIds[i], cardNums[i]);
@@ -507,7 +507,7 @@ public class NewGameManager : NetworkBehaviour
 
     }
 
-
+    /*
     //SubmittedCardList는 서버에만 갱신되어있는데 어떻게 하지?
     void CheckCardSubmissions()
     {
@@ -543,7 +543,7 @@ public class NewGameManager : NetworkBehaviour
                 SuccessList[playerId] = true;
             }
         }
-    }
+    }*/
 
 
     #endregion
@@ -706,7 +706,7 @@ public class NewGameManager : NetworkBehaviour
         int whileCount = 0;
         while (SubmittedCardList.Count > 0)
         {
-            List<int> minCardPlayerId = GetMinCardPlayerNetIds();
+            List<uint> minCardPlayerId = GetMinCardPlayerNetIds();
             if (minCardPlayerId.Count > 1) { Debug.LogError("DuplicatedCard Exists"); }
             WinPlayerIds.Add(minCardPlayerId[0]);
             SubmittedCardList.Remove(minCardPlayerId[0]);
@@ -716,7 +716,7 @@ public class NewGameManager : NetworkBehaviour
         }
 
         //2. 승리자 List를 토대로 보상 분배
-        List<int> rewardedPlayerIds = new List<int>();
+        List<uint> rewardedPlayerIds = new List<uint>();
         List<int> rewardIndexs = new List<int>();
 
         for (int i = 0; i < 3; i++)
@@ -742,7 +742,7 @@ public class NewGameManager : NetworkBehaviour
     {
         //Mirror를 사용하면서 컬렉션을 수정하는 도중에 그 컬렉션을 열거하려고 하면 문제가 발생함.
         // 제거할 키들을 저장할 리스트
-        List<int> keysToRemove = new List<int>();
+        List<uint> keysToRemove = new List<uint>();
 
         // 첫 번째 루프: 제거할 키를 수집
         foreach (int card in SubmittedCardList.Values)
@@ -767,20 +767,20 @@ public class NewGameManager : NetworkBehaviour
 
     //토벌 성공시는 보상을 받을 가장 작은 값이 여러개일 경우가 없지만,
     //토벌 실패시는 보상을 잃을 가장 작은 값이 여러개일 수 있다.
-    private List<int> GetMinCardPlayerNetIds()
+    private List<uint> GetMinCardPlayerNetIds()
     {
         int minValue = SubmittedCardList.Values.Min();
-        List<int> minCardPlayerNetIds = SubmittedCardList
+        List<uint> minCardPlayerNetIds = SubmittedCardList
             .Where(kv => kv.Value == minValue)
             .Select(kv => kv.Key)
             .ToList();
         return minCardPlayerNetIds;
     }
 
-    public MyPlayer GetPlayerFromNetId(int playerNetId)
+    public MyPlayer GetPlayerFromNetId(uint playerNetId)
     {   
         NetworkIdentity networkIdentity;
-        if (NetworkClient.spawned.TryGetValue((uint)playerNetId, out networkIdentity))
+        if (NetworkClient.spawned.TryGetValue(playerNetId, out networkIdentity))
         {
             MyPlayer player = networkIdentity.gameObject.GetComponent<MyPlayer>();
             return player;
@@ -789,18 +789,18 @@ public class NewGameManager : NetworkBehaviour
     }
 
     [ClientRpc]
-    private void RpcDistributeRewards(int[] playerIds, int[] rewardIndexs, int curMonsterId)
+    private void RpcDistributeRewards(uint[] playerIds, int[] rewardIndexs, int curMonsterId)
     {
         for(int i = 0; i < playerIds.Length; i++)
         {
-            int playerId = playerIds[i];
+            uint playerId = playerIds[i];
             int rewardIndex = rewardIndexs[i];
 
             PlayerGetReward(playerId, rewardIndex, curMonsterId);
         }    
     }
 
-    private void PlayerGetReward(int playerNetId, int reward_n, int curMonsterId)
+    private void PlayerGetReward(uint playerNetId, int reward_n, int curMonsterId)
     {
         //2-1. NetId의 플레이어 찾기
         MyPlayer player = GetPlayerFromNetId(playerNetId);
@@ -834,7 +834,7 @@ public class NewGameManager : NetworkBehaviour
     }
 
     [ClientRpc]
-    private void RpcSetUIBonusSelect(int playerNetId)
+    private void RpcSetUIBonusSelect(uint playerNetId)
     {
         //모든 플레이어에게 Popup_GetBonus 띄운다.
         //보너스 선택 플레이어가 아니면 WaitForSelect로 화면 바꾼다.
@@ -846,7 +846,7 @@ public class NewGameManager : NetworkBehaviour
     }
 
     [Command(requiresAuthority = false)]
-    public void CmdSubBonusJewel_OnClick(int playerNetId, int jewelIndex)
+    public void CmdSubBonusJewel_OnClick(uint playerNetId, int jewelIndex)
     {
         List<int> newBonus = new List<int>();
         //그냥 newBonus에 BonusJewels를 대입하면 참조 복사가 일어나 값 변경시 hook이 발생하지 않음.
@@ -859,7 +859,7 @@ public class NewGameManager : NetworkBehaviour
     }
 
     [ClientRpc]
-    private void RpcAddjewelToPlayer(int playerNetId, int jewelIndex)
+    private void RpcAddjewelToPlayer(uint playerNetId, int jewelIndex)
     {
         MyPlayer player = GetPlayerFromNetId(playerNetId);
 
@@ -905,10 +905,10 @@ public class NewGameManager : NetworkBehaviour
     public void ServerChooseLoseJewelsPlayer()
     {
         //1. 가장 작은 카드를 낸 플레이어들의 NetId 구하기
-        List<int> losePlayerNetIds = GetMinCardPlayerNetIds();
+        List<uint> losePlayerNetIds = GetMinCardPlayerNetIds();
 
         //2. 해당 NetId의 플레이어가 가장 많이 가진 보석의 색깔 구하기.
-        foreach (int netId in losePlayerNetIds)
+        foreach (uint netId in losePlayerNetIds)
         {
             MyPlayer player = GetPlayerFromNetId(netId);
             List<int> maxJewels = FindMaxIndexes(player.Jewels);
@@ -939,7 +939,7 @@ public class NewGameManager : NetworkBehaviour
 
     //보석을 잃을 플레이어에게 UI 띄워주기
     [ClientRpc]
-    private void RpcSetUIToLoseJewels(int playerId, List<int> maxJewels)
+    private void RpcSetUIToLoseJewels(uint playerId, List<int> maxJewels)
     {
         //모든 클라에 날려서 보석을 잃는 플레이어가 아니면 return
         if (NetworkClient.localPlayer.netId != playerId) { return; }
@@ -982,7 +982,7 @@ public class NewGameManager : NetworkBehaviour
         foreach(var kv in SelectedJewelIndexList)
         {
             //실제로 플레이어의 보석이 빠져나가는 부분.
-            RpcPlayerLoseJewels((int)kv.Key, kv.Value);
+            RpcPlayerLoseJewels(kv.Key, kv.Value);
         }
 
         //상태변화
@@ -999,14 +999,14 @@ public class NewGameManager : NetworkBehaviour
 
         foreach (var kv in SelectedJewelIndexList)
         {
-            newBonus[kv.Value] += GetPlayerFromNetId((int)kv.Key).Jewels[kv.Value];
+            newBonus[kv.Value] += GetPlayerFromNetId(kv.Key).Jewels[kv.Value];
         }
         BonusJewels = newBonus;
     }
 
     //클라의 패배 플레이어 Jewel을 없애는 로직
     [ClientRpc]
-    private void RpcPlayerLoseJewels(int netId, int jewelIndex)
+    private void RpcPlayerLoseJewels(uint netId, int jewelIndex)
     {
         MyPlayer player = GetPlayerFromNetId(netId);
 

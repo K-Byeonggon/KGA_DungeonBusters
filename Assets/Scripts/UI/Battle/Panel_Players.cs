@@ -18,7 +18,7 @@ public class Panel_Players : MonoBehaviour
 
     public void Start()
     {
-        PlayerPanelList = new Dictionary<int, Panel_Player1>();
+        PlayerPanelList = new Dictionary<uint, Panel_Player1>();
     }
 
     //GamePlayer가 생성되고 이게 호출되어야 Panel의 Id를 설정할 수 있다?
@@ -34,12 +34,12 @@ public class Panel_Players : MonoBehaviour
     }
 
 
-    public void UpdatePanelJewels(int player_netId)
+    public void UpdatePanelJewels(uint player_netId)
     {
         PlayerPanelList[player_netId].UpdateJewelsInfo(player_netId);
     }
 
-    public void UpdatePanelUsedCards(int player_netId)
+    public void UpdatePanelUsedCards(uint player_netId)
     {
         PlayerPanelList[player_netId].UpdateUsedCardsInfo(player_netId);
     }
