@@ -1,4 +1,5 @@
 using Mirror;
+using Org.BouncyCastle.Asn1.Crmf;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,17 +34,20 @@ public class NewGameManager : NetworkBehaviour
     [SerializeField] List<CorridorController> _corridors;
     
     [SerializeField] Queue<Monster> _currentDungeonMonsterQueue;        //현재 진행중인 던전에 있는 몬스터를 담은 Queue
-    [SerializeField] Dictionary<int, int> _submittedCardList;           //key:netId, value:제출한 카드Num
+    [SerializeField] Dictionary<uint, int> _submittedCardList;           //key:netId, value:제출한 카드Num
     [SerializeField] Dictionary<int, int> _duplicationCheck;            //key:CardNum, value:해당Num의 개수
     [SerializeField] Dictionary<uint, int> _selectedJewelIndexList;     //key:netId, value:플레이어가 선택한 버릴 Jewel 인덱스
     [SerializeField] Dictionary<int, List<int>> _netIdAndJewelsIndex;    //key:netId, value:가장많은Jewel의 인덱스List
+    
     [SerializeField] List<int> _winPlayerIds;
     [SerializeField] Dictionary<int, int> _savedCardList;
     [SerializeField] Dictionary<int, bool> _checkedPlayerList;
     
     //MyPlayer가 생성되면 OnStartClient에서 자신을 여기에 등록한다.
-    private Dictionary<uint, MyPlayer> _playerList;
+    private Dictionary<uint, MyPlayer> _playerList;     //netId와 플레이어
     [SerializeField] MonsterController _monsterList;
+    private Dictionary<uint, bool> _atkSuccessList;     //netId와 공격성공여부
+
 
 
     private int _currentSelectBonusPlayerIndex;
@@ -109,7 +113,7 @@ public class NewGameManager : NetworkBehaviour
         set { _currentDungeonMonsterQueue = value; }
     }
 
-    public Dictionary<int, int> SubmittedCardList
+    public Dictionary<uint, int> SubmittedCardList
     {
         get { return _submittedCardList; }
         set { _submittedCardList = value; }
@@ -161,6 +165,12 @@ public class NewGameManager : NetworkBehaviour
     {
         get { return _checkedPlayerList; }
         set { _checkedPlayerList = value; }
+    }
+
+    public Dictionary<uint, bool> AtkSuccessList
+    {
+        get { return _atkSuccessList; }
+        set { _atkSuccessList = value;}
     }
 
     #endregion
@@ -385,7 +395,7 @@ public class NewGameManager : NetworkBehaviour
     private void StartStage()
     {
         //Stage시작시 초기화
-        SubmittedCardList = new Dictionary<int, int>();
+        SubmittedCardList = new Dictionary<uint, int>();
         DuplicationCheck = new Dictionary<int, int>();
         SelectedJewelIndexList = new Dictionary<uint, int>();
         NetIdAndJewelsIndex = new Dictionary<int, List<int>>();
@@ -411,7 +421,7 @@ public class NewGameManager : NetworkBehaviour
 
     #endregion
 
-    #region 2-2. 플레이어 카드 세팅
+    #region 안쓰이는 부분
 
     private void SetLocalPopupSelect()
     {
@@ -421,10 +431,11 @@ public class NewGameManager : NetworkBehaviour
 
     #endregion
 
+    #region SubmitCard
 
     //플레이어의 카드 제출 처리(클라에서 요청후, 서버에서 처리)
     [Command(requiresAuthority = false)]
-    public void CmdAddSubmittedCard_OnClick_Card(int player_netId, int cardNum)
+    public void CmdAddSubmittedCard_OnClick_Card(uint player_netId, int cardNum)
     {
         if (SubmittedCardList.ContainsKey(player_netId))
         {
@@ -461,10 +472,11 @@ public class NewGameManager : NetworkBehaviour
     [Server]
     private void ServerOnAllPlayersSubmitted()
     {
-        SavedCardList = new Dictionary<int, int>(SubmittedCardList);
+        SavedCardList = new Dictionary<uint, int>(SubmittedCardList);
         int[] playerNetIds = SavedCardList.Keys.ToArray();
         int[] cardNums = SavedCardList.Values.ToArray();
         RpcUpdateSavedCardList(playerNetIds, cardNums);
+        //RpcUpdateAtkSuccessList();
 
         ChangeState(GameState.CalculateResults);
     }
@@ -478,6 +490,63 @@ public class NewGameManager : NetworkBehaviour
             SavedCardList.Add(playerNetIds[i], cardNums[i]);
         }
     }
+
+    
+
+    [ClientRpc]
+    private void RpcUpdateAtkSuccessList(int[] playerNetIds, int[] cardNums)    //SubmittedCardList
+    {
+        AtkSuccessList = new Dictionary<uint, bool>();
+        //중복 제외 true로 저장
+        //비동기 처리라서 클라의 SavedCardList를 쓸게 아니라 서버의 SubmittedCardList를 이용하자.
+
+        //int[]로 받은 SubmittedcardList로 Dic만들어주기
+        Dictionary<int, List<int>> cardToPlayerIds = new Dictionary<int, List<int>>();
+
+
+
+    }
+
+
+    //SubmittedCardList는 서버에만 갱신되어있는데 어떻게 하지?
+    void CheckCardSubmissions()
+    {
+        // 카드 숫자에 따른 NetId 목록을 저장하는 딕셔너리
+        Dictionary<int, List<uint>> cardToPlayerIds = new Dictionary<int, List<uint>>();
+
+        // 각 플레이어가 제출한 카드 숫자를 기반으로 딕셔너리 생성
+        foreach (var entry in SubmittedCardList)
+        {
+            uint playerId = entry.Key;
+            int cardNum = entry.Value;
+
+            if (!cardToPlayerIds.ContainsKey(cardNum))
+            {
+                cardToPlayerIds[cardNum] = new List<uint>();
+            }
+            cardToPlayerIds[cardNum].Add(playerId);
+        }
+
+        // 중복 여부를 기반으로 SuccessList 업데이트
+        foreach (var entry in SubmittedCardList)
+        {
+            uint playerId = entry.Key;
+            int cardNum = entry.Value;
+
+            // 같은 숫자를 제출한 플레이어들이 여러 명일 경우
+            if (cardToPlayerIds[cardNum].Count > 1)
+            {
+                SuccessList[playerId] = false;
+            }
+            else
+            {
+                SuccessList[playerId] = true;
+            }
+        }
+    }
+
+
+    #endregion
 
 
     #region CalculateResults
@@ -539,7 +608,7 @@ public class NewGameManager : NetworkBehaviour
     }
 
     [ClientRpc]
-    public void RpcSetPlayerUsedCard(int playerNetId, int usedCard)
+    public void RpcSetPlayerUsedCard(uint playerNetId, int usedCard)
     {
         MyPlayer player = GetPlayerFromNetId(playerNetId);
         if (player == null) { Debug.LogError("player == null"); return; }

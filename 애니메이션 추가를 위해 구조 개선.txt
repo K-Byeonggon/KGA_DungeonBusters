@@ -1,0 +1,55 @@
+카드 제출 이후 공격 성공 플레이어/몬스터 모두 공격 애니메이션 재생
+공격 실패 플레이어 피격 애니메이션 재생
+
+결과 공개후
+
+승리시: 몬스터 죽는 애니메이션 재생
+
+
+
+
+카드 제출이후 플레이어의 공격성공 여부가 애니메이션 출력전에 정해져야한다.
+
+지금은 GetJewels까지 가기 전까지는 토벌 승리/실패만 정해지고,
+GetJewels에서 중복카드를 체크하면서 승리자 List를 만든다.
+
+
+구조를 바꾸려면,
+
+#카드 제출 단계
+1. 플레이어들이 카드 제출(netId와 CardNum)
+2. 중복된 카드 제출을 검사하고, 플레이어의 공격 성공 여부를 정해준다.
+
+#공격 애니메이션 재생
+
+# 토벌 결과 출력
+3. 공격 성공한 플레이어의 제출 카드만 확인하여 토벌 성공여부를 결정.
+4. 토벌 결과는 모든 플레이어의 제출 카드를 보여준다.
+
+#토벌 성공시 -> GetBonus로
+#토벌 실패시 -> LoseJewels로
+
+플레이어가 공격 성공했는지 판단하는 방법
+
+지금 있는 정보
+1. submittedCardList : netId / 카드Num
+2. duplicationCheck : 카드Num /  해당 Num의 개수
+3. winPlayerIds : 
+
+지금 진행 과정
+
+0. SubmitCard State로
+1. 플레이어의 입력을 받아 서버의 SubmittedCardList에 netId와 cardNum 저장.
+2. 모두 입력이 끝나면 클라이언트의 SavedCardList에 SubmittedCardList를 복사.
+
+3. CalculateResults State로
+4. 서버에서, SubmittedCardList를 기반으로 중복카드를 검사하고, totalDamage를 계산.
+5. totalDamage를 기반으로 StageClear가 바뀐다.
+6. StageClear가 바뀌면 SycVar로 클라의 StageClear도 바뀌고, SavedCardList에 따라 UI가 바뀐다.
+7. 서버의 SubmittedCardList를 기반으로 클라이언트의 각 플레이어의 UsedCards, Cards 변경해줌.
+
+7. ShowWinLose State로
+8. BattleUIManager를 통해 각 클라에 토벌 성공 여부 UI 활성화
+9. 모든 플레이어가 확인하면 각 클라의 UI를 비활성화함.
+
+10. StageClear에 따라 GetJewels 또는 LoseJewels State로
