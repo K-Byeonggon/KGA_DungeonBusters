@@ -39,6 +39,11 @@ public class BattleUIManager : UIManager
     {
         battleUI.UpdateBonusJewels();
     }
+
+    public void RequestSetStageInfo(bool setActive)
+    {
+        battleUI.SetActiveStageInfo(setActive);
+    }
     #endregion
 
     #region Panel_Players

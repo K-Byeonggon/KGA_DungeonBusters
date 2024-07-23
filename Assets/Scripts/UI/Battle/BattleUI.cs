@@ -6,6 +6,8 @@ using UnityEngine.UI;
 
 public class BattleUI : MonoBehaviour
 {
+    [SerializeField] GameObject StageInfo;
+
     [Header("Panel_Enemy")]
     [SerializeField] Text Text_MonsterName;
     [SerializeField] Slider Slider_Hp;
@@ -65,6 +67,13 @@ public class BattleUI : MonoBehaviour
     {
         popup_Select.gameObject.SetActive(true);
     }
+
+    public void SetActiveStageInfo(bool setActive)
+    {
+        StageInfo.SetActive(setActive);
+    }
+
+
     #endregion
 
 

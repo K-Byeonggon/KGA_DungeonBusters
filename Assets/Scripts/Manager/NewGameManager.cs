@@ -312,6 +312,7 @@ public class NewGameManager : NetworkBehaviour
 
         //Dungeon시작시 초기화
         CurrentStage = 0;
+        BattleUIManager.Instance.RequestSetStageInfo(false);
         //모든 클라 플레이어 UsedCards, Cards 초기화
         RpcInitPlayerUsedCards();
 
@@ -388,11 +389,11 @@ public class NewGameManager : NetworkBehaviour
         NetIdAndJewelsIndex = new Dictionary<int, List<int>>();
         WinPlayerIds = new List<int>();
         CheckedPlayerList = new Dictionary<int, bool>();
-
         //Stage시작시 변경
         CurrentStage++;
         CurrentMonster = this.DequeueMonsterCurrentStage();
         CurrentMonsterId = CurrentMonster.DataId;
+        BattleUIManager.Instance.RequestSetStageInfo(true);
 
         //상태변화
         ChangeState(GameState.SubmitCard);
