@@ -353,6 +353,7 @@ MonoBehaviour:
   - {fileID: 2031642943}
   - {fileID: 2123505335}
   _winPlayerIds: 
+  _monsterList: {fileID: 1547605554170738511}
 --- !u!4 &765025277
 Transform:
   m_ObjectHideFlags: 0
@@ -1288,6 +1289,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0e4db65b83a46de45a0867729d12bfd8, type: 3}
+--- !u!114 &1547605554170738511 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2475587903799440677, guid: 0e4db65b83a46de45a0867729d12bfd8, type: 3}
+  m_PrefabInstance: {fileID: 1547605554170738510}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e4e0b6989c39fd541bb12f2dca7d952d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &6581133092712920368
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -43,6 +43,8 @@ public class NewGameManager : NetworkBehaviour
     
     //MyPlayer가 생성되면 OnStartClient에서 자신을 여기에 등록한다.
     private Dictionary<uint, MyPlayer> _playerList;
+    [SerializeField] MonsterController _monsterList;
+
 
     private int _currentSelectBonusPlayerIndex;
 
@@ -393,6 +395,8 @@ public class NewGameManager : NetworkBehaviour
         CurrentStage++;
         CurrentMonster = this.DequeueMonsterCurrentStage();
         CurrentMonsterId = CurrentMonster.DataId;
+        _monsterList.UnsetMonster();
+        _monsterList.SetActiveMonster(CurrentMonsterId);
         BattleUIManager.Instance.RequestSetStageInfo(true);
 
         //상태변화
