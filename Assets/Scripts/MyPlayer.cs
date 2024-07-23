@@ -13,7 +13,10 @@ public enum Jewel
 public enum PlayerAnim
 {
     Idle,
-    Run
+    Run,
+    Atk,
+    Damage,
+    Lose
 }
 
 public class MyPlayer : NetworkBehaviour
@@ -24,6 +27,8 @@ public class MyPlayer : NetworkBehaviour
 
     public Animator _animator;
 
+    private bool _isAttackSuccessed;
+    private int _submittedCard;
 
     public List<int> Cards
     {
@@ -54,6 +59,17 @@ public class MyPlayer : NetworkBehaviour
         }
     }
 
+    public bool IsAttackSuccessed
+    {
+        get { return _isAttackSuccessed; }
+        set { _isAttackSuccessed = value; }
+    }
+
+    public int SubmittedCard
+    {
+        get { return _submittedCard; }
+        set { _submittedCard = value; }
+    }
 
     public override void OnStartClient()
     {
@@ -103,14 +119,23 @@ public class MyPlayer : NetworkBehaviour
 
     public void SetAnimator(PlayerAnim anim)
     {
-        //enum으로 바꾸자
         switch (anim)
         {
             case PlayerAnim.Idle:
                 _animator.SetBool("Run", false);
+                _animator.SetBool("Lose", false);
                 break;
             case PlayerAnim.Run:
                 _animator.SetBool("Run", true);
+                break;
+            case PlayerAnim.Atk:
+                _animator.SetTrigger("Atk");
+                break;
+            case PlayerAnim.Damage:
+                _animator.SetTrigger("Damage");
+                break;
+            case PlayerAnim.Lose:
+                _animator.SetBool("Lose", true);
                 break;
         }
         

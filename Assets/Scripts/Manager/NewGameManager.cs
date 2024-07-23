@@ -415,8 +415,6 @@ public class NewGameManager : NetworkBehaviour
 
     private void SetLocalPopupSelect()
     {
-        bool dungeonStart = (CurrentDungeonMonsterQueue.Count == 3);
-
         //이 부분은 게임 시작할때는 플레이어 못찾아서 세팅 안됨. 그래서 MyPlayer에서 한번더 부르고 있음.
         BattleUIManager.Instance.RequestUpdateSelectCard();
     }
