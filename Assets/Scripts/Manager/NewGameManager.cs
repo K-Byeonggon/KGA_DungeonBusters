@@ -358,12 +358,6 @@ public class NewGameManager : NetworkBehaviour
     private IEnumerator DungeonAnim()
     {
         RpcTempRun();
-
-        foreach(var corridor in _corridors)
-        {
-            corridor.StartMove(3f);
-        }
-
         yield return new WaitForSeconds(3f);
         RpcTempIdle();
         yield return new WaitForSeconds(1f);
@@ -376,6 +370,11 @@ public class NewGameManager : NetworkBehaviour
         foreach(var player in PlayerList.Values)
         {
             player.SetAnimator(PlayerAnim.Run);
+        }
+
+        foreach (var corridor in _corridors)
+        {
+            corridor.StartMove(3f);
         }
     }
     [ClientRpc]
