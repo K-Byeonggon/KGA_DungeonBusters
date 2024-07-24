@@ -333,11 +333,8 @@ public class NewGameManager : NetworkBehaviour
         this.Enqueue4MonstersFromData(_currentDungeon);
 
 
-        //애니메이션 재생용 코루틴
-        StartCoroutine(DungeonAnim());
-
         //상태변화
-        //ChangeState(GameState.StartStage);
+        ChangeState(GameState.StartStage);
     }
 
     [ClientRpc]
@@ -351,38 +348,6 @@ public class NewGameManager : NetworkBehaviour
             player.UsedCards = new List<int>();
             if(MyNetworkRoomManager.Instance.minPlayers < 4) { player.Cards = new List<int>() { 2,3,4,5,6,7}; }
             else { player.Cards = new List<int>() { 1, 2, 3, 4, 5, 6 }; }
-        }
-    }
-
-    [Server]
-    private IEnumerator DungeonAnim()
-    {
-        RpcTempRun();
-        yield return new WaitForSeconds(3f);
-        RpcTempIdle();
-        yield return new WaitForSeconds(1f);
-        ChangeState(GameState.StartStage);
-    }
-
-    [ClientRpc]
-    private void RpcTempRun()
-    {
-        foreach(var player in PlayerList.Values)
-        {
-            player.SetAnimator(PlayerAnim.Run);
-        }
-
-        foreach (var corridor in _corridors)
-        {
-            corridor.StartMove(3f);
-        }
-    }
-    [ClientRpc]
-    private void RpcTempIdle()
-    {
-        foreach(var player in PlayerList.Values)
-        {
-            player.SetAnimator(PlayerAnim.Idle);
         }
     }
 
@@ -400,6 +365,37 @@ public class NewGameManager : NetworkBehaviour
         NetIdAndJewelsIndex = new Dictionary<uint, List<int>>();
         WinPlayerIds = new List<uint>();
         CheckedPlayerList = new Dictionary<int, bool>();
+        RpcHideMonster();
+
+        StartCoroutine(StageAnim());
+
+
+    }
+
+    [ClientRpc]
+    private void RpcHideMonster()
+    {
+        _monsterList.gameObject.SetActive(false);
+    }
+
+    [ClientRpc]
+    private void RpcSetMonsterInfo(int currentMonsterId)
+    {
+        _monsterList.gameObject.SetActive(true);
+        _monsterList.UnsetMonster();
+        _monsterList.SetActiveMonster(currentMonsterId);
+        BattleUIManager.Instance.RequestSetStageInfo(true);
+    }
+
+    
+    [Server]
+    private IEnumerator StageAnim()
+    {
+        RpcTempRun();
+        yield return new WaitForSeconds(3f);
+        RpcTempIdle();
+        yield return new WaitForSeconds(1f);
+
         //Stage시작시 변경
         CurrentStage++;
         CurrentMonster = this.DequeueMonsterCurrentStage();
@@ -411,18 +407,27 @@ public class NewGameManager : NetworkBehaviour
     }
 
     [ClientRpc]
-    private void RpcSetMonsterInfo(int currentMonsterId)
+    private void RpcTempRun()
     {
-        _monsterList.UnsetMonster();
-        _monsterList.SetActiveMonster(currentMonsterId);
-        BattleUIManager.Instance.RequestSetStageInfo(true);
+        foreach (var player in PlayerList.Values)
+        {
+            player.SetAnimator(PlayerAnim.Run);
+        }
+
+        foreach (var corridor in _corridors)
+        {
+            corridor.StartMove(3f);
+        }
+    }
+    [ClientRpc]
+    private void RpcTempIdle()
+    {
+        foreach (var player in PlayerList.Values)
+        {
+            player.SetAnimator(PlayerAnim.Idle);
+        }
     }
 
-    [Server]
-    private void StageAnim()
-    {
-
-    }
 
     #endregion
 
