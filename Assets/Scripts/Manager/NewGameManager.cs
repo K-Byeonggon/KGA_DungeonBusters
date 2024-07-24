@@ -368,24 +368,16 @@ public class NewGameManager : NetworkBehaviour
         RpcHideMonster();
 
         StartCoroutine(StageAnim());
-
-
     }
 
     [ClientRpc]
     private void RpcHideMonster()
     {
         _monsterList.gameObject.SetActive(false);
+        BattleUIManager.Instance.RequestSetStageInfo(false);
     }
 
-    [ClientRpc]
-    private void RpcSetMonsterInfo(int currentMonsterId)
-    {
-        _monsterList.gameObject.SetActive(true);
-        _monsterList.UnsetMonster();
-        _monsterList.SetActiveMonster(currentMonsterId);
-        BattleUIManager.Instance.RequestSetStageInfo(true);
-    }
+
 
     
     [Server]
@@ -428,6 +420,14 @@ public class NewGameManager : NetworkBehaviour
         }
     }
 
+    [ClientRpc]
+    private void RpcSetMonsterInfo(int currentMonsterId)
+    {
+        _monsterList.gameObject.SetActive(true);
+        _monsterList.UnsetMonster();
+        _monsterList.SetActiveMonster(currentMonsterId);
+        BattleUIManager.Instance.RequestSetStageInfo(true);
+    }
 
     #endregion
 
