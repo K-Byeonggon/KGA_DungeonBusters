@@ -405,12 +405,18 @@ public class NewGameManager : NetworkBehaviour
         CurrentStage++;
         CurrentMonster = this.DequeueMonsterCurrentStage();
         CurrentMonsterId = CurrentMonster.DataId;
-        _monsterList.UnsetMonster();
-        _monsterList.SetActiveMonster(CurrentMonsterId);
-        BattleUIManager.Instance.RequestSetStageInfo(true);
+        RpcSetMonsterInfo(CurrentMonsterId);
 
         //상태변화
         ChangeState(GameState.SubmitCard);
+    }
+
+    [ClientRpc]
+    private void RpcSetMonsterInfo(int currentMonsterId)
+    {
+        _monsterList.UnsetMonster();
+        _monsterList.SetActiveMonster(currentMonsterId);
+        BattleUIManager.Instance.RequestSetStageInfo(true);
     }
 
     [Server]
