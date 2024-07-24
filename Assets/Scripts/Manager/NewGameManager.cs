@@ -637,9 +637,6 @@ public class NewGameManager : NetworkBehaviour
         }
         _monsterList.SetAnimator(MonsterAnim.Atk);
     }
-
-
-
     #endregion
 
 
@@ -698,14 +695,51 @@ public class NewGameManager : NetworkBehaviour
     private void ServerOnAllPlayerChecked()
     {
         RpcUnsetWinLoseUI();
-        if (StageClear) { ChangeState(GameState.GetJewels); }
-        else { ChangeState(GameState.LoseJewels); }
+
+
+        StartCoroutine(WinLoseAnim());
+
+
+        //if (StageClear) { ChangeState(GameState.GetJewels); }
+        //else { ChangeState(GameState.LoseJewels); }
     }
 
     [ClientRpc]
     private void RpcUnsetWinLoseUI()
     {
         BattleUIManager.Instance.RequestSetWinLose(false);
+    }
+
+
+    [Server]
+    private IEnumerator WinLoseAnim()
+    {
+        RpcTempWinLose(StageClear);
+        yield return new WaitForSeconds(2f);
+
+        if (StageClear) { ChangeState(GameState.GetJewels); }
+        else { ChangeState(GameState.LoseJewels); }
+    }
+
+    [ClientRpc]
+    private void RpcTempWinLose(bool stageCleared)
+    {
+        if (stageCleared)
+        {
+            _monsterList.SetAnimator(MonsterAnim.Die);
+            foreach (var player in PlayerList.Values)
+            {
+                player.SetAnimator(PlayerAnim.Win);
+            }
+        }
+        else
+        {
+            _monsterList.SetAnimator(MonsterAnim.Win);
+            foreach (var player in PlayerList.Values)
+            {
+                player.SetAnimator(PlayerAnim.Lose);
+            }
+        }
     }
 
 

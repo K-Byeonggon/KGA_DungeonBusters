@@ -7,7 +7,8 @@ public enum MonsterAnim
     Idle,
     Atk,
     Damage,
-    Die
+    Die,
+    Win
 }
 
 public class MonsterController : MonoBehaviour
@@ -55,6 +56,9 @@ public class MonsterController : MonoBehaviour
                 break;
             case MonsterAnim.Die:
                 animator.SetBool("Die", true);
+                break;
+            case MonsterAnim.Win:
+                animator.SetTrigger("Win");
                 break;
         }
     }

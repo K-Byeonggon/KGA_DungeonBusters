@@ -16,7 +16,8 @@ public enum PlayerAnim
     Run,
     Atk,
     Damage,
-    Lose
+    Lose,
+    Win
 }
 
 public class MyPlayer : NetworkBehaviour
@@ -137,8 +138,11 @@ public class MyPlayer : NetworkBehaviour
             case PlayerAnim.Lose:
                 _animator.SetBool("Lose", true);
                 break;
+            case PlayerAnim.Win:
+                _animator.SetTrigger("Win");
+                break;
         }
-        
+
     }
 
 }
