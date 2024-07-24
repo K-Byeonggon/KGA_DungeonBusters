@@ -46,7 +46,7 @@ public class MyPlayer : NetworkBehaviour
         set
         {
             _jewels = value;
-            BattleUIManager.Instance.RequestUpdatePlayerJewels((int)this.netId);
+            BattleUIManager.Instance.RequestUpdatePlayerJewels(this.netId);
         }
     }
     public List<int> UsedCards
@@ -55,7 +55,7 @@ public class MyPlayer : NetworkBehaviour
         set
         {
             _usedCards = value;
-            BattleUIManager.Instance.RequestUpdatePlayerUsedCards((int)this.netId);
+            BattleUIManager.Instance.RequestUpdatePlayerUsedCards(this.netId);
         }
     }
 
@@ -78,7 +78,7 @@ public class MyPlayer : NetworkBehaviour
         RegisterPlayer();
 
         //이 시점에 패널 생성 요청
-        BattleUIManager.Instance.RequestCreatePlayer((int)this.netId);
+        BattleUIManager.Instance.RequestCreatePlayer(this.netId);
 
         initialSettings();
 

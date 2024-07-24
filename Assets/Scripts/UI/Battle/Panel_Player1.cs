@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public class Panel_Player1 : MonoBehaviour
 {
-    [SerializeField] int _panel_Id;
+    [SerializeField] uint _panel_Id;
 
     [SerializeField] Image Img_Player;
     [SerializeField] Text Text_JewelRed_Player;
@@ -14,7 +14,7 @@ public class Panel_Player1 : MonoBehaviour
     [SerializeField] Text Text_JewelBlue_Player;
     [SerializeField] Text Text_UsedCard;
 
-    public int Panel_Id
+    public uint Panel_Id
     {
         get { return _panel_Id; } 
         set

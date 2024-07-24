@@ -47,17 +47,17 @@ public class BattleUIManager : UIManager
     #endregion
 
     #region Panel_Players
-    public void RequestCreatePlayer(int player_netId)
+    public void RequestCreatePlayer(uint player_netId)
     {
         battleUI.RequestCreatePlayerPanel(player_netId);
     }
 
-    public void RequestUpdatePlayerJewels(int player_netId)
+    public void RequestUpdatePlayerJewels(uint player_netId)
     {
         battleUI.RequestUpdatePlayerJewels(player_netId);
     }
 
-    public void RequestUpdatePlayerUsedCards(int player_netId)
+    public void RequestUpdatePlayerUsedCards(uint player_netId)
     {
         battleUI.RequestUpdatePlayerUsedCards(player_netId);
     }

@@ -14,9 +14,9 @@ public class Content_Point : MonoBehaviour
     [SerializeField] Text Text_PointBlue;
     [SerializeField] Text Text_PointSet;
     [SerializeField] Text Text_PointTotal;
-    [SerializeField] int _panel_Id;
+    [SerializeField] uint _panel_Id;
 
-    public int Panel_Id
+    public uint Panel_Id
     {
         get { return _panel_Id; }
         set 

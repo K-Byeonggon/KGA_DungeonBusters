@@ -78,17 +78,17 @@ public class BattleUI : MonoBehaviour
 
 
     #region Panel_Players
-    public void RequestCreatePlayerPanel(int player_netId)
+    public void RequestCreatePlayerPanel(uint player_netId)
     {  
         panel_Players.CreatePlayerPanel(player_netId);
     }
 
-    public void RequestUpdatePlayerJewels(int player_netId)
+    public void RequestUpdatePlayerJewels(uint player_netId)
     {
         panel_Players.UpdatePanelJewels(player_netId);
     }
 
-    public void RequestUpdatePlayerUsedCards(int player_netId)
+    public void RequestUpdatePlayerUsedCards(uint player_netId)
     {
         panel_Players.UpdatePanelUsedCards(player_netId);
     }

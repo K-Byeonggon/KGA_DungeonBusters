@@ -34,7 +34,7 @@ public class PointUI : MonoBehaviour
             
             var gObj = Instantiate(Prefab_Point, Transform_SlotRoot.transform);
             var point = gObj.GetComponent<Content_Point>();
-            point.Panel_Id = (int)player.Key;
+            point.Panel_Id = player.Key;
         }
     }
 }
