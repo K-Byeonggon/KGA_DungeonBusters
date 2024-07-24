@@ -472,11 +472,10 @@ public class NewGameManager : NetworkBehaviour
     [Server]
     private void ServerOnAllPlayersSubmitted()
     {
-        SavedCardList = new Dictionary<uint, int>(SubmittedCardList);
-        uint[] playerNetIds = SavedCardList.Keys.ToArray();
-        int[] cardNums = SavedCardList.Values.ToArray();
+        uint[] playerNetIds = SubmittedCardList.Keys.ToArray();
+        int[] cardNums = SubmittedCardList.Values.ToArray();
         RpcUpdateSavedCardList(playerNetIds, cardNums);
-        //RpcUpdateAtkSuccessList();
+        RpcUpdateAtkSuccessList(playerNetIds, cardNums);
 
         ChangeState(GameState.CalculateResults);
     }
@@ -491,61 +490,42 @@ public class NewGameManager : NetworkBehaviour
         }
     }
 
-    
-
     [ClientRpc]
-    private void RpcUpdateAtkSuccessList(int[] playerNetIds, int[] cardNums)    //SubmittedCardList
+    private void RpcUpdateAtkSuccessList(uint[] playerNetIds, int[] cardNums)    //SubmittedCardList
     {
         AtkSuccessList = new Dictionary<uint, bool>();
         //중복 제외 true로 저장
         //비동기 처리라서 클라의 SavedCardList를 쓸게 아니라 서버의 SubmittedCardList를 이용하자.
 
         //int[]로 받은 SubmittedcardList로 Dic만들어주기
-        Dictionary<int, List<int>> cardToPlayerIds = new Dictionary<int, List<int>>();
+        //카드 번호와 그 카드를 낸 플레이어의 NetId가 들어간다.
+        Dictionary<int, List<uint>> cardToPlayerIds = new Dictionary<int, List<uint>>();
+        for(int i = 0; i < cardNums.Length; i++)
+        {
+            if (cardToPlayerIds.ContainsKey(cardNums[i]) == false)
+            {
+                cardToPlayerIds[cardNums[i]] = new List<uint>();
+            }
+            cardToPlayerIds[cardNums[i]].Add(playerNetIds[i]);
+        }
 
+        //cardToPlayerIds 기반으로 AtkSuccessList 업데이트
+        for(int i = 0; i < cardNums.Length; i++)
+        {
+            bool isSuccess = cardToPlayerIds[cardNums[i]].Count == 1;
+            AtkSuccessList[playerNetIds[i]] = isSuccess;
+        }
 
-
+        TempAtkSuccessCheck();
     }
 
-    /*
-    //SubmittedCardList는 서버에만 갱신되어있는데 어떻게 하지?
-    void CheckCardSubmissions()
+    private void TempAtkSuccessCheck()
     {
-        // 카드 숫자에 따른 NetId 목록을 저장하는 딕셔너리
-        Dictionary<int, List<uint>> cardToPlayerIds = new Dictionary<int, List<uint>>();
-
-        // 각 플레이어가 제출한 카드 숫자를 기반으로 딕셔너리 생성
-        foreach (var entry in SubmittedCardList)
+        foreach(var kvp in AtkSuccessList)
         {
-            uint playerId = entry.Key;
-            int cardNum = entry.Value;
-
-            if (!cardToPlayerIds.ContainsKey(cardNum))
-            {
-                cardToPlayerIds[cardNum] = new List<uint>();
-            }
-            cardToPlayerIds[cardNum].Add(playerId);
+            Debug.Log($"{kvp.Key} {kvp.Value}");
         }
-
-        // 중복 여부를 기반으로 SuccessList 업데이트
-        foreach (var entry in SubmittedCardList)
-        {
-            uint playerId = entry.Key;
-            int cardNum = entry.Value;
-
-            // 같은 숫자를 제출한 플레이어들이 여러 명일 경우
-            if (cardToPlayerIds[cardNum].Count > 1)
-            {
-                SuccessList[playerId] = false;
-            }
-            else
-            {
-                SuccessList[playerId] = true;
-            }
-        }
-    }*/
-
-
+    }
     #endregion
 
 
