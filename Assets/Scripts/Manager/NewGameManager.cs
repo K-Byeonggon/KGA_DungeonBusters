@@ -716,6 +716,7 @@ public class NewGameManager : NetworkBehaviour
     {
         RpcTempWinLose(StageClear);
         yield return new WaitForSeconds(2f);
+        RpcTempIdle();
 
         if (StageClear) { ChangeState(GameState.GetJewels); }
         else { ChangeState(GameState.LoseJewels); }
@@ -741,6 +742,9 @@ public class NewGameManager : NetworkBehaviour
             }
         }
     }
+
+    [ClientRpc]
+
 
 
     #endregion
