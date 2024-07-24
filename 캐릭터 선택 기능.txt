@@ -1,0 +1,28 @@
+캐릭터 선택기능?
+
+Lobby에서 선택하면
+선택 내용을 GameScene까지 전달해야한다.
+
+NewGameManager를 LobbyScene에 배치해도 정상적으로 작동하면
+
+근데 NewGameManager GameScene에서 끌어다놔야 하는게 많아서 
+LobbyScene에 놓기 좀 그렇다.
+
+그러면 싱글톤으로 CostumeManager만들고 거기에 저장해서 넘겨주자.
+
+
+아 아니다. 이거 캐릭터를 생성할때 바꾸게 해야하는거 아니냐?
+캐릭터는 GameScene에서 계속 움직이잖아.
+
+
+플레이어 생성시 코스튬 변경하려고 생각했는데,
+결국 한 클라이언트에서 선택한 코스튬으로 전부 바뀔거 같아서 고민이 된다.
+
+Room에 들어가기 전에 각 클라에서 번호를 선택해서, 
+각 클라에서 선택한 번호를 바탕으로 내 클라에 캐릭터들을 생성하고 코스튬을 바꿔야한다.
+
+- 코스튬 번호 선택할 UI 구성
+- 번호 넘길 클래스
+- MyNetworkRoomManager에 OnRoomServerAddPlayer 수정
+- MyPlayer에 코스튬 셋업 기능 추가
+- 마법사, 궁수 애니메이터 추가

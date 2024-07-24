@@ -72,6 +72,11 @@ public class MyPlayer : NetworkBehaviour
         set { _submittedCard = value; }
     }
 
+    private void Awake()
+    {
+        Debug.Log("나 언제?");
+    }
+
     public override void OnStartClient()
     {
         base.OnStartClient();

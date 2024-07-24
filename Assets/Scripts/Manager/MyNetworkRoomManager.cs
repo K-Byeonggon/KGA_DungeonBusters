@@ -16,14 +16,15 @@ public class MyNetworkRoomManager : NetworkRoomManager
         else
         {
             Instance = this;
-            DontDestroyOnLoad(gameObject); // ¼±ÅÃ »çÇ×: ¾À ÀüÈ¯ ½Ã À¯Áö
+            DontDestroyOnLoad(gameObject); // ì„ íƒ ì‚¬í•­: ì”¬ ì „í™˜ ì‹œ ìœ ì§€
         }
     }
 
     public override void OnServerAddPlayer(NetworkConnectionToClient conn)
     {
-
+        Debug.Log("ì•ˆë…•í•˜ì„¸ìš”");
         base.OnServerAddPlayer(conn);
+        Debug.Log("ë°˜ê°‘ìŠµë‹ˆë‹¤.");
     }
 
     
@@ -31,10 +32,10 @@ public class MyNetworkRoomManager : NetworkRoomManager
 
     public override GameObject OnRoomServerCreateRoomPlayer(NetworkConnectionToClient conn)
     {
-        //¿©±â¼­ Ä¿½ºÅÒÀ¸·Î RoomPlayer »ı¼º.
+        //ì—¬ê¸°ì„œ ì»¤ìŠ¤í…€ìœ¼ë¡œ RoomPlayer ìƒì„±.
         GameObject roomPlayer = Instantiate(roomPlayerPrefab.gameObject, Vector3.zero, Quaternion.identity);
 
-        //»ı¼ºÇÒ¶§ uid¼³Á¤ÀÌ ¾ÈµÇ¼­ ±×³É »ı¼ºÈÄ¿¡ uid ¹Ù²ãÁÖ´Â °ÍÀ» ½ÃµµÇØº¸·Á°í ÇÑ´Ù.
+        //ìƒì„±í• ë•Œ uidì„¤ì •ì´ ì•ˆë˜ì„œ ê·¸ëƒ¥ ìƒì„±í›„ì— uid ë°”ê¿”ì£¼ëŠ” ê²ƒì„ ì‹œë„í•´ë³´ë ¤ê³  í•œë‹¤.
         /*
         var myRoomPlayer = roomPlayer.GetComponent<MyNetworkRoomPlayer>();
 
@@ -47,10 +48,11 @@ public class MyNetworkRoomManager : NetworkRoomManager
             }
             else
             {
-                Debug.LogError("UID ¸øÃ£¾Ò¾î¿ë");
+                Debug.LogError("UID ëª»ì°¾ì•˜ì–´ìš©");
             }
         }
         */
         return roomPlayer;
     }
+
 }

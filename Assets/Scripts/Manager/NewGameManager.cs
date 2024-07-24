@@ -209,7 +209,15 @@ public class NewGameManager : NetworkBehaviour
 
     private void Awake()
     {
-        Instance = this;
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+        }
+        else
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
         PlayerList = new Dictionary<uint, MyPlayer>();
     }
 
