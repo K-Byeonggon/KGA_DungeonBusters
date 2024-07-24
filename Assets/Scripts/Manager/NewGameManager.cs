@@ -748,7 +748,6 @@ public class NewGameManager : NetworkBehaviour
         }
     }
 
-    [ClientRpc]
 
 
 
@@ -757,7 +756,7 @@ public class NewGameManager : NetworkBehaviour
 
     #region GetJewels
     [Server]
-    public void ServerChooseRewardedPlayer()
+    private void ServerChooseRewardedPlayer()
     {
         //0. SubmittedCardList에서 중복 카드 제거
         RemoveDuplicatedCard();
@@ -798,11 +797,25 @@ public class NewGameManager : NetworkBehaviour
         else { ChangeState(GameState.GetBonus); }
     }
 
+    [Server]
     private void RemoveDuplicatedCard()
     {
         //Mirror를 사용하면서 컬렉션을 수정하는 도중에 그 컬렉션을 열거하려고 하면 문제가 발생함.
         // 제거할 키들을 저장할 리스트
         List<uint> keysToRemove = new List<uint>();
+
+        // 컬렉션이 null인지 확인
+        if (SubmittedCardList == null)
+        {
+            Debug.LogError("SubmittedCardList is null");
+            return;
+        }
+
+        if(DuplicationCheck == null)
+        {
+            Debug.LogError("DuplicationCheck is null");
+            return;
+        }
 
         // 첫 번째 루프: 제거할 키를 수집
         foreach (int card in SubmittedCardList.Values)
