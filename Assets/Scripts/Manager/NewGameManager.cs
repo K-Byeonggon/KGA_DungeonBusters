@@ -544,7 +544,9 @@ public class NewGameManager : NetworkBehaviour
 
         ServerRequestSetUsedCard();
 
-        ChangeState(GameState.ShowWinLose);
+        //ChangeState(GameState.ShowWinLose);
+
+        StartCoroutine(RpcCalculateAnim());
     }
 
     [Server]
@@ -608,6 +610,36 @@ public class NewGameManager : NetworkBehaviour
         newCards.Remove(usedCard);
         player.Cards = newCards;
     }
+
+    [Server]
+    private IEnumerator RpcCalculateAnim()
+    {
+        RpcTempAtk();
+
+        yield return new WaitForSeconds(1f);
+
+        ChangeState(GameState.ShowWinLose);
+    }
+
+    [ClientRpc]
+    private void RpcTempAtk()
+    {
+        foreach(var kvp in PlayerList)
+        {
+            if (AtkSuccessList[kvp.Key])
+            {
+                kvp.Value.SetAnimator(PlayerAnim.Atk);
+            }
+            else
+            {
+                kvp.Value.SetAnimator(PlayerAnim.Damage);
+            }
+        }
+        _monsterList.SetAnimator(MonsterAnim.Atk);
+    }
+
+
+
     #endregion
 
 

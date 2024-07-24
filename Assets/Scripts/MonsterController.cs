@@ -2,6 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum MonsterAnim
+{
+    Idle,
+    Atk,
+    Damage,
+    Die
+}
+
 public class MonsterController : MonoBehaviour
 {
     private List<GameObject> Monsters;
@@ -28,5 +36,26 @@ public class MonsterController : MonoBehaviour
     public void UnsetMonster()
     {
         if(currentId != 0) Monsters[currentId -1].SetActive(false);
+    }
+
+    public void SetAnimator(MonsterAnim anim)
+    {
+        Animator animator = Monsters[currentId-1].GetComponent<Animator>();
+
+        switch (anim)
+        {
+            case MonsterAnim.Idle:
+                animator.SetBool("Die", false);
+                break;
+            case MonsterAnim.Atk:
+                animator.SetTrigger("Atk");
+                break;
+            case MonsterAnim.Damage:
+                animator.SetTrigger("Damage");
+                break;
+            case MonsterAnim.Die:
+                animator.SetBool("Die", true);
+                break;
+        }
     }
 }
