@@ -77,6 +77,8 @@ public class MyPlayer : NetworkBehaviour
         Debug.Log("나 언제?");
     }
 
+
+
     public override void OnStartClient()
     {
         base.OnStartClient();

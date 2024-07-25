@@ -375,6 +375,11 @@ public class NewGameManager : NetworkBehaviour
         CheckedPlayerList = new Dictionary<int, bool>();
         RpcHideMonster();
 
+        //Stage시작시 변경
+        CurrentStage++; 
+        CurrentMonster = this.DequeueMonsterCurrentStage();
+        CurrentMonsterId = CurrentMonster.DataId;
+
         StartCoroutine(StageAnim());
     }
 
@@ -396,10 +401,7 @@ public class NewGameManager : NetworkBehaviour
         RpcTempIdle();
         yield return new WaitForSeconds(1f);
 
-        //Stage시작시 변경
-        CurrentStage++;
-        CurrentMonster = this.DequeueMonsterCurrentStage();
-        CurrentMonsterId = CurrentMonster.DataId;
+
         RpcSetMonsterInfo(CurrentMonsterId);
 
         //상태변화
