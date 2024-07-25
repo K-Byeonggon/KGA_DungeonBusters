@@ -68,6 +68,11 @@ public class BattleUIManager : UIManager
     {
         battleUI.UpdateSelectCardPopup();
     }
+
+    public void RequestUnsetSelectCard()
+    {
+        battleUI.OnAllPlayerSelectedCard();
+    }
     #endregion
 
     #region Popup_Remove

@@ -264,15 +264,12 @@ public class NewGameManager : NetworkBehaviour
         switch (state)
         {
             case GameState.StartDungeon:
-                Debug.Log("Before StartDungeon");
                 StartDungeon();
                 break;
             case GameState.StartStage:
-                Debug.Log("Before StartStage");
                 StartStage();
                 break;
             case GameState.SubmitCard:
-                //SetLocalPopupSelect();
                 break;
             case GameState.CalculateResults:
                 ServerDecideStageResult();
@@ -492,12 +489,19 @@ public class NewGameManager : NetworkBehaviour
     [Server]
     private void ServerOnAllPlayersSubmitted()
     {
+        RpcUnsetSelectCard();
         uint[] playerNetIds = SubmittedCardList.Keys.ToArray();
         int[] cardNums = SubmittedCardList.Values.ToArray();
         RpcUpdateSavedCardList(playerNetIds, cardNums);
         RpcUpdateAtkSuccessList(playerNetIds, cardNums);
 
         ChangeState(GameState.CalculateResults);
+    }
+
+    [ClientRpc]
+    private void RpcUnsetSelectCard()
+    {
+        BattleUIManager.Instance.RequestUnsetSelectCard();
     }
 
     [ClientRpc]

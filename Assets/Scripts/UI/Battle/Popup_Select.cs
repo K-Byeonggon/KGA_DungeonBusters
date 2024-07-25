@@ -9,7 +9,7 @@ public class Popup_Select : MonoBehaviour
     [SerializeField] Button Btn_FrontClose;
     [SerializeField] GameObject Transform_SlotRoot;
     [SerializeField] GameObject Prefab_CardRed;
-
+    [SerializeField] GameObject Panel_Wait;
     public void RemoveCards()
     {
         for (int i = 0; i < Transform_SlotRoot.transform.childCount; i++)
@@ -43,9 +43,14 @@ public class Popup_Select : MonoBehaviour
 
     public void UISetActive(bool active)
     {
+        Panel_Wait.SetActive(false);
         this.gameObject.SetActive(active);
     }
 
+    public void WaitForOthers()
+    {
+        Panel_Wait.SetActive(true);
+    }
 
     public void OnClick_FrontClose()
     {

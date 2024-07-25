@@ -65,7 +65,12 @@ public class BattleUI : MonoBehaviour
 
     public void OnClick_SelectCard()
     {
-        popup_Select.gameObject.SetActive(true);
+        popup_Select.UISetActive(true);
+    }
+
+    public void OnAllPlayerSelectedCard()
+    {
+        popup_Select.UISetActive(false);
     }
 
     public void SetActiveStageInfo(bool setActive)

@@ -48,8 +48,9 @@ public class Card : NetworkBehaviour
         uint netId = NetworkClient.localPlayer.netId;
         NewGameManager.Instance.CmdAddSubmittedCard_OnClick_Card(netId, cardNum);
 
-        //그리고 선택창 닫기(이건 모든 클라에서 이루어져야해)
-        Popup_Select.UISetActive(false);
+        //다른 플레이어를 기다리는 화면으로 전환
+        //Popup_Select.UISetActive(false);
+        Popup_Select.WaitForOthers();
     }
 
 
