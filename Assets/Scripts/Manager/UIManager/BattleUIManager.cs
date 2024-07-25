@@ -76,9 +76,14 @@ public class BattleUIManager : UIManager
     #endregion
 
     #region Popup_Remove
-    public void RequestUpdateRemoveJewels(List<int> maxJewels)
+    public void RequestUpdateRemoveJewels(bool isLosePlayer)
     {
-        battleUI.UpdateRemoveJewels(maxJewels);
+        battleUI.UpdateRemoveJewels(isLosePlayer);
+    }
+
+    public void RequestUnsetRemoveJewels()
+    {
+        battleUI.UnsetRemoveJewels();
     }
     #endregion
 

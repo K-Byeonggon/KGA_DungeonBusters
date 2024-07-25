@@ -1,4 +1,5 @@
 using Mirror;
+using Org.BouncyCastle.Asn1.Mozilla;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -116,12 +117,21 @@ public class BattleUI : MonoBehaviour
     #endregion
 
     #region Popup_RemoveJewels
-    public void UpdateRemoveJewels(List<int> maxJewels)
+    public void UpdateRemoveJewels(bool isLosePlayer)
     {
         popup_RemoveJewels.RemoveJewels();
-        popup_RemoveJewels.SetJewels(maxJewels);
-        popup_RemoveJewels.SetBonus();
+        if (isLosePlayer)
+        {
+            popup_RemoveJewels.SetJewels();
+            popup_RemoveJewels.SetBonus();
+        }
+        popup_RemoveJewels.SetLosePlayer(isLosePlayer);
         popup_RemoveJewels.UISetActive(true);
+    }
+
+    public void UnsetRemoveJewels()
+    {
+        popup_RemoveJewels.UISetActive(false);
     }
     #endregion
 

@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class NewGameManager : NetworkBehaviour
 {
@@ -38,7 +39,8 @@ public class NewGameManager : NetworkBehaviour
     [SerializeField] Dictionary<int, int> _duplicationCheck;            //key:CardNum, value:해당Num의 개수
     [SerializeField] Dictionary<uint, int> _selectedJewelIndexList;     //key:netId, value:플레이어가 선택한 버릴 Jewel 인덱스
     [SerializeField] Dictionary<uint, List<int>> _netIdAndJewelsIndex;    //key:netId, value:가장많은Jewel의 인덱스List
-    
+    private List<uint> _losePlayersNetIdList; //가장 작은 카드를 낸 플레이어들의 netId가 담길 List
+
     [SerializeField] List<uint> _winPlayerIds;
     [SerializeField] Dictionary<uint, int> _savedCardList;
     [SerializeField] Dictionary<int, bool> _checkedPlayerList;
@@ -171,6 +173,12 @@ public class NewGameManager : NetworkBehaviour
     {
         get { return _atkSuccessList; }
         set { _atkSuccessList = value;}
+    }
+
+    public List<uint> LosePlayersNetIdList
+    {
+        get { return _losePlayersNetIdList; }
+        set { _losePlayersNetIdList = value;}
     }
 
     #endregion
@@ -992,8 +1000,9 @@ public class NewGameManager : NetworkBehaviour
     public void ServerChooseLoseJewelsPlayer()
     {
         //1. 가장 작은 카드를 낸 플레이어들의 NetId 구하기
-        List<uint> losePlayerNetIds = GetMinCardPlayerNetIds();
+        LosePlayersNetIdList = GetMinCardPlayerNetIds();
 
+        /*
         //2. 해당 NetId의 플레이어가 가장 많이 가진 보석의 색깔 구하기.
         foreach (uint netId in losePlayerNetIds)
         {
@@ -1001,13 +1010,21 @@ public class NewGameManager : NetworkBehaviour
             List<int> maxJewels = FindMaxIndexes(player.Jewels);
             NetIdAndJewelsIndex.Add(netId, maxJewels);
         }
+        */
+        //여기까지 보석을 잃을 플레이어와 그 플레이어가 가진 가장 많은 보석의 종류를 알아내는 단
+
+        uint[] loseNetIds = LosePlayersNetIdList.ToArray();
+
+        RpcSetLoseJewelsUI(loseNetIds);
+
 
         //3-1. 보석의 색깔이 여러개면, 플레이어에게 어떤 보석을 버릴지 선택을 시킨다
         //이거는 그냥 UI만 띄우는 거고, 실제 보석 버리기는 Content_Jewel을 통해 시킴.
-        foreach(var kv in NetIdAndJewelsIndex)
+        /*
+        foreach (var kv in NetIdAndJewelsIndex)
         {
             RpcSetUIToLoseJewels(kv.Key, kv.Value);
-        }
+        }*/
     }
 
     private List<int> FindMaxIndexes(List<int> list)
@@ -1024,18 +1041,28 @@ public class NewGameManager : NetworkBehaviour
         return maxIndexes;
     }
 
+    //모든 플레이어에게 UI 띄워주기, 단 패배 플레이어가 아니면 대기 화면을 띄움
+    [ClientRpc]
+    private void RpcSetLoseJewelsUI(uint[] losePlayerNetIds)
+    {
+        bool isLosePlayer = losePlayerNetIds.Contains(NetworkClient.localPlayer.netId);
+
+        BattleUIManager.Instance.RequestUpdateRemoveJewels(isLosePlayer);
+    }
+
+    /*
     //보석을 잃을 플레이어에게 UI 띄워주기
     [ClientRpc]
     private void RpcSetUIToLoseJewels(uint playerId, List<int> maxJewels)
     {
-        //모든 클라에 날려서 보석을 잃는 플레이어가 아니면 return
-        if (NetworkClient.localPlayer.netId != playerId) { return; }
+        //모든 클라에 날려서 보석을 잃는 플레이어가 아니면 다른 UI를 띄워주도록 구분
+        bool isLosePlayer = NetworkClient.localPlayer.netId == playerId;
 
-        //패배 플레이어에 잃을 보석을 선택하는 UI를 띄워준다.
-        BattleUIManager.Instance.RequestUpdateRemoveJewels(maxJewels);
+        //모든 플레이어에 UI를 띄워준다. 단, isLosePlayer로 띄울 UI를 구분한다.
+        BattleUIManager.Instance.RequestUpdateRemoveJewels(maxJewels, isLosePlayer);
 
         //UI에서 Content_Jewel OnClick 시 보석 잃는 로직으로.
-    }
+    }*/
 
     [Command(requiresAuthority = false)]
     public void CmdAddSelectedJewelIndexList_OnClick(uint playerNetId, int jewelIndex)
@@ -1048,7 +1075,7 @@ public class NewGameManager : NetworkBehaviour
     [Command(requiresAuthority = false)]
     public void CmdCheckAllPlayerSelectedJewel_OnClick()
     {
-        if (ServerAllPlayerSelectedJewel(NetIdAndJewelsIndex.Count))
+        if (ServerAllPlayerSelectedJewel(LosePlayersNetIdList.Count))
         {
             //선택을 바탕으로 모든 클라에서 패배 플레이어의 Jewel 보너스로.
             ServerOnAllPlayersSelectedJewel();
@@ -1066,8 +1093,11 @@ public class NewGameManager : NetworkBehaviour
     {
         ServerAddJewelsToBonus();
 
-        foreach(var kv in SelectedJewelIndexList)
+        RpcUnsetLoseJewelUI();
+
+        foreach (var kv in SelectedJewelIndexList)
         {
+
             //실제로 플레이어의 보석이 빠져나가는 부분.
             RpcPlayerLoseJewels(kv.Key, kv.Value);
         }
@@ -1089,6 +1119,12 @@ public class NewGameManager : NetworkBehaviour
             newBonus[kv.Value] += GetPlayerFromNetId(kv.Key).Jewels[kv.Value];
         }
         BonusJewels = newBonus;
+    }
+
+    [ClientRpc]
+    private void RpcUnsetLoseJewelUI()
+    {
+        BattleUIManager.Instance.RequestUnsetRemoveJewels();
     }
 
     //클라의 패배 플레이어 Jewel을 없애는 로직

@@ -39,7 +39,11 @@ public class Content_Jewel : MonoBehaviour
         NewGameManager.Instance.CmdAddSelectedJewelIndexList_OnClick(playerNetId, jewelIndex);
 
         //Popup창 꺼줌
-        Popup_RemoveJewels.UISetActive(false);
+        //Popup_RemoveJewels.UISetActive(false);
+
+        //대기 화면으로 변경
+        Popup_RemoveJewels.WaitForOthers();
+
 
         //여기서 패배플레이어가 다 체크했는지 체크
         NewGameManager.Instance.CmdCheckAllPlayerSelectedJewel_OnClick();
