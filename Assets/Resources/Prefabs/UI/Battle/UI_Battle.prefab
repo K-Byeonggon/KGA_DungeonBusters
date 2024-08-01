@@ -34,7 +34,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 28.132996, y: 0.87301636}
+  m_AnchoredPosition: {x: 30, y: 0}
   m_SizeDelta: {x: 34.5888, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5880371791087444346
@@ -192,7 +192,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 28.132996, y: 0.87301636}
+  m_AnchoredPosition: {x: 30, y: 0}
   m_SizeDelta: {x: 34.5888, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2497038510792356908
@@ -514,7 +514,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 28.132996, y: 0.87301636}
+  m_AnchoredPosition: {x: 30, y: 0}
   m_SizeDelta: {x: 34.5888, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4127282416618207740
@@ -1022,8 +1022,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -84.8, y: -15.1}
-  m_SizeDelta: {x: 21.6762, y: 31.7453}
+  m_AnchoredPosition: {x: -83, y: -15.1}
+  m_SizeDelta: {x: 28, y: 28}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5778608430190009309
 CanvasRenderer:
@@ -1053,7 +1053,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 882466429, guid: 488234cbd2d2bd44eb803c42b8afc599, type: 3}
+  m_Sprite: {fileID: 1142514554, guid: bc99d4e86bec6a04e87ed09d3ffb32c3, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1170,8 +1170,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -11.637988, y: -15.099976}
-  m_SizeDelta: {x: 21.6762, y: 31.7453}
+  m_AnchoredPosition: {x: -14, y: -15.099976}
+  m_SizeDelta: {x: 28, y: 28}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2515087152884589500
 CanvasRenderer:
@@ -1201,7 +1201,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 117857952, guid: 488234cbd2d2bd44eb803c42b8afc599, type: 3}
+  m_Sprite: {fileID: -977081029, guid: bc99d4e86bec6a04e87ed09d3ffb32c3, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1539,7 +1539,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.8113208, g: 0, b: 0, a: 1}
+  m_Color: {r: 1, g: 0.9386792, b: 0.9386792, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -1687,8 +1687,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 61.400013, y: -15.099976}
-  m_SizeDelta: {x: 21.6762, y: 31.7453}
+  m_AnchoredPosition: {x: 55.1, y: -15.099976}
+  m_SizeDelta: {x: 28, y: 28}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &544026597012000544
 CanvasRenderer:
@@ -1718,7 +1718,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 962253234, guid: 488234cbd2d2bd44eb803c42b8afc599, type: 3}
+  m_Sprite: {fileID: 1991601014, guid: bc99d4e86bec6a04e87ed09d3ffb32c3, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -2048,6 +2048,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Popup_GetBonus
       objectReference: {fileID: 0}
+    - target: {fileID: 3887654124819367077, guid: 4b4d6fe546e7e59459620aab1e01d290, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -2274,6 +2278,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Popup_Select
       objectReference: {fileID: 0}
+    - target: {fileID: 6060994723262081178, guid: 70cc3569f4365574ca92e8a486f2a532, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -2306,6 +2314,10 @@ PrefabInstance:
     - target: {fileID: 344757535825527457, guid: 26e19732d6c4dbc4da9e9de90f72fd12, type: 3}
       propertyPath: m_Name
       value: Popup_WinLose
+      objectReference: {fileID: 0}
+    - target: {fileID: 344757535825527457, guid: 26e19732d6c4dbc4da9e9de90f72fd12, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7609365780138198411, guid: 26e19732d6c4dbc4da9e9de90f72fd12, type: 3}
       propertyPath: m_Pivot.x
@@ -2499,6 +2511,10 @@ PrefabInstance:
     - target: {fileID: 3887654124819367077, guid: f2303b6de38f65246ae910e5419ea150, type: 3}
       propertyPath: m_Name
       value: Popup_RemoveJewels
+      objectReference: {fileID: 0}
+    - target: {fileID: 3887654124819367077, guid: f2303b6de38f65246ae910e5419ea150, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

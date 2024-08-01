@@ -66,7 +66,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 882466429, guid: 488234cbd2d2bd44eb803c42b8afc599, type: 3}
+  m_Sprite: {fileID: 1142514554, guid: bc99d4e86bec6a04e87ed09d3ffb32c3, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -246,8 +246,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -150.01102, y: -2.8395996}
-  m_SizeDelta: {x: 82.65, y: 118.23}
+  m_AnchoredPosition: {x: -150.01102, y: -20.2974}
+  m_SizeDelta: {x: 82.65, y: 83.3144}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2607636987673644723
 MonoBehaviour:
@@ -265,6 +265,6 @@ MonoBehaviour:
   Btn_Jewel: {fileID: 5767117073732097780}
   Text_Count: {fileID: 3949597276359720158}
   Sprite_color:
-  - {fileID: 882466429, guid: 488234cbd2d2bd44eb803c42b8afc599, type: 3}
-  - {fileID: 117857952, guid: 488234cbd2d2bd44eb803c42b8afc599, type: 3}
-  - {fileID: 962253234, guid: 488234cbd2d2bd44eb803c42b8afc599, type: 3}
+  - {fileID: 1142514554, guid: bc99d4e86bec6a04e87ed09d3ffb32c3, type: 3}
+  - {fileID: -977081029, guid: bc99d4e86bec6a04e87ed09d3ffb32c3, type: 3}
+  - {fileID: 1991601014, guid: bc99d4e86bec6a04e87ed09d3ffb32c3, type: 3}
