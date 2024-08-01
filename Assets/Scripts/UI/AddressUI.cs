@@ -24,8 +24,14 @@ public class AddressUI : MonoBehaviour
         MyNetworkRoomManager.Instance.networkAddress = address;
 
         //클라로 게임 시작
-        MyNetworkRoomManager.Instance.StartClient();
-
+        try
+        {
+            MyNetworkRoomManager.Instance.StartClient();
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogError($"Failed to start client: {e.Message}");
+        }
 
     }
 
