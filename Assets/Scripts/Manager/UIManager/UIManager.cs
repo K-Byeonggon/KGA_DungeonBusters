@@ -10,7 +10,8 @@ public enum UIType
     SetPlayerNumPopup,
     Room,
     Battle,
-    Point
+    Point,
+    Address
 }
 
 public class UIManager : MonoBehaviour
@@ -78,6 +79,9 @@ public class UIManager : MonoBehaviour
                 break;
             case UIType.Point:
                 path = "Prefabs/UI/UI_Point";
+                break;
+            case UIType.Address:
+                path = "Prefabs/UI/UI_Address";
                 break;
         }
         return path;

@@ -14,11 +14,12 @@ public class LobbyManager
         }
     }
 
+    /*
     public void LobbyUI_OnClick_StartWitClient()
     {
         MyNetworkRoomManager.Instance.StartClient();
     }
-
+    */
 
     public void Popup_OnClick_3PlayerStart()
     {

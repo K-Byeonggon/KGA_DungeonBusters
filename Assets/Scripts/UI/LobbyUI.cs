@@ -46,7 +46,9 @@ public class LobbyUI : MonoBehaviour
 
     private void OnClick_StartWithClient()
     {
-        LobbyManager.Instance.LobbyUI_OnClick_StartWitClient();
+        UIManager.Instance.OpenSpecificUI(UIType.Address);
+
+        //LobbyManager.Instance.LobbyUI_OnClick_StartWitClient();
     }
     
 }
