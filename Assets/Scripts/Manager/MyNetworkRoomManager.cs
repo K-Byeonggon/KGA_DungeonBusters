@@ -18,6 +18,7 @@ public class MyNetworkRoomManager : NetworkRoomManager
             Instance = this;
             DontDestroyOnLoad(gameObject); // 선택 사항: 씬 전환 시 유지
         }
+
     }
 
     public override void OnServerAddPlayer(NetworkConnectionToClient conn)
@@ -59,4 +60,9 @@ public class MyNetworkRoomManager : NetworkRoomManager
         return roomPlayer;
     }
 
+    public override void OnClientError(TransportError transportError, string message)
+    {
+        UIManager.Instance.OpenSpecificUI(UIType.Warning);
+    }
+    
 }

@@ -25,10 +25,13 @@ public class AddressUI : MonoBehaviour
 
         //클라로 게임 시작
         MyNetworkRoomManager.Instance.StartClient();
+
+
     }
 
     private void OnClick_Btn_FrontClose()
     {
         UIManager.Instance.CloseSpecificUI(UIType.Address);
     }
+
 }

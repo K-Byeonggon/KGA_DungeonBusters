@@ -11,7 +11,8 @@ public enum UIType
     Room,
     Battle,
     Point,
-    Address
+    Address,
+    Warning
 }
 
 public class UIManager : MonoBehaviour
@@ -82,6 +83,9 @@ public class UIManager : MonoBehaviour
                 break;
             case UIType.Address:
                 path = "Prefabs/UI/UI_Address";
+                break;
+            case UIType.Warning:
+                path = "Prefabs/UI/UI_Warning";
                 break;
         }
         return path;

@@ -914,3 +914,5 @@ MonoBehaviour:
   Input_Address: {fileID: 8594100429863975727}
   Btn_Start: {fileID: 752285032809796253}
   Btn_FrontClose: {fileID: 1541958777789705106}
+  Popup_Warning: {fileID: 0}
+  Btn_Okay: {fileID: 0}
