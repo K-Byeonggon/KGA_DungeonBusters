@@ -11,6 +11,8 @@ GameObject:
   - component: {fileID: 8270285677858909471}
   - component: {fileID: 426270104789151642}
   - component: {fileID: 3551802546137081294}
+  - component: {fileID: 4733260519389503499}
+  - component: {fileID: 6590006849784183546}
   m_Layer: 5
   m_Name: Text_Number
   m_TagString: Untagged
@@ -58,7 +60,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -79,6 +81,36 @@ MonoBehaviour:
     m_VerticalOverflow: 0
     m_LineSpacing: 1
   m_Text: 0
+--- !u!114 &4733260519389503499
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1848640705572703665}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cfabb0440166ab443bba8876756fdfa9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_EffectColor: {r: 0, g: 0, b: 0, a: 1}
+  m_EffectDistance: {x: 2, y: -2}
+  m_UseGraphicAlpha: 1
+--- !u!114 &6590006849784183546
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1848640705572703665}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cfabb0440166ab443bba8876756fdfa9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_EffectColor: {r: 0, g: 0, b: 0, a: 1}
+  m_EffectDistance: {x: -2, y: 2}
+  m_UseGraphicAlpha: 1
 --- !u!1 &4974378821119214374
 GameObject:
   m_ObjectHideFlags: 0
@@ -146,7 +178,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -1566623720, guid: 4ef39ff1ebd46ba4bbc1bb66995f4bba, type: 3}
+  m_Sprite: {fileID: 218603114, guid: 3ee2c98a9bb42c941be85389e635151c, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -268,7 +300,6 @@ MonoBehaviour:
   Img_Card: {fileID: 3652094981452309454}
   Btn_Card: {fileID: 1338083147248314292}
   Text_Number: {fileID: 3551802546137081294}
-  Popup_Select: {fileID: 0}
   Sprite_color:
   - {fileID: -1566623720, guid: 4ef39ff1ebd46ba4bbc1bb66995f4bba, type: 3}
   - {fileID: -1789673266, guid: 4ef39ff1ebd46ba4bbc1bb66995f4bba, type: 3}
