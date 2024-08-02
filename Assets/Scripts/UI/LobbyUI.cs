@@ -24,6 +24,7 @@ public class LobbyUI : MonoBehaviour
         Btn_Logout.onClick.AddListener(OnClick_Logout);
         Btn_StartWithServer.onClick.AddListener(OnClick_StartWithServer);
         Btn_StartWithClient.onClick.AddListener(OnClick_StartWithClient);
+        Btn_Costume.onClick.AddListener(OnClick_Costume);
     }
 
     private void OnDisable()
@@ -31,6 +32,7 @@ public class LobbyUI : MonoBehaviour
         Btn_Logout.onClick.RemoveListener(OnClick_Logout);
         Btn_StartWithServer.onClick.RemoveListener(OnClick_StartWithServer);
         Btn_StartWithClient.onClick.RemoveListener(OnClick_StartWithClient);
+        Btn_Costume.onClick.RemoveListener(OnClick_Costume);
     }
 
     private void OnClick_Logout()
@@ -51,4 +53,8 @@ public class LobbyUI : MonoBehaviour
         //LobbyManager.Instance.LobbyUI_OnClick_StartWitClient();
     }
     
+    private void OnClick_Costume()
+    {
+
+    }
 }
