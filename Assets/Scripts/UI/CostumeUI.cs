@@ -15,6 +15,7 @@ public class CostumeUI : MonoBehaviour
         Btn_Warrior.onClick.AddListener(OnClick_Warrior);
         Btn_Archer.onClick.AddListener(OnClick_Archer);
         Btn_Wizard.onClick.AddListener(OnClick_Wizard);
+        Btn_FrontClose.onClick.AddListener(OnClick_FrontClose);
     }
 
     private void OnDisable()
@@ -22,25 +23,32 @@ public class CostumeUI : MonoBehaviour
         Btn_Warrior.onClick?.RemoveListener(OnClick_Warrior);
         Btn_Archer.onClick?.RemoveListener(OnClick_Archer);
         Btn_Wizard.onClick?.RemoveListener(OnClick_Wizard);
+        Btn_FrontClose.onClick?.RemoveListener(OnClick_FrontClose);
     }
 
     private void OnClick_Warrior()
     {
-
+        //뭔가에 정보 넘김
+        MyNetworkRoomManager.Instance.SetCharacter(Character.Warrior);
+        UIManager.Instance.CloseSpecificUI(UIType.Costume);
     }
 
     private void OnClick_Archer()
     {
-
+        //뭔가에 정보 넘김
+        MyNetworkRoomManager.Instance.SetCharacter(Character.Archer);
+        UIManager.Instance.CloseSpecificUI(UIType.Costume);
     }
 
     private void OnClick_Wizard()
     {
-
+        //뭔가에 정보 넘김
+        MyNetworkRoomManager.Instance.SetCharacter(Character.Wizard);
+        UIManager.Instance.CloseSpecificUI(UIType.Costume);
     }
 
     private void OnClick_FrontClose()
     {
-
+        UIManager.Instance.CloseSpecificUI(UIType.Costume);
     }
 }

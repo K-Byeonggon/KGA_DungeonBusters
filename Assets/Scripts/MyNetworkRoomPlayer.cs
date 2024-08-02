@@ -8,6 +8,10 @@ public class MyNetworkRoomPlayer : NetworkRoomPlayer
     [SyncVar][SerializeField] int _uid;
     public int Uid {  get { return _uid; }  set { _uid = value; } }
 
+    [SerializeField] Character _currentCharacter;
+    public Character CurrentCharacter { get { return _currentCharacter; } set { _currentCharacter = value; } }
+
+
 
     public override void OnStartClient()
     {
@@ -23,7 +27,7 @@ public class MyNetworkRoomPlayer : NetworkRoomPlayer
 
     public override void OnClientEnterRoom()
     {
-        //ÀÌ°Åµµ Àá½Ã uid°¡Á®¿À´Â ½Ãµµ´Â Æ÷±âÇÕ½Ã´Ù~
+        //ì´ê±°ë„ ì ì‹œ uidê°€ì ¸ì˜¤ëŠ” ì‹œë„ëŠ” í¬ê¸°í•©ì‹œë‹¤~
         /*
         int clientUID = LoginManager.Instance.UserID;
         UIDManager.Instance.AddClientUID(connectionToClient, clientUID);
@@ -33,7 +37,7 @@ public class MyNetworkRoomPlayer : NetworkRoomPlayer
     }
 
 
-    //¿©±â¼­ uid°¡Á®¿À°í ÀÖ´Âµ¥?
+    //ì—¬ê¸°ì„œ uidê°€ì ¸ì˜¤ê³  ìˆëŠ”ë°?
 
     [Command]
     void CmdSendUIDToServer(int uid)

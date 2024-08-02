@@ -20,11 +20,18 @@ public enum PlayerAnim
     Win
 }
 
+
 public class MyPlayer : NetworkBehaviour
 {
     public List<int> _cards;
     [SerializeField] List<int> _usedCards;
     [SerializeField] List<int> _jewels; //RED:0, YELLOW:1, BLUE:2
+
+
+    [Header("Character")]
+    [SerializeField] GameObject Warrior;
+    [SerializeField] GameObject Archer;
+    [SerializeField] GameObject Wizard;
 
     public Animator _animator;
 
@@ -75,8 +82,34 @@ public class MyPlayer : NetworkBehaviour
     private void Awake()
     {
         Debug.Log("나 언제?");
+        CharacterChange(Character.Archer);
     }
 
+
+    private void CharacterChange(Character character)
+    {
+        switch(character)
+        {
+            case Character.Warrior:
+                Warrior.SetActive(true);
+                Archer.SetActive(false);
+                Wizard.SetActive(false);
+                _animator = Warrior.transform.GetChild(0).GetComponent<Animator>();
+                break;
+            case Character.Archer:
+                Warrior.SetActive(false);
+                Archer.SetActive(true);
+                Wizard.SetActive(false);
+                _animator = Archer.transform.GetChild(0).GetComponent<Animator>();
+                break;
+            case Character.Wizard:
+                Warrior.SetActive(false);
+                Archer.SetActive(false);
+                Wizard.SetActive(true);
+                _animator = Wizard.transform.GetChild(0).GetComponent<Animator>();
+                break;
+        }
+    }
 
 
     public override void OnStartClient()

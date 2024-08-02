@@ -678,6 +678,7 @@ MonoBehaviour:
   _allPlayersReady: 0
   roomSlots: []
   clientIndex: 0
+  _currentCharacter: 0
 --- !u!4 &1470322141
 Transform:
   m_ObjectHideFlags: 0

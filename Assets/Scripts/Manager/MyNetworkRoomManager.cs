@@ -7,6 +7,9 @@ public class MyNetworkRoomManager : NetworkRoomManager
 {
     public static MyNetworkRoomManager Instance { get; private set; }
 
+    [SerializeField] Character _currentCharacter;
+    public Character CurrentCharacter { get { return _currentCharacter; } set { _currentCharacter = value; } }
+
     public override void Awake()
     {
         if (Instance != null && Instance != this)
@@ -29,34 +32,14 @@ public class MyNetworkRoomManager : NetworkRoomManager
     }
 
 
-    public override void OnRoomServerAddPlayer(NetworkConnectionToClient conn)
-    {
-        base.OnRoomServerAddPlayer(conn);
-    }
-
 
     public override GameObject OnRoomServerCreateRoomPlayer(NetworkConnectionToClient conn)
     {
         //여기서 커스텀으로 RoomPlayer 생성.
         GameObject roomPlayer = Instantiate(roomPlayerPrefab.gameObject, Vector3.zero, Quaternion.identity);
+        roomPlayer.GetComponent<MyNetworkRoomPlayer>().CurrentCharacter = MyNetworkRoomManager.Instance.CurrentCharacter;
 
-        //생성할때 uid설정이 안되서 그냥 생성후에 uid 바꿔주는 것을 시도해보려고 한다.
-        /*
-        var myRoomPlayer = roomPlayer.GetComponent<MyNetworkRoomPlayer>();
 
-        if (myRoomPlayer != null)
-        {
-            int uid = UIDManager.Instance.GetClientUID(conn);
-            if (uid != -1)
-            {
-                myRoomPlayer.Uid = uid;
-            }
-            else
-            {
-                Debug.LogError("UID 못찾았어용");
-            }
-        }
-        */
         return roomPlayer;
     }
 
@@ -65,4 +48,9 @@ public class MyNetworkRoomManager : NetworkRoomManager
         UIManager.Instance.OpenSpecificUI(UIType.Warning);
     }
     
+
+    public void SetCharacter(Character character)
+    {
+        _currentCharacter = character;
+    }
 }

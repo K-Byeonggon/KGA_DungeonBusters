@@ -55,6 +55,6 @@ public class LobbyUI : MonoBehaviour
     
     private void OnClick_Costume()
     {
-
+        UIManager.Instance.OpenSpecificUI(UIType.Costume);
     }
 }

@@ -13,3 +13,10 @@ public enum GameState
     EndDungeon,
     EndGame
 }
+
+public enum Character
+{
+    Warrior,
+    Archer,
+    Wizard
+}

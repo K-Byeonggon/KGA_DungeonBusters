@@ -12,7 +12,8 @@ public enum UIType
     Battle,
     Point,
     Address,
-    Warning
+    Warning,
+    Costume
 }
 
 public class UIManager : MonoBehaviour
@@ -86,6 +87,9 @@ public class UIManager : MonoBehaviour
                 break;
             case UIType.Warning:
                 path = "Prefabs/UI/UI_Warning";
+                break;
+            case UIType.Costume:
+                path = "Prefabs/UI/Popup_Costume";
                 break;
         }
         return path;
