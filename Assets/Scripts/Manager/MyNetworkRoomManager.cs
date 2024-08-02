@@ -21,6 +21,8 @@ public class MyNetworkRoomManager : NetworkRoomManager
             Instance = this;
             DontDestroyOnLoad(gameObject); // 선택 사항: 씬 전환 시 유지
         }
+
+        _currentCharacter = Character.Warrior;
     }
 
     public override void OnStartServer()
@@ -38,8 +40,13 @@ public class MyNetworkRoomManager : NetworkRoomManager
         MyNetworkRoomPlayer myRoomPlayer = roomPlayer.GetComponent<MyNetworkRoomPlayer>();
         myRoomPlayer.CurrentCharacter = info.currentCharacter;
 
+        //RoomUI에 플레이어 띄우기(이거 서버에서만 됨)
+        RoomUI roomUI = UIManager.Instance.GetCreatedUI(UIType.Room).GetComponent<RoomUI>();
+        roomUI.AddPlayerPanel(info.currentCharacter);
+        
         NetworkServer.AddPlayerForConnection(conn, roomPlayer);
     }
+
 
 
     //클라가 서버에 연결될 때, 서버에 메시지를 전송한다. (메시지: 자신의 NetworkConnection, Character)
